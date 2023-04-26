@@ -1,0 +1,295 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/681990/BankkAPIiiv2/1.0.0
+  - url: https://virtserver.swaggerhub.com/681990/Bankkk/1.0.0
+info:
+  version: 1.0.0
+  title: Banking API
+  description: Banking API
+  
+components:
+  parameters:
+    accountNumberPathParam:
+      name: accountNumber
+      in: path
+      description: The account number of the bank account
+      required: true
+      schema:
+        type: number
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+            message: Please log in to access this resource.
+    Forbidden:
+      description: Forbidden 
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+            message: You dont have right permissson to access this resources.
+    InternalServerError:
+      description: Internal Server Error 
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+            message: Something went wrong Internally Try Again!
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+            message: The account number does not exist.
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+           message: Mis Data Or No Data 
+    conflict:
+      description: Conflict
+      content: 
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+           message: You already have an Account
+          
+  schemas:
+    Account:
+      type: object
+      properties:
+        accountNumber:
+          type: string
+        accountBalance:
+          type: number
+        creationDate:
+          type: string
+        daylimit:
+          type: number
+        transcationLimit:
+          type: number
+        absoluteLimit:
+          type: number
+        isActive:
+          type: boolean
+        accountType:
+          type: string
+          description: The type of account either saving or Current.
+        accountHolder:
+          type: object
+          properties:
+            bsn:
+              type: number
+            firstName:
+              type: string
+            lastName:
+              type: string
+    CreatingAccount:
+      type: object
+      properties:
+        daylimit:
+          type: number
+        transcationLimit:
+          type: number
+        absoluteLimit:
+          type: number
+        accountType:
+          type: string
+          description: The type of account either saving or Current.
+        accountHolderBSN:
+              type: number
+    ErrorMessage:
+      type: object
+      properties:
+        message: 
+          type: string
+          description: this  message will sent when error 
+      
+paths:
+  /accounts:
+    get:
+      summary: Get all bank accounts
+      parameters:
+        - name: Account Holder Name
+          in: query
+          description: The name of the account holder to search for an account and Get all account
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+              example:
+                - accountNumber: NL89 GRP1 0123 4567 89
+                  accountBalance: 2000.50
+                  creationDate: 24/04/2023
+                  daylimit: 2000
+                  transactionLimit: 1500
+                  absoluteLimit: 200
+                  isActive: true
+                  accountType: current
+                  accountHolder:
+                    bsn: 1234566
+                    firstName: Test
+                    lastName: Inholland
+                    
+                - accountNumber: NL90 GRP1 0987 6543 21
+                  accountBalance: 1500.00
+                  creationDate: 25/04/2023
+                  daylimit: 1000
+                  transactionLimit: 1000
+                  absoluteLimit: 100
+                  isActive: true
+                  accountType: saving
+                  accountHolder:
+                    bsn: 1234566
+                    firstName: Test2
+                    lastName: Inholland2
+                  
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+                   
+        '403':           
+          $ref: '#/components/responses/Forbidden'
+          
+    post:
+      summary: This endpoint is used to create an Account By Employee
+      responses:
+        '201':
+          description: OK
+          content: 
+            application/json:
+              schema:
+                 $ref: '#/components/schemas/CreatingAccount'
+              example:
+              - accountNumber: NL90 GRP1 0987 6543 52
+                accountBalance: 1500.00
+                creationDate: 25/04/2023
+                daylimit: 1000
+                transactionLimit: 1000
+                absoluteLimit: 100
+                isActive: true
+                accountType: Current
+                accountHolder:
+                  bsn: 1234566
+                  firstName: Test2
+                  lastName: Inholland2
+                  
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
+           
+        '409': 
+            $ref: '#/components/responses/conflict'
+      
+      
+    
+  /accounts/{accountNumber}:                 
+    get:
+      summary: get one bank account with account number
+      parameters:
+        - $ref: '#/components/parameters/accountNumberPathParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/Account'
+              example:
+              - accountNumber: NL90 GRP1 0987 6543 21
+                accountBalance: 1500.00
+                creationDate: 25/04/2023
+                daylimit: 1000
+                transactionLimit: 1000
+                absoluteLimit: 100
+                isActive: true
+                accountType: saving
+                accountHolder:
+                  bsn: 1234566
+                  firstName: Test2
+                  lastName: Inholland2
+        '404':
+          $ref: '#/components/responses/NotFound'
+             
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+                   
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+             
+    put:
+      summary: The endpoint is used to update the details of Account
+      parameters:
+       - $ref: '#/components/parameters/accountNumberPathParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Account'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+                schema:
+                 $ref: '#/components/schemas/Account'
+                example:
+                  - accountNumber: NL90 GRP1 0987 6543 21
+                    accountBalance: 1500.00
+                    creationDate: 25/04/2023
+                    daylimit: 1000
+                    transactionLimit: 1000
+                    absoluteLimit: 100
+                    isActive: true
+                    accountType: saving
+                    accountHolder:
+                     firstName: Test2
+                     lastName: Inholland2
+                     bsn: 1234566
+        '404':
+          $ref: '#/components/responses/NotFound'
+          
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
