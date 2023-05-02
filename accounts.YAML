@@ -43,7 +43,7 @@ components:
         creationDate: 25/04/2023
         absoluteLimit: 500
         isActive: true
-        accountType: saving
+        accountType: Current
         accountHolder:
           bsn: 154841
           daylimit: 1000
@@ -176,16 +176,18 @@ components:
       properties:
         daylimit:
           type: number
+          example: 1000
         transcationLimit:
           type: number
-        absoluteLimit:
-          type: number
+          example: 1000
         accountType:
           type: string
           enum: [saving, current]
           description: The type of account either saving or Current.
+          example: current
         accountHolderBSN:
               type: number
+              example: 123456
     ErrorMessage:
       type: object
       properties:
@@ -234,6 +236,12 @@ paths:
           $ref: '#/components/responses/Forbidden'
           
     post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatingAccount'
+            example: 
       tags:
         - Employee Access
       summary: This endpoint is used to create an Account By Employee
@@ -243,10 +251,10 @@ paths:
           content: 
             application/json:
               schema:
-                 $ref: '#/components/schemas/CreatingAccount'
+                 $ref: '#/components/schemas/Account'
               examples:
-                FullAccountEg1:
-                  $ref: '#/components/examples/FullAccountEg1'
+                FullAccountEg2:
+                  $ref: '#/components/examples/FullAccountEg2'
                   
         '403':           
            $ref: '#/components/responses/Forbidden'
