@@ -352,7 +352,6 @@ paths:
                 properties:
                   isActive:
                     type: boolean
-                  example: true
               example: 
                  isActive: true
       responses:
