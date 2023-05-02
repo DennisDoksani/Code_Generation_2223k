@@ -241,7 +241,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CreatingAccount'
-            example: 
       tags:
         - Employee Access
       summary: This endpoint is used to create an Account By Employee
@@ -337,7 +336,7 @@ paths:
         '400':
            $ref: '#/components/responses/BadRequest'
            
-  /accounts/AccountStatus/{accountNumber}:
+  /accounts/accountStatus/{accountNumber}:
     put:  
       tags:
           - Employee Access
@@ -351,10 +350,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  IsActive:
+                  isActive:
                     type: boolean
-                example:
-                  IsActive: true
+                  example: true
+              example: 
+                 isActive: true
       responses:
         '204':
           $ref: '#/components/responses/Nocontent'
