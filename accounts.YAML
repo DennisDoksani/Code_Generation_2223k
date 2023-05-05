@@ -264,11 +264,11 @@ components:
         auth:
           type: string
           description: Auth token
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjYwMH0.G-8xAd8EYmJiZQlH-4DxzFtGCZMMB0xJKpY_gz26FeI
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjMxMjMxMjMiLCJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjIsImV4cCI6NjAwfQ.Sxd8RF689tg329dV66sXRQra9r-oOB5pXo5-1R0pda8
         refresh:
           type: string
           description: Refresh token
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjQzMjAwMH0.u3IP069N0J86xXfCOf7T75Q0WD0wr5dp8SHyouJ-O10
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjMxMjMxMjMiLCJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjIsImV4cCI6NDMyMDAwfQ.6vH7uyNxk7Obz1fOanq-F2dEquIKRyG4ej5urR3Gwrg
         firstName:
           type: string
           description: First name of the user
