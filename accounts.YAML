@@ -7,14 +7,20 @@ servers:
 info:
   version: 1.0.0
   title: Banking API
-  description: Accounts Endpoints for Banking API
+  description: Banking API
 tags:
   - name: Employee Access
     description: Employee Access required in order to access this resource
   - name: Customer Access & Employee Access
     description: Customer Access & Employee Access required in order to access this resource
+  - name: Users
+    description: For user info
+  - name: Authentication
+    description: For authentication
 security:
   - bearerAuth: []
+
+# Components Section
 components:
   securitySchemes:
     bearerAuth:
@@ -22,7 +28,7 @@ components:
       scheme: bearer
       bearerFormat: JWT
   examples:
-    FullAccountEg1: 
+    FullAccountEg1:
       value: 
         accountNumber: NL90 INHO 0987 6543 21
         accountBalance: 1500.00
@@ -58,6 +64,21 @@ components:
       value:
         accountHolder: Test2 Inholland
         accountNumber: NL90 INHO 0987 6543 22
+    Login123123123:
+      value:
+        email: johnsmith@gmail.com
+        password: SomePassword123
+    User123123123:
+      value:
+        bsn: 123123123
+        firstName: John
+        lastName: Smith
+        email: johnsmith@gmail.com
+        password: SomePassword123
+        birthDate: 1999-12-31
+        phoneNumber: "0612345678"
+
+  #Parameters section
   parameters:
     accountNumberPathParam:
       name: accountNumber
@@ -121,18 +142,17 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           example:
-           message: Mis Data Or No Data 
-    conflict:
+           message: Miss Data Or No Data
+    Conflict:
       description: Conflict
       content: 
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           example:
-           message: You already have an Account
-    Nocontent:
+           message: You already have an account
+    NoContent:
       description: No Content
-      
           
   schemas:
     SearchingAccount:
@@ -194,6 +214,69 @@ components:
         message: 
           type: string
           description: this  message will sent when error 
+    User:
+      type: object
+      properties:
+        bsn:
+          type: integer
+          format: int64
+          description: Unique identifier for the user/person
+          example: 123123123
+        firstName:
+          type: string
+          description: First name of the user
+          example: John
+        lastName:
+          type: string
+          description: Last name of the user
+          example: Smith
+        email:
+          type: string
+          description: Email of the user
+          example: johnsmith@gmail.com
+        password:
+          type: string
+          description: Password of the user
+          example: Password123
+        birthDate: 
+          type: string
+          format: date
+          description: Birth date of the user
+          example: 1999-12-31
+        phoneNumber:
+          type: string
+          description: Phone number of the user
+          example: "0612345678"
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email of the user
+          example: johnsmith@gmail.com
+        password:
+          type: string
+          description: Password of the user
+          example: Password123
+    LoginResponse:
+      type: object
+      properties:
+        auth:
+          type: string
+          description: Auth token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjYwMH0.G-8xAd8EYmJiZQlH-4DxzFtGCZMMB0xJKpY_gz26FeI
+        refresh:
+          type: string
+          description: Refresh token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjQzMjAwMH0.u3IP069N0J86xXfCOf7T75Q0WD0wr5dp8SHyouJ-O10
+        firstName:
+          type: string
+          description: First name of the user
+          example: John
+        lastName:
+          type: string
+          description: Last name of the user
+          example: Smith
       
 paths:
   /accounts:
@@ -268,7 +351,7 @@ paths:
            $ref: '#/components/responses/BadRequest'
            
         '409': 
-            $ref: '#/components/responses/conflict'
+            $ref: '#/components/responses/Conflict'
       
   /accounts/{accountNumber}:                 
     get:
@@ -298,6 +381,7 @@ paths:
 
         '500':
            $ref: '#/components/responses/InternalServerError'
+  
              
     put:
       tags:
@@ -356,7 +440,7 @@ paths:
                  isActive: true
       responses:
         '204':
-          $ref: '#/components/responses/Nocontent'
+          $ref: '#/components/responses/NoContent'
 
         '404':
           $ref: '#/components/responses/NotFound'
@@ -410,3 +494,77 @@ paths:
            $ref: '#/components/responses/InternalServerError'
         '401':
           $ref: '#/components/responses/Unauthorized'
+  
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Gets a JWT token by logging in.
+      description: Gets a JWT token by logging in.
+      operationId: login
+      requestBody:
+        description: Email and password
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Login"
+            examples:
+              Login123123123:
+                $ref: "#/components/examples/Login123123123"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+  
+  /auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refreshes a JWT token
+      description: Refreshes a JWT token
+      operationId: refresh
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+  
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Create user
+      description: This happens when a new user registers themselves. (Employees will be seeded)
+      operationId: createUser
+      requestBody:
+        description: User details
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+            examples:
+                User123123123:
+                  $ref: "#/components/examples/User123123123"
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/responses/BadRequest"
