@@ -7,9 +7,57 @@ servers:
 info:
   version: 1.0.0
   title: Banking API
-  description: Banking API
-  
+  description: Accounts Endpoints for Banking API
+tags:
+  - name: Employee Access
+    description: Employee Access required in order to access this resource
+  - name: Customer Access & Employee Access
+    description: Customer Access & Employee Access required in order to access this resource
+security:
+  - bearerAuth: []
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  examples:
+    FullAccountEg1: 
+      value: 
+        accountNumber: NL90 INHO 0987 6543 21
+        accountBalance: 1500.00
+        creationDate: 25/04/2023
+        absoluteLimit: 0
+        isActive: true
+        accountType: saving
+        accountHolder:
+          bsn: 1234566
+          daylimit: 1000
+          transactionLimit: 1000
+          firstName: Test2
+          lastName: Inholland2
+    FullAccountEg2:
+      value: 
+        accountNumber: NL90 INHO 0987 6543 21
+        accountBalance: 1500.00
+        creationDate: 25/04/2023
+        absoluteLimit: 500
+        isActive: true
+        accountType: Current
+        accountHolder:
+          bsn: 154841
+          daylimit: 1000
+          transactionLimit: 1000
+          firstName: Test2
+          lastName: Inholland2   
+    SearchingAccountExample1:
+      value:
+        accountHolder: Test Inholland
+        accountNumber: NL90 INHO 0987 6543 21
+    SearchingAccountExample2:
+      value:
+        accountHolder: Test2 Inholland
+        accountNumber: NL90 INHO 0987 6543 22
   parameters:
     accountNumberPathParam:
       name: accountNumber
@@ -18,6 +66,21 @@ components:
       required: true
       schema:
         type: number
+    limitQueryParam:
+      name: limit
+      in: query
+      description: The maximum number of items to return (maximum 50).
+      required: true
+      schema:
+        type: integer
+        maximum: 50
+    offsetQueryParam:
+      name: offset
+      in: query
+      description: The number of items to skip before starting to return items.
+      required: true
+      schema:
+        type: integer
   responses:
     Unauthorized:
       description: Unauthorized
@@ -67,8 +130,20 @@ components:
             $ref: '#/components/schemas/ErrorMessage'
           example:
            message: You already have an Account
+    Nocontent:
+      description: No Content
+      
           
   schemas:
+    SearchingAccount:
+      type: object
+      properties:
+        accountHolder:
+          type: string
+          description: The name of the account holder
+        accountNumber:  
+          type: string
+          description: The account number of the bank account
     Account:
       type: object
       properties:
@@ -78,12 +153,6 @@ components:
           type: number
         creationDate:
           type: string
-        daylimit:
-          type: number
-        transcationLimit:
-          type: number
-        absoluteLimit:
-          type: number
         isActive:
           type: boolean
         accountType:
@@ -98,20 +167,27 @@ components:
               type: string
             lastName:
               type: string
+            daylimit:
+              type: number
+            transcationLimit:
+              type: number
     CreatingAccount:
       type: object
       properties:
         daylimit:
           type: number
+          example: 1000
         transcationLimit:
           type: number
-        absoluteLimit:
-          type: number
+          example: 1000
         accountType:
           type: string
+          enum: [saving, current]
           description: The type of account either saving or Current.
+          example: current
         accountHolderBSN:
               type: number
+              example: 123456
     ErrorMessage:
       type: object
       properties:
@@ -122,14 +198,20 @@ components:
 paths:
   /accounts:
     get:
+      tags:
+        - Employee Access
       summary: Get all bank accounts
       parameters:
-        - name: Account Holder Name
-          in: query
-          description: The name of the account holder to search for an account and Get all account
+        - $ref: '#/components/parameters/limitQueryParam'
+        - $ref: '#/components/parameters/offsetQueryParam'
+        - in: query
+          name: accountType
+          description: Will return the accounts of the given type
           required: false
           schema:
             type: string
+            enum: [Saving, Current]
+          example: saving
       responses:
         '200':
           description: OK
@@ -139,33 +221,11 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Account'
-              example:
-                - accountNumber: NL89 GRP1 0123 4567 89
-                  accountBalance: 2000.50
-                  creationDate: 24/04/2023
-                  daylimit: 2000
-                  transactionLimit: 1500
-                  absoluteLimit: 200
-                  isActive: true
-                  accountType: current
-                  accountHolder:
-                    bsn: 1234566
-                    firstName: Test
-                    lastName: Inholland
-                    
-                - accountNumber: NL90 GRP1 0987 6543 21
-                  accountBalance: 1500.00
-                  creationDate: 25/04/2023
-                  daylimit: 1000
-                  transactionLimit: 1000
-                  absoluteLimit: 100
-                  isActive: true
-                  accountType: saving
-                  accountHolder:
-                    bsn: 1234566
-                    firstName: Test2
-                    lastName: Inholland2
-                  
+              examples:
+                FullAccountEg1:
+                  $ref: '#/components/examples/FullAccountEg1'
+                FullAccountEg2:
+                  $ref: '#/components/examples/FullAccountEg2'      
         '500':
            $ref: '#/components/responses/InternalServerError'
            
@@ -176,6 +236,13 @@ paths:
           $ref: '#/components/responses/Forbidden'
           
     post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatingAccount'
+      tags:
+        - Employee Access
       summary: This endpoint is used to create an Account By Employee
       responses:
         '201':
@@ -183,20 +250,10 @@ paths:
           content: 
             application/json:
               schema:
-                 $ref: '#/components/schemas/CreatingAccount'
-              example:
-              - accountNumber: NL90 GRP1 0987 6543 52
-                accountBalance: 1500.00
-                creationDate: 25/04/2023
-                daylimit: 1000
-                transactionLimit: 1000
-                absoluteLimit: 100
-                isActive: true
-                accountType: Current
-                accountHolder:
-                  bsn: 1234566
-                  firstName: Test2
-                  lastName: Inholland2
+                 $ref: '#/components/schemas/Account'
+              examples:
+                FullAccountEg2:
+                  $ref: '#/components/examples/FullAccountEg2'
                   
         '403':           
            $ref: '#/components/responses/Forbidden'
@@ -213,11 +270,11 @@ paths:
         '409': 
             $ref: '#/components/responses/conflict'
       
-      
-    
   /accounts/{accountNumber}:                 
     get:
-      summary: get one bank account with account number
+      tags:
+          - Employee Access
+      summary: get one bank account with account number and customer can only access his/her own account
       parameters:
         - $ref: '#/components/parameters/accountNumberPathParam'
       responses:
@@ -227,29 +284,24 @@ paths:
             application/json:
               schema:
                $ref: '#/components/schemas/Account'
-              example:
-              - accountNumber: NL90 GRP1 0987 6543 21
-                accountBalance: 1500.00
-                creationDate: 25/04/2023
-                daylimit: 1000
-                transactionLimit: 1000
-                absoluteLimit: 100
-                isActive: true
-                accountType: saving
-                accountHolder:
-                  bsn: 1234566
-                  firstName: Test2
-                  lastName: Inholland2
+              examples:
+                FullAccountEg1:
+                  $ref: '#/components/examples/FullAccountEg1'
         '404':
           $ref: '#/components/responses/NotFound'
-             
+  
         '401':
             $ref: '#/components/responses/Unauthorized'
                    
         '403':           
            $ref: '#/components/responses/Forbidden'
+
+        '500':
+           $ref: '#/components/responses/InternalServerError'
              
     put:
+      tags:
+          - Employee Access
       summary: The endpoint is used to update the details of Account
       parameters:
        - $ref: '#/components/parameters/accountNumberPathParam'
@@ -266,19 +318,9 @@ paths:
             application/json:
                 schema:
                  $ref: '#/components/schemas/Account'
-                example:
-                  - accountNumber: NL90 GRP1 0987 6543 21
-                    accountBalance: 1500.00
-                    creationDate: 25/04/2023
-                    daylimit: 1000
-                    transactionLimit: 1000
-                    absoluteLimit: 100
-                    isActive: true
-                    accountType: saving
-                    accountHolder:
-                     firstName: Test2
-                     lastName: Inholland2
-                     bsn: 1234566
+                examples:
+                  FullAccountEg1:
+                    $ref: '#/components/examples/FullAccountEg1'
         '404':
           $ref: '#/components/responses/NotFound'
           
@@ -293,3 +335,78 @@ paths:
         
         '400':
            $ref: '#/components/responses/BadRequest'
+           
+  /accounts/accountStatus/{accountNumber}:
+    put:  
+      tags:
+          - Employee Access
+      summary: The endpoint is used to update the status of Account only
+      parameters:
+        - $ref: '#/components/parameters/accountNumberPathParam'
+      requestBody:
+        required: true
+        content:
+           application/json:
+              schema:
+                type: object
+                properties:
+                  isActive:
+                    type: boolean
+              example: 
+                 isActive: true
+      responses:
+        '204':
+          $ref: '#/components/responses/Nocontent'
+
+        '404':
+          $ref: '#/components/responses/NotFound'
+          
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
+
+  /accounts/SearchByCustomerName:
+    get:
+      tags:
+        - Customer Access & Employee Access
+      summary: Get all Current accounts by Searching With Name 
+      parameters:
+        - $ref: '#/components/parameters/limitQueryParam'
+        - $ref: '#/components/parameters/offsetQueryParam'
+        - in: query
+          name: customer Name
+          description: Will return the accounts matching given customer name
+          required: true
+          schema:
+            type: string
+          example: test
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchingAccount'
+              examples:
+                SearchingAccountExample1:
+                  $ref: '#/components/examples/SearchingAccountExample1'
+                SearchingAccountExample2:
+                  $ref: '#/components/examples/SearchingAccountExample2'
+        '404': 
+          $ref: '#/components/responses/NotFound'
+        '400': 
+          $ref: '#/components/responses/BadRequest'
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
