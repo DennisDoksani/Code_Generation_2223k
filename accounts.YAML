@@ -177,7 +177,8 @@ components:
           type: boolean
         accountType:
           type: string
-          description: The type of account either saving or Current.
+          enum: [savings, current]
+          description: The type of account either savings or current.
         accountHolder:
           type: object
           properties:
@@ -202,8 +203,8 @@ components:
           example: 1000
         accountType:
           type: string
-          enum: [saving, current]
-          description: The type of account either saving or Current.
+          enum: [savings, current]
+          description: The type of account either savings or current.
           example: current
         accountHolderBSN:
               type: number
