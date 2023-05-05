@@ -86,7 +86,7 @@ components:
       description: The account number of the bank account
       required: true
       schema:
-        type: number
+        type: string
     limitQueryParam:
       name: limit
       in: query
