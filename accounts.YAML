@@ -154,6 +154,14 @@ components:
             $ref: '#/components/schemas/ErrorMessage'
           example:
             message: The account number does not exist.
+    UserNotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+            message: The bsn number does not exist.
     BadRequest:
       description: Bad Request
       content:
@@ -634,7 +642,7 @@ paths:
                 UserAccountEg1:
                   $ref: "#/components/examples/User123123123"
         '404':
-          $ref: '#/components/responses/NotFound'
+          $ref: '#/components/responses/UserNotFound'
   
         '401':
             $ref: '#/components/responses/Unauthorized'
@@ -663,7 +671,7 @@ paths:
                 UserAccountEg1:
                   $ref: '#/components/examples/User123123123'
         '404':
-          $ref: '#/components/responses/NotFound'
+          $ref: '#/components/responses/UserNotFound'
   
         '401':
             $ref: '#/components/responses/Unauthorized'
@@ -673,4 +681,39 @@ paths:
 
         '500':
            $ref: '#/components/responses/InternalServerError'
-  
+    put:
+      tags:
+          - Users
+      summary: The endpoint is used to update the details of the User
+      parameters:
+       - $ref: '#/components/parameters/bsnNumberParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+                schema:
+                 $ref: '#/components/schemas/User'
+                examples:
+                  UserAccountEg1:
+                    $ref: "#/components/examples/User123123123"
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+          
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
