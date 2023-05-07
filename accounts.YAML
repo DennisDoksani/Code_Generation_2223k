@@ -1,6 +1,9 @@
 openapi: 3.0.0
 servers:
   # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/CRAZYTHOUGHTSML_1/Users/1.0.0
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/681990/BankkAPIiiv2/1.0.0
   - url: https://virtserver.swaggerhub.com/681990/Bankkk/1.0.0
@@ -77,6 +80,15 @@ components:
         password: SomePassword123
         birthDate: 1999-12-31
         phoneNumber: "0612345678"
+    User321321321:
+      value:
+        bsn: 321321321
+        firstName: John
+        lastName: Wick
+        email: johnwick@gmail.com
+        password: SomePassword123
+        birthDate: 1990-11-29
+        phoneNumber: "0632165498"
 
   #Parameters section
   parameters:
@@ -99,6 +111,13 @@ components:
       name: offset
       in: query
       description: The number of items to skip before starting to return items.
+      required: true
+      schema:
+        type: integer
+    bsnNumberParam:
+      name: bsnNumber
+      in: path
+      description: The bsn number of the users account
       required: true
       schema:
         type: integer
@@ -539,6 +558,36 @@ paths:
           $ref: '#/components/responses/BadRequest'
   
   /users:
+    get:
+      tags:
+        - Users
+      summary: Get all Users
+      parameters:
+        - $ref: '#/components/parameters/limitQueryParam'
+        - $ref: '#/components/parameters/offsetQueryParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+              examples:
+                UserAccountEg1:
+                  $ref: "#/components/examples/User123123123"
+                UserAccountEg2:
+                  $ref: '#/components/examples/User321321321'
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+                   
+        '403':           
+          $ref: '#/components/responses/Forbidden'
+          
     post:
       tags:
         - Users
@@ -568,3 +617,60 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/responses/BadRequest"
+    delete:
+      tags:
+          - Users
+      summary: Delete one User account with the BSN number of the account.
+      parameters:
+        - $ref: '#/components/parameters/bsnNumberParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/User'
+              examples:
+                UserAccountEg1:
+                  $ref: "#/components/examples/User123123123"
+        '404':
+          $ref: '#/components/responses/NotFound'
+  
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+                   
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+  
+  /users/{bsnNumber}:        
+    get:
+      tags:
+          - Users
+      summary: get one user account with bsn number
+      parameters:
+        - $ref: '#/components/parameters/bsnNumberParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/User'
+              examples:
+                UserAccountEg1:
+                  $ref: '#/components/examples/User123123123'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+                   
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+  
