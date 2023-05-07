@@ -1,0 +1,570 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/681990/BankkAPIiiv2/1.0.0
+  - url: https://virtserver.swaggerhub.com/681990/Bankkk/1.0.0
+info:
+  version: 1.0.0
+  title: Banking API
+  description: Banking API
+tags:
+  - name: Employee Access
+    description: Employee Access required in order to access this resource
+  - name: Customer Access & Employee Access
+    description: Customer Access & Employee Access required in order to access this resource
+  - name: Users
+    description: For user info
+  - name: Authentication
+    description: For authentication
+security:
+  - bearerAuth: []
+
+# Components Section
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  examples:
+    FullAccountEg1:
+      value: 
+        accountNumber: NL90 INHO 0987 6543 21
+        accountBalance: 1500.00
+        creationDate: 25/04/2023
+        absoluteLimit: 0
+        isActive: true
+        accountType: saving
+        accountHolder:
+          bsn: 1234566
+          daylimit: 1000
+          transactionLimit: 1000
+          firstName: Test2
+          lastName: Inholland2
+    FullAccountEg2:
+      value: 
+        accountNumber: NL90 INHO 0987 6543 21
+        accountBalance: 1500.00
+        creationDate: 25/04/2023
+        absoluteLimit: 500
+        isActive: true
+        accountType: Current
+        accountHolder:
+          bsn: 154841
+          daylimit: 1000
+          transactionLimit: 1000
+          firstName: Test2
+          lastName: Inholland2   
+    SearchingAccountExample1:
+      value:
+        accountHolder: Test Inholland
+        accountNumber: NL90 INHO 0987 6543 21
+    SearchingAccountExample2:
+      value:
+        accountHolder: Test2 Inholland
+        accountNumber: NL90 INHO 0987 6543 22
+    Login123123123:
+      value:
+        email: johnsmith@gmail.com
+        password: SomePassword123
+    User123123123:
+      value:
+        bsn: 123123123
+        firstName: John
+        lastName: Smith
+        email: johnsmith@gmail.com
+        password: SomePassword123
+        birthDate: 1999-12-31
+        phoneNumber: "0612345678"
+
+  #Parameters section
+  parameters:
+    accountNumberPathParam:
+      name: accountNumber
+      in: path
+      description: The account number of the bank account
+      required: true
+      schema:
+        type: string
+    limitQueryParam:
+      name: limit
+      in: query
+      description: The maximum number of items to return (maximum 50).
+      required: true
+      schema:
+        type: integer
+        maximum: 50
+    offsetQueryParam:
+      name: offset
+      in: query
+      description: The number of items to skip before starting to return items.
+      required: true
+      schema:
+        type: integer
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+            message: Please log in to access this resource.
+    Forbidden:
+      description: Forbidden 
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+            message: You dont have right permissson to access this resources.
+    InternalServerError:
+      description: Internal Server Error 
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+            message: Something went wrong Internally Try Again!
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+            message: The account number does not exist.
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+           message: Miss Data Or No Data
+    Conflict:
+      description: Conflict
+      content: 
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+           message: You already have an account
+    NoContent:
+      description: No Content
+          
+  schemas:
+    SearchingAccount:
+      type: object
+      properties:
+        accountHolder:
+          type: string
+          description: The name of the account holder
+        accountNumber:  
+          type: string
+          description: The account number of the bank account
+    Account:
+      type: object
+      properties:
+        accountNumber:
+          type: string
+        accountBalance:
+          type: number
+        creationDate:
+          type: string
+        isActive:
+          type: boolean
+        accountType:
+          type: string
+          description: The type of account either saving or Current.
+        accountHolder:
+          type: object
+          properties:
+            bsn:
+              type: number
+            firstName:
+              type: string
+            lastName:
+              type: string
+            daylimit:
+              type: number
+            transcationLimit:
+              type: number
+    CreatingAccount:
+      type: object
+      properties:
+        daylimit:
+          type: number
+          example: 1000
+        transcationLimit:
+          type: number
+          example: 1000
+        accountType:
+          type: string
+          enum: [saving, current]
+          description: The type of account either saving or Current.
+          example: current
+        accountHolderBSN:
+              type: number
+              example: 123456
+    ErrorMessage:
+      type: object
+      properties:
+        message: 
+          type: string
+          description: this  message will sent when error 
+    User:
+      type: object
+      properties:
+        bsn:
+          type: integer
+          format: int64
+          description: Unique identifier for the user/person
+          example: 123123123
+        firstName:
+          type: string
+          description: First name of the user
+          example: John
+        lastName:
+          type: string
+          description: Last name of the user
+          example: Smith
+        email:
+          type: string
+          description: Email of the user
+          example: johnsmith@gmail.com
+        password:
+          type: string
+          description: Password of the user
+          example: Password123
+        birthDate: 
+          type: string
+          format: date
+          description: Birth date of the user
+          example: 1999-12-31
+        phoneNumber:
+          type: string
+          description: Phone number of the user
+          example: "0612345678"
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email of the user
+          example: johnsmith@gmail.com
+        password:
+          type: string
+          description: Password of the user
+          example: Password123
+    LoginResponse:
+      type: object
+      properties:
+        auth:
+          type: string
+          description: Auth token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjYwMH0.G-8xAd8EYmJiZQlH-4DxzFtGCZMMB0xJKpY_gz26FeI
+        refresh:
+          type: string
+          description: Refresh token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjQzMjAwMH0.u3IP069N0J86xXfCOf7T75Q0WD0wr5dp8SHyouJ-O10
+        firstName:
+          type: string
+          description: First name of the user
+          example: John
+        lastName:
+          type: string
+          description: Last name of the user
+          example: Smith
+      
+paths:
+  /accounts:
+    get:
+      tags:
+        - Employee Access
+      summary: Get all bank accounts
+      parameters:
+        - $ref: '#/components/parameters/limitQueryParam'
+        - $ref: '#/components/parameters/offsetQueryParam'
+        - in: query
+          name: accountType
+          description: Will return the accounts of the given type
+          required: false
+          schema:
+            type: string
+            enum: [Saving, Current]
+          example: saving
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+              examples:
+                FullAccountEg1:
+                  $ref: '#/components/examples/FullAccountEg1'
+                FullAccountEg2:
+                  $ref: '#/components/examples/FullAccountEg2'      
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+                   
+        '403':           
+          $ref: '#/components/responses/Forbidden'
+          
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatingAccount'
+      tags:
+        - Employee Access
+      summary: This endpoint is used to create an Account By Employee
+      responses:
+        '201':
+          description: OK
+          content: 
+            application/json:
+              schema:
+                 $ref: '#/components/schemas/Account'
+              examples:
+                FullAccountEg2:
+                  $ref: '#/components/examples/FullAccountEg2'
+                  
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
+           
+        '409': 
+            $ref: '#/components/responses/Conflict'
+      
+  /accounts/{accountNumber}:                 
+    get:
+      tags:
+          - Employee Access
+      summary: get one bank account with account number and customer can only access his/her own account
+      parameters:
+        - $ref: '#/components/parameters/accountNumberPathParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/Account'
+              examples:
+                FullAccountEg1:
+                  $ref: '#/components/examples/FullAccountEg1'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+                   
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+  
+             
+    put:
+      tags:
+          - Employee Access
+      summary: The endpoint is used to update the details of Account
+      parameters:
+       - $ref: '#/components/parameters/accountNumberPathParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Account'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+                schema:
+                 $ref: '#/components/schemas/Account'
+                examples:
+                  FullAccountEg1:
+                    $ref: '#/components/examples/FullAccountEg1'
+        '404':
+          $ref: '#/components/responses/NotFound'
+          
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
+           
+  /accounts/accountStatus/{accountNumber}:
+    put:  
+      tags:
+          - Employee Access
+      summary: The endpoint is used to update the status of Account only
+      parameters:
+        - $ref: '#/components/parameters/accountNumberPathParam'
+      requestBody:
+        required: true
+        content:
+           application/json:
+              schema:
+                type: object
+                properties:
+                  isActive:
+                    type: boolean
+              example: 
+                 isActive: true
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
+
+        '404':
+          $ref: '#/components/responses/NotFound'
+          
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
+
+  /accounts/SearchByCustomerName:
+    get:
+      tags:
+        - Customer Access & Employee Access
+      summary: Get all Current accounts by Searching With Name 
+      parameters:
+        - $ref: '#/components/parameters/limitQueryParam'
+        - $ref: '#/components/parameters/offsetQueryParam'
+        - in: query
+          name: customer Name
+          description: Will return the accounts matching given customer name
+          required: true
+          schema:
+            type: string
+          example: test
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchingAccount'
+              examples:
+                SearchingAccountExample1:
+                  $ref: '#/components/examples/SearchingAccountExample1'
+                SearchingAccountExample2:
+                  $ref: '#/components/examples/SearchingAccountExample2'
+        '404': 
+          $ref: '#/components/responses/NotFound'
+        '400': 
+          $ref: '#/components/responses/BadRequest'
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Gets a JWT token by logging in.
+      description: Gets a JWT token by logging in.
+      operationId: login
+      requestBody:
+        description: Email and password
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Login"
+            examples:
+              Login123123123:
+                $ref: "#/components/examples/Login123123123"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+  
+  /auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refreshes a JWT token
+      description: Refreshes a JWT token
+      operationId: refresh
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+  
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Create user
+      description: This happens when a new user registers themselves. (Employees will be seeded)
+      operationId: createUser
+      requestBody:
+        description: User details
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+            examples:
+                User123123123:
+                  $ref: "#/components/examples/User123123123"
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/responses/BadRequest"
