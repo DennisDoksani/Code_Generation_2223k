@@ -1,6 +1,9 @@
 openapi: 3.0.0
 servers:
   # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/CRAZYTHOUGHTSML_1/Users/1.0.0
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/681990/BankkAPIiiv2/1.0.0
 info:
@@ -459,7 +462,7 @@ paths:
                 FullAccountEg1:
                   $ref: '#/components/examples/FullAccountEg1'
         '404':
-          $ref: '#/components/responses/NotFound'
+          $ref: '#/components/responses/AccountNotFound'
   
         '401':
             $ref: '#/components/responses/Unauthorized'
@@ -494,7 +497,7 @@ paths:
                   FullAccountEg1:
                     $ref: '#/components/examples/FullAccountEg1'
         '404':
-          $ref: '#/components/responses/NotFound'
+          $ref: '#/components/responses/AccountNotFound'
           
         '403':           
            $ref: '#/components/responses/Forbidden'
@@ -531,7 +534,7 @@ paths:
           $ref: '#/components/responses/NoContent'
 
         '404':
-          $ref: '#/components/responses/NotFound'
+          $ref: '#/components/responses/AccountNotFound'
           
         '403':           
            $ref: '#/components/responses/Forbidden'
@@ -575,7 +578,7 @@ paths:
                 SearchingAccountExample2:
                   $ref: '#/components/examples/SearchingAccountExample2'
         '404': 
-          $ref: '#/components/responses/NotFound'
+          $ref: '#/components/responses/AccountNotFound'
         '400': 
           $ref: '#/components/responses/BadRequest'
         '500':
