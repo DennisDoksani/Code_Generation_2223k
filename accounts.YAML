@@ -367,7 +367,6 @@ components:
                 example: '15:33'
       
 paths:
-  paths:
   /accounts:
     get:
       tags:
