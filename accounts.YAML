@@ -696,15 +696,8 @@ paths:
       parameters:
         - $ref: '#/components/parameters/bsnNumberParam'
       responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-               $ref: '#/components/schemas/User'
-              examples:
-                UserAccountEg1:
-                  $ref: "#/components/examples/User123123123"
+        '204':
+          $ref: '#/components/responses/NoContent'
         '404':
           $ref: '#/components/responses/UserNotFound'
   
