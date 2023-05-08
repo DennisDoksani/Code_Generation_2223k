@@ -1,12 +1,8 @@
 openapi: 3.0.0
 servers:
   # Added by API Auto Mocking Plugin
-  # Added by API Auto Mocking Plugin
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/CRAZYTHOUGHTSML_1/Users/1.0.0
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/681990/BankkAPIiiv2/1.0.0
-  - url: https://virtserver.swaggerhub.com/681990/Bankkk/1.0.0
 info:
   version: 1.0.0
   title: Banking API
@@ -145,15 +141,15 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           example:
-            message: Something went wrong Internally Try Again!
-    NotFound:
+            message: Something went wrong internally. Try again in 30 seconds.
+    AccountNotFound:
       description: Not Found
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           example:
-            message: The account number does not exist.
+            message: The requested account was not found.
     UserNotFound:
       description: Not Found
       content:
@@ -161,7 +157,7 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           example:
-            message: The bsn number does not exist.
+            message: The BSN number does not exist.
     BadRequest:
       description: Bad Request
       content:
@@ -169,7 +165,7 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           example:
-           message: Miss Data Or No Data
+           message: The request was not valid.
     Conflict:
       description: Conflict
       content: 
@@ -177,9 +173,9 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           example:
-           message: You already have an account
+           message: You already have an account.
     NoContent:
-      description: No Content
+      description: No Content.
           
   schemas:
     SearchingAccount:
@@ -241,7 +237,7 @@ components:
       properties:
         message: 
           type: string
-          description: this  message will sent when error 
+          description: This message will be sent when there is an error 
     User:
       type: object
       properties:
@@ -305,6 +301,70 @@ components:
           type: string
           description: Last name of the user
           example: Smith
+    Transactions: 
+      type: object
+      required: 
+        - TransactionID
+        - Amount
+        - AccountTo
+        - AccountFrom
+        - Date
+        - Timestamp
+        - UserPerforming
+      properties:
+        TransactionID: 
+          type: integer
+          example: 1
+        Amount: 
+          type: number
+          example: 10.00
+        AccountTo: 
+          type: string
+          example: NL90 INHO 0000 0000 01
+        AccountFrom: 
+          type: string
+          example: NL90 INHO 0000 0000 02
+        Date: 
+          type: string
+          example: '25/04/2023'
+        Timestamp: 
+          type: string
+          example: '15:33'
+  
+  requestBodies:
+    Transfer:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - TransactionID
+              - amount
+              - AccountTo
+              - AccountFrom
+              - Date
+              - Timestamp
+            properties:
+              TransactionID: 
+                type: integer
+                example: 1
+              Amount: 
+                type: number
+                example: 10.00
+              AccountTo: 
+                type: string
+                format: 'NL[0-9]{2}INHO0[0-9]{9}' 
+                example: "NL03INHO0123456789"
+              AccountFrom:
+                type: string
+                format: 'NL[0-9]{2}INHO0[0-9]{9}'
+                example: "NL03INHO0987654321"
+              Date:
+                type: string
+                example: '25/04/2023'
+              Timestamp:
+                type: string
+                example: '15:33'
       
 paths:
   /accounts:
@@ -718,3 +778,114 @@ paths:
         
         '400':
            $ref: '#/components/responses/BadRequest'
+  
+  /accounts/{Username}: 
+    get: 
+      description: Provides the bank accounts for the specified user
+      tags: 
+        - Bank Accounts
+      parameters:
+        - in: path
+          name: Username
+          schema:
+            type: string
+            example: 'User001'
+          required: true
+      responses:
+        200:
+          description: Accounts for the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Account'
+                  
+  /transactions: 
+    get:
+      tags: 
+        - Transactions
+      summary: Gets the transactions that were made
+      operationId: GetTransactions
+      description: This call provides the transactions made using the system
+      responses: 
+        '200':
+          description: Transaction data
+          content:
+            application/json: 
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Transactions'
+    post:
+      description: Transfer money from one account to another
+      tags:
+        - Transaction
+      operationId: transferTransaction
+      requestBody:
+        $ref: '#/components/requestBodies/Transfer'
+      responses:
+        201: 
+          description: Succesful transfer
+
+  /transactions/{IBAN}:
+    get:
+      description: Provides transactions information for a given account.
+      tags:
+        - Transaction
+      parameters:
+        - in: path
+          name: IBAN
+          schema:
+            type: string
+            format: 'NL[0-9]{2}INHO0[0-9]{9}'
+            example: 'NL04INHO0123456789'
+          required: true
+        - in: query
+          name: dateFrom
+          schema:
+            type: string
+        - in: query
+          name: dateTo
+          schema:
+            type: string
+        - in: query
+          name: IBANTo
+          schema:
+            type: string
+        - in: query
+          name: IBANFrom
+          schema:
+            type: string
+        - in: query
+          name: amountEquals
+          schema:
+            type: number
+            minimum: 0.01
+        - in: query
+          name: amountBigger
+          schema:
+            type: number
+            minimum: 0.01       
+        - in: query
+          name: amountSmaller
+          schema:
+            type: number
+            minimum: 0.01
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          schema:
+            type: integer
+      responses:
+        200:
+          description: List of transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Transactions'
