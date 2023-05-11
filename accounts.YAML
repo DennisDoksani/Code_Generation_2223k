@@ -11,14 +11,14 @@ info:
   title: Banking API
   description: Banking API
 tags:
+  - name: Employee Access
+    description: Employee Access required in order to access this resource
+  - name: Customer Access & Employee Access
+    description: Customer Access & Employee Access required in order to access this resource
   - name: Users
-    description: For users and user info
+    description: For user info
   - name: Authentication
     description: For authentication
-  - name: Accounts
-    description: For bank accounts
-  - name: Transactions
-    description: For transactions
 security:
   - bearerAuth: []
 
@@ -186,10 +186,10 @@ components:
       properties:
         accountHolder:
           type: string
-          description: The name of the account holder.
+          description: The name of the account holder
         accountNumber:  
           type: string
-          description: The account number of the bank account.
+          description: The account number of the bank account
     Account:
       type: object
       properties:
@@ -296,10 +296,6 @@ components:
           type: string
           description: Refresh token
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjMxMjMxMjMiLCJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjIsImV4cCI6NDMyMDAwfQ.6vH7uyNxk7Obz1fOanq-F2dEquIKRyG4ej5urR3Gwrg
-        bsn:
-          type: integer
-          description: Unique ID of the user.
-          example: 1234567890
         firstName:
           type: string
           description: First name of the user
@@ -377,7 +373,7 @@ paths:
   /accounts:
     get:
       tags:
-        - Accounts
+        - Employee Access
       summary: Get all bank accounts
       parameters:
         - $ref: '#/components/parameters/limitQueryParam'
@@ -420,7 +416,7 @@ paths:
             schema:
               $ref: '#/components/schemas/CreatingAccount'
       tags:
-        - Accounts
+        - Employee Access
       summary: This endpoint is used to create an Account By Employee
       responses:
         '201':
@@ -451,7 +447,7 @@ paths:
   /accounts/{accountNumber}:                 
     get:
       tags:
-          - Accounts
+          - Employee Access
       summary: get one bank account with account number and customer can only access his/her own account
       parameters:
         - $ref: '#/components/parameters/accountNumberPathParam'
@@ -480,7 +476,7 @@ paths:
              
     put:
       tags:
-          - Accounts
+          - Employee Access
       summary: The endpoint is used to update the details of Account
       parameters:
        - $ref: '#/components/parameters/accountNumberPathParam'
@@ -518,7 +514,7 @@ paths:
   /accounts/accountStatus/{accountNumber}:
     put:  
       tags:
-          - Accounts
+          - Employee Access
       summary: The endpoint is used to update the status of Account only
       parameters:
         - $ref: '#/components/parameters/accountNumberPathParam'
@@ -555,7 +551,7 @@ paths:
   /accounts/SearchByCustomerName:
     get:
       tags:
-        - Accounts
+        - Customer Access & Employee Access
       summary: Get all Current accounts by Searching With Name 
       parameters:
         - $ref: '#/components/parameters/limitQueryParam'
@@ -790,7 +786,7 @@ paths:
     get: 
       description: Provides the bank accounts for the specified user
       tags: 
-        - Accounts
+        - Bank Accounts
       parameters:
         - in: path
           name: Username
@@ -827,7 +823,7 @@ paths:
     post:
       description: Transfer money from one account to another
       tags:
-        - Transactions
+        - Transaction
       operationId: transferTransaction
       requestBody:
         $ref: '#/components/requestBodies/Transfer'
@@ -839,7 +835,7 @@ paths:
     get:
       description: Provides transactions information for a given account.
       tags:
-        - Transactions
+        - Transaction
       parameters:
         - in: path
           name: IBAN
