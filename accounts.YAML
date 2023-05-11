@@ -58,11 +58,11 @@ components:
           transactionLimit: 1000
           firstName: Test2
           lastName: Inholland2   
-    SearchingAccountExample1:
+    SearchedAccountExample1:
       value:
         accountHolder: Test Inholland
         accountNumber: NL90 INHO 0987 6543 21
-    SearchingAccountExample2:
+    SearchedAccountExample2:
       value:
         accountHolder: Test2 Inholland
         accountNumber: NL90 INHO 0987 6543 22
@@ -189,7 +189,7 @@ components:
       description: No Content.
   #Schemas        
   schemas:
-    SearchingAccount:
+    SearchedAccount:
       type: object
       properties:
         accountHolder:
@@ -387,6 +387,7 @@ paths:
       tags:
         - Accounts
       summary: Get all bank accounts
+      description: Get all the existing bank accounts with optional parameters.
       parameters:
         - $ref: '#/components/parameters/limitQueryParam'
         - $ref: '#/components/parameters/offsetQueryParam'
@@ -419,8 +420,7 @@ paths:
             $ref: '#/components/responses/Unauthorized'
                    
         '403':           
-          $ref: '#/components/responses/Forbidden'
-          
+          $ref: '#/components/responses/Forbidden'       
     post:
       requestBody:
         content:
@@ -429,7 +429,8 @@ paths:
               $ref: '#/components/schemas/CreatingAccount'
       tags:
         - Accounts
-      summary: This endpoint is used to create an Account By Employee
+      summary: Create bank account
+      description: Creates a new bank account and returns it as JSON.
       responses:
         '201':
           description: OK
@@ -460,7 +461,8 @@ paths:
     get:
       tags:
           - Accounts
-      summary: get one bank account with account number and customer can only access his/her own account
+      summary: Get one bank account by IBAN.
+      description: Get one bank account by the IBAN specified in the path.
       parameters:
         - $ref: '#/components/parameters/accountNumberPathParam'
       responses:
@@ -483,13 +485,12 @@ paths:
            $ref: '#/components/responses/Forbidden'
 
         '500':
-           $ref: '#/components/responses/InternalServerError'
-  
-             
+           $ref: '#/components/responses/InternalServerError'         
     put:
       tags:
           - Accounts
-      summary: The endpoint is used to update the details of Account
+      summary: Update a bank account.
+      description: Update a bank account using the id passed in url and the json body. Returns the updated bank account.
       parameters:
        - $ref: '#/components/parameters/accountNumberPathParam'
       requestBody:
@@ -528,7 +529,7 @@ paths:
       tags:
           - Accounts
       summary: Update account status.
-      description: Calls a function that activates or deactivates the account.
+      description: Calls a function that activates or deactivates the account. This instead of the regular PUT to reduce overhead.
       parameters:
         - $ref: '#/components/parameters/accountNumberPathParam'
       requestBody:
@@ -565,7 +566,8 @@ paths:
     get:
       tags:
         - Accounts
-      summary: Get all Current accounts by Searching With Name 
+      summary: Get all Current accounts by Searching With Name of the Account Holder
+      description: Get all the Current accounts of one Account Holder. Returns a specific dataset to reduce overhead.
       parameters:
         - $ref: '#/components/parameters/limitQueryParam'
         - $ref: '#/components/parameters/offsetQueryParam'
@@ -584,12 +586,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/SearchingAccount'
+                  $ref: '#/components/schemas/SearchedAccount'
               examples:
-                SearchingAccountExample1:
-                  $ref: '#/components/examples/SearchingAccountExample1'
-                SearchingAccountExample2:
-                  $ref: '#/components/examples/SearchingAccountExample2'
+                SearchedAccountExample1:
+                  $ref: '#/components/examples/SearchedAccountExample1'
+                SearchedAccountExample2:
+                  $ref: '#/components/examples/SearchedAccountExample2'
         '404': 
           $ref: '#/components/responses/AccountNotFound'
         '400': 
@@ -629,8 +631,8 @@ paths:
     post:
       tags:
         - Authentication
-      summary: Refreshes a JWT token
-      description: Refreshes a JWT token
+      summary: Refreshes a JWT token.
+      description: Refreshes a JWT token.
       operationId: refresh
       responses:
         "200":
@@ -676,7 +678,7 @@ paths:
     post:
       tags:
         - Users
-      summary: Create user
+      summary: Create a user.
       description: This happens when a new user registers themselves. (Employees will be seeded)
       operationId: createUser
       requestBody:
@@ -729,7 +731,7 @@ paths:
       tags:
           - Users
       summary: Get one user.
-      description: Get one user by user ID.
+      description: Get one user by the userID.
       parameters:
         - $ref: '#/components/parameters/userIdParam'
       responses:
@@ -793,7 +795,8 @@ paths:
   
   /accounts/{Username}: 
     get: 
-      description: Provides the bank accounts for the specified user
+      summary: Get all accounts for a user.
+      description: Provides the bank accounts for a matching name of account holder.
       tags: 
         - Accounts
       parameters:
@@ -831,9 +834,9 @@ paths:
     get:
       tags: 
         - Transactions
-      summary: Gets the transactions that were made
-      operationId: GetTransactions
+      summary: Gets the transactions that were made.
       description: This call provides the transactions made using the system
+      operationId: GetTransactions
       responses: 
         '200':
           description: Transaction data
@@ -844,7 +847,8 @@ paths:
                 items: 
                   $ref: '#/components/schemas/Transactions'
     post:
-      description: Transfer money from one account to another
+      summary: Create a transaction. 
+      description: Create a transaction to transfer money from one account to another.
       tags:
         - Transactions
       operationId: transferTransaction
@@ -870,7 +874,8 @@ paths:
 
   /transactions/{IBAN}:
     get:
-      description: Provides transactions information for a given account.
+      summary: Gets all transactions for one bank account.
+      description: Gets all transactions that are retrieved for one bank account, using the IBAN.
       tags:
         - Transactions
       parameters:
@@ -946,7 +951,7 @@ paths:
 
   /transactions/atm/deposit:
     post:
-      description: Deposit money to an account through an ATM
+      description: Deposit money to an account through an ATM.
       tags:
         - Transactions
       operationId: depositTransaction
@@ -970,14 +975,14 @@ paths:
                 - AccountTo
       responses:
         201: 
-          description: Succesfully deposited
+          description: Amount successfully deposited!
         400:
           $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/InternalServerError'
   /transactions/atm/withdraw:
     post:
-      description: Withdrawing money of an account from an ATM
+      description: Withdraw money of an account through an ATM.
       tags:
         - Transactions
       operationId: withdrawTransaction
