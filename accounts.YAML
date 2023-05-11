@@ -103,17 +103,19 @@ components:
       name: limit
       in: query
       description: The maximum number of items to return (maximum 50).
-      required: true
+      required: false
       schema:
         type: integer
         maximum: 50
+        default: 50
     offsetQueryParam:
       name: offset
       in: query
       description: The number of items to skip before starting to return items.
-      required: true
+      required: false
       schema:
         type: integer
+        default: 0
     bsnNumberParam:
       name: bsnNumber
       in: path
