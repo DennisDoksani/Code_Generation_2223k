@@ -350,16 +350,10 @@ components:
           schema:
             type: object
             required:
-              - TransactionID
               - amount
               - AccountTo
               - AccountFrom
-              - Date
-              - Timestamp
             properties:
-              TransactionID: 
-                type: integer
-                example: 1
               Amount: 
                 type: number
                 example: 10.00
@@ -371,12 +365,6 @@ components:
                 type: string
                 format: 'NL[0-9]{2}INHO0[0-9]{9}'
                 example: "NL03INHO0987654321"
-              Date:
-                type: string
-                example: '25/04/2023'
-              Timestamp:
-                type: string
-                example: '15:33'
       
 paths:
   /accounts:
