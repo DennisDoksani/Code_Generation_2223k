@@ -11,11 +11,13 @@ info:
   description: Banking API
 tags:
   - name: Users
-    description: Endpoints for users
+    description: Endpoints for users.
   - name: Authentication
-    description: Endpoints for authentication/jwt/login
+    description: Endpoints for authentication.
   - name: Accounts
-    description: Endpoints for bank accounts
+    description: Endpoints for bank accounts.
+  - name: Transactions
+    description: Endpoints for transactions.
 security:
   - bearerAuth: []
 
@@ -26,6 +28,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  #Examples
   examples:
     FullAccountEg1:
       value: 
@@ -36,7 +39,7 @@ components:
         isActive: true
         accountType: saving
         accountHolder:
-          bsn: 1234566
+          userId: 20
           daylimit: 1000
           transactionLimit: 1000
           firstName: Test2
@@ -50,7 +53,7 @@ components:
         isActive: true
         accountType: Current
         accountHolder:
-          bsn: 154841
+          userId: 23
           daylimit: 1000
           transactionLimit: 1000
           firstName: Test2
@@ -63,28 +66,32 @@ components:
       value:
         accountHolder: Test2 Inholland
         accountNumber: NL90 INHO 0987 6543 22
-    Login123123123:
+    LoginRequest123123123:
       value:
         email: johnsmith@gmail.com
         password: SomePassword123
     User123123123:
       value:
+        userId: 20
         bsn: 123123123
         firstName: John
         lastName: Smith
         email: johnsmith@gmail.com
-        password: SomePassword123
         birthDate: 1999-12-31
         phoneNumber: "0612345678"
+        dayLimit: 200.00
+        transactionLimit: 50.00
     User321321321:
       value:
+        userId: 23
         bsn: 321321321
         firstName: John
         lastName: Wick
         email: johnwick@gmail.com
-        password: SomePassword123
         birthDate: 1990-11-29
         phoneNumber: "0632165498"
+        dayLimit: 500.00
+        transactionLimit: 100.00
 
   #Parameters section
   parameters:
@@ -114,10 +121,10 @@ components:
       schema:
         type: integer
         default: 0
-    bsnNumberParam:
-      name: bsnNumber
+    userIdparam:
+      name: userID
       in: path
-      description: The bsn number of the users account
+      description: The ID of a user.
       required: true
       schema:
         type: integer
@@ -161,7 +168,7 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           example:
-            message: The BSN number does not exist.
+            message: The requested user does not exist.
     BadRequest:
       description: Bad Request
       content:
@@ -180,7 +187,7 @@ components:
            message: You already have an account.
     NoContent:
       description: No Content.
-          
+  #Schemas        
   schemas:
     SearchingAccount:
       type: object
@@ -209,8 +216,8 @@ components:
         accountHolder:
           type: object
           properties:
-            bsn:
-              type: number
+            userId:
+              type: integer
             firstName:
               type: string
             lastName:
@@ -233,19 +240,19 @@ components:
           enum: [savings, current]
           description: The type of account either savings or current.
           example: current
-        accountHolderBSN:
+        accountHolderId:
               type: number
-              example: 123456
+              example: 123
     ErrorMessage:
       type: object
       properties:
         message: 
           type: string
           description: This message will be sent when there is an error 
-    User:
+    UserResponse:
       type: object
       properties:
-        bsn:
+        userId:
           type: integer
           format: int64
           description: Unique identifier for the user/person
@@ -262,10 +269,6 @@ components:
           type: string
           description: Email of the user
           example: johnsmith@gmail.com
-        password:
-          type: string
-          description: Password of the user
-          example: Password123
         birthDate: 
           type: string
           format: date
@@ -283,7 +286,7 @@ components:
           type: number
           description: Limit per transaction for the user
           example: "1000.00"
-    Login:
+    LoginRequest:
       type: object
       properties:
         email:
@@ -313,7 +316,7 @@ components:
           type: string
           description: Last name of the user
           example: Smith
-    Transactions: 
+    Transactions:
       type: object
       required: 
         - TransactionID
@@ -521,10 +524,11 @@ paths:
            $ref: '#/components/responses/BadRequest'
            
   /accounts/accountStatus/{IBAN}:
-    put:  
+    post:  
       tags:
           - Accounts
-      summary: The endpoint is used to update the status of Account only
+      summary: Update account status.
+      description: Calls a function that activates or deactivates the account.
       parameters:
         - $ref: '#/components/parameters/accountNumberPathParam'
       requestBody:
@@ -609,8 +613,8 @@ paths:
             schema:
               $ref: "#/components/schemas/Login"
             examples:
-              Login123123123:
-                $ref: "#/components/examples/Login123123123"
+              LoginRequest123123123:
+                $ref: "#/components/examples/LoginRequest123123123"
       responses:
         "200":
           description: Successful operation
@@ -701,9 +705,10 @@ paths:
     delete:
       tags:
           - Users
-      summary: Delete one User account with the BSN number of the account.
+      summary: Delete one user.
+      description: Delete one user with the ID. Only possible to delete users without a bank account.
       parameters:
-        - $ref: '#/components/parameters/bsnNumberParam'
+        - $ref: '#/components/parameters/userIdParam'
       responses:
         '204':
           $ref: '#/components/responses/NoContent'
@@ -719,13 +724,14 @@ paths:
         '500':
            $ref: '#/components/responses/InternalServerError'
   
-  /users/{bsnNumber}:        
+  /users/{userId}:        
     get:
       tags:
           - Users
-      summary: get one user account with bsn number
+      summary: Get one user.
+      description: Get one user by user ID.
       parameters:
-        - $ref: '#/components/parameters/bsnNumberParam'
+        - $ref: '#/components/parameters/userIdParam'
       responses:
         '200':
           description: OK
@@ -750,9 +756,10 @@ paths:
     put:
       tags:
           - Users
-      summary: The endpoint is used to update the details of the User
+      summary: Update user details.
+      description: Update a user object and return the updated user.
       parameters:
-       - $ref: '#/components/parameters/bsnNumberParam'
+       - $ref: '#/components/parameters/userIdParam'
       requestBody:
         required: true
         content:
