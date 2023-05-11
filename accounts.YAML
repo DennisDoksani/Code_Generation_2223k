@@ -33,7 +33,7 @@ components:
     FullAccountEg1:
       value: 
         accountNumber: NL90 INHO 0987 6543 21
-        accountBalance: 1500.00
+        accountBalance: 0.00
         creationDate: 25/04/2023
         absoluteLimit: 0
         isActive: true
@@ -46,7 +46,7 @@ components:
           lastName: Inholland2
     FullAccountEg2:
       value: 
-        accountNumber: NL90 INHO 0987 6543 21
+        accountNumber: NL90 INHO 0987 6543 23
         accountBalance: 1500.00
         creationDate: 25/04/2023
         absoluteLimit: 500
@@ -57,8 +57,6 @@ components:
           daylimit: 1000
           transactionLimit: 1000
           firstName: Test2
-          lastName: Inholland2   
-    SearchedAccountExample1:
       value:
         accountHolder: Test Inholland
         accountNumber: NL90 INHO 0987 6543 21
@@ -187,6 +185,7 @@ components:
            message: You already have an account.
     NoContent:
       description: No Content.
+      
   #Schemas        
   schemas:
     SearchedAccount:
@@ -944,6 +943,26 @@ paths:
       responses:
         '201': 
           description: Amount successfully deposited!
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  TransactionID: 
+                    type: integer
+                    example: 1
+                  Amount: 
+                    type: number
+                    example: 10.00
+                  AccountTo: 
+                    type: string
+                    example: NL04INHO0123456789
+                  Date: 
+                    type: string
+                    example: '25/04/2023'
+                  Timestamp: 
+                    type: string
+                    example: '15:33:00'
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -975,6 +994,26 @@ paths:
       responses:
         '201': 
           description: Amount successfully withdrawn!
+           content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  TransactionID: 
+                    type: integer
+                    example: 5
+                  Amount: 
+                    type: number
+                    example: 10.00
+                  AccountTo: 
+                    type: string
+                    example: NL04INHO0123456789
+                  Date: 
+                    type: string
+                    example: '25/04/2023'
+                  Timestamp: 
+                    type: string
+                    example: '15:33:00'
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
