@@ -316,7 +316,7 @@ components:
           type: string
           description: Last name of the user
           example: Smith
-    Transactions:
+    TransactionResponse:
       type: object
       required: 
         - TransactionID
@@ -369,33 +369,21 @@ components:
           schema:
             type: object
             required:
-              - TransactionID
               - amount
-              - AccountTo
-              - AccountFrom
-              - Date
-              - Timestamp
+              - accountTo
+              - accountFrom
             properties:
-              TransactionID: 
-                type: integer
-                example: 1
               Amount: 
                 type: number
                 example: 10.00
-              AccountTo: 
+              accountTo: 
                 type: string
                 format: 'NL[0-9]{2}INHO0[0-9]{9}' 
                 example: "NL03INHO0123456789"
-              AccountFrom:
+              accountFrom:
                 type: string
                 format: 'NL[0-9]{2}INHO0[0-9]{9}'
                 example: "NL03INHO0987654321"
-              Date:
-                type: string
-                example: '25/04/2023'
-              Timestamp:
-                type: string
-                example: '15:33'
       
 paths:
   /accounts:
@@ -833,7 +821,7 @@ paths:
               schema:
                 type: array
                 items: 
-                  $ref: '#/components/schemas/Transactions'
+                  $ref: '#/components/schemas/TransactionResponse'
     post:
       summary: Create a transaction. 
       description: Create a transaction to transfer money from one account to another.
@@ -917,7 +905,7 @@ paths:
               schema:
                 type: array
                 items: 
-                  $ref: '#/components/schemas/Transactions'
+                  $ref: '#/components/schemas/TransactionResponse'
         '404':
           $ref: '#/components/responses/UserNotFound'          
         '403':           
