@@ -476,14 +476,11 @@ paths:
                 FullAccountEg1:
                   $ref: '#/components/examples/FullAccountEg1'
         '404':
-          $ref: '#/components/responses/AccountNotFound'
-  
+          $ref: '#/components/responses/AccountNotFound'  
         '401':
-            $ref: '#/components/responses/Unauthorized'
-                   
+            $ref: '#/components/responses/Unauthorized'                   
         '403':           
            $ref: '#/components/responses/Forbidden'
-
         '500':
            $ref: '#/components/responses/InternalServerError'         
     put:
@@ -510,17 +507,13 @@ paths:
                   FullAccountEg1:
                     $ref: '#/components/examples/FullAccountEg1'
         '404':
-          $ref: '#/components/responses/AccountNotFound'
-          
+          $ref: '#/components/responses/AccountNotFound'          
         '403':           
-           $ref: '#/components/responses/Forbidden'
-           
+           $ref: '#/components/responses/Forbidden'           
         '401':
-            $ref: '#/components/responses/Unauthorized'
-            
+            $ref: '#/components/responses/Unauthorized'            
         '500':
-           $ref: '#/components/responses/InternalServerError'
-        
+           $ref: '#/components/responses/InternalServerError'        
         '400':
            $ref: '#/components/responses/BadRequest'
            
@@ -546,19 +539,14 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/NoContent'
-
         '404':
-          $ref: '#/components/responses/AccountNotFound'
-          
+          $ref: '#/components/responses/AccountNotFound'          
         '403':           
-           $ref: '#/components/responses/Forbidden'
-           
+           $ref: '#/components/responses/Forbidden'           
         '401':
-            $ref: '#/components/responses/Unauthorized'
-            
+            $ref: '#/components/responses/Unauthorized'            
         '500':
-           $ref: '#/components/responses/InternalServerError'
-        
+           $ref: '#/components/responses/InternalServerError'        
         '400':
            $ref: '#/components/responses/BadRequest'
 
@@ -566,8 +554,8 @@ paths:
     get:
       tags:
         - Accounts
-      summary: Get all Current accounts by Searching With Name of the Account Holder
-      description: Get all the Current accounts of one Account Holder. Returns a specific dataset to reduce overhead.
+      summary: Get all Current accounts for Account Holder
+      description: Get all the Current accounts of one Account Holder by their name. Returns a specific dataset to reduce overhead.
       parameters:
         - $ref: '#/components/parameters/limitQueryParam'
         - $ref: '#/components/parameters/offsetQueryParam'
@@ -667,11 +655,9 @@ paths:
                 UserAccountEg2:
                   $ref: '#/components/examples/User321321321'
         '500':
-           $ref: '#/components/responses/InternalServerError'
-           
+           $ref: '#/components/responses/InternalServerError'           
         '401':
-            $ref: '#/components/responses/Unauthorized'
-                   
+            $ref: '#/components/responses/Unauthorized'                   
         '403':           
           $ref: '#/components/responses/Forbidden'
           
@@ -715,14 +701,11 @@ paths:
         '204':
           $ref: '#/components/responses/NoContent'
         '404':
-          $ref: '#/components/responses/UserNotFound'
-  
+          $ref: '#/components/responses/UserNotFound'  
         '401':
-            $ref: '#/components/responses/Unauthorized'
-                   
+            $ref: '#/components/responses/Unauthorized'                   
         '403':           
            $ref: '#/components/responses/Forbidden'
-
         '500':
            $ref: '#/components/responses/InternalServerError'
   
@@ -745,14 +728,11 @@ paths:
                 UserAccountEg1:
                   $ref: '#/components/examples/User123123123'
         '404':
-          $ref: '#/components/responses/UserNotFound'
-  
+          $ref: '#/components/responses/UserNotFound'  
         '401':
-            $ref: '#/components/responses/Unauthorized'
-                   
+            $ref: '#/components/responses/Unauthorized'                   
         '403':           
            $ref: '#/components/responses/Forbidden'
-
         '500':
            $ref: '#/components/responses/InternalServerError'
     put:
@@ -779,17 +759,13 @@ paths:
                   UserAccountEg1:
                     $ref: "#/components/examples/User123123123"
         '404':
-          $ref: '#/components/responses/UserNotFound'
-          
+          $ref: '#/components/responses/UserNotFound'          
         '403':           
-           $ref: '#/components/responses/Forbidden'
-           
+           $ref: '#/components/responses/Forbidden'           
         '401':
-            $ref: '#/components/responses/Unauthorized'
-            
+            $ref: '#/components/responses/Unauthorized'            
         '500':
-           $ref: '#/components/responses/InternalServerError'
-        
+           $ref: '#/components/responses/InternalServerError'        
         '400':
            $ref: '#/components/responses/BadRequest'
   
@@ -807,7 +783,7 @@ paths:
             example: 'User001'
           required: true
       responses:
-        200:
+        '200':
           description: Accounts for the user
           content:
             application/json:
@@ -816,17 +792,13 @@ paths:
                 items: 
                   $ref: '#/components/schemas/Account'
         '404':
-          $ref: '#/components/responses/UserNotFound'
-          
+          $ref: '#/components/responses/UserNotFound'          
         '403':           
-           $ref: '#/components/responses/Forbidden'
-           
+           $ref: '#/components/responses/Forbidden'           
         '401':
-            $ref: '#/components/responses/Unauthorized'
-            
+            $ref: '#/components/responses/Unauthorized'            
         '500':
-           $ref: '#/components/responses/InternalServerError'
-        
+           $ref: '#/components/responses/InternalServerError'        
         '400':
            $ref: '#/components/responses/BadRequest'
                   
@@ -855,20 +827,16 @@ paths:
       requestBody:
         $ref: '#/components/requestBodies/Transfer'
       responses:
-        201: 
+        '201': 
           description: Succesful transfer
         '404':
-          $ref: '#/components/responses/UserNotFound'
-          
+          $ref: '#/components/responses/UserNotFound'          
         '403':           
-           $ref: '#/components/responses/Forbidden'
-           
+           $ref: '#/components/responses/Forbidden'           
         '401':
-            $ref: '#/components/responses/Unauthorized'
-            
+            $ref: '#/components/responses/Unauthorized'            
         '500':
-           $ref: '#/components/responses/InternalServerError'
-        
+           $ref: '#/components/responses/InternalServerError'        
         '400':
            $ref: '#/components/responses/BadRequest'
 
@@ -926,7 +894,7 @@ paths:
           schema:
             type: integer
       responses:
-        200:
+        '200':
           description: List of transactions
           content:
             application/json:
@@ -935,17 +903,13 @@ paths:
                 items: 
                   $ref: '#/components/schemas/Transactions'
         '404':
-          $ref: '#/components/responses/UserNotFound'
-          
+          $ref: '#/components/responses/UserNotFound'          
         '403':           
-           $ref: '#/components/responses/Forbidden'
-           
+           $ref: '#/components/responses/Forbidden'           
         '401':
-            $ref: '#/components/responses/Unauthorized'
-            
+            $ref: '#/components/responses/Unauthorized' 
         '500':
            $ref: '#/components/responses/InternalServerError'
-        
         '400':
            $ref: '#/components/responses/BadRequest'
 
@@ -974,11 +938,11 @@ paths:
                 - amount
                 - AccountTo
       responses:
-        201: 
+        '201': 
           description: Amount successfully deposited!
-        400:
+        '400':
           $ref: '#/components/responses/BadRequest'
-        500:
+        '500':
           $ref: '#/components/responses/InternalServerError'
   /transactions/atm/withdraw:
     post:
@@ -1005,9 +969,9 @@ paths:
                 - amount
                 - AccountFrom
       responses:
-        201: 
+        '201': 
           description: Amount successfully withdrawn!
-        400:
+        '400':
           $ref: '#/components/responses/BadRequest'
-        500:
+        '500':
           $ref: '#/components/responses/InternalServerError'
