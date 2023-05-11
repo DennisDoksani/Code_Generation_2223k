@@ -1,7 +1,6 @@
 openapi: 3.0.0
 servers:
   # Added by API Auto Mocking Plugin
-  # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/CRAZYTHOUGHTSML_1/Users/1.0.0
   - description: SwaggerHub API Auto Mocking
@@ -92,27 +91,31 @@ components:
   #Parameters section
   parameters:
     accountNumberPathParam:
-      name: accountNumber
+      name: IBAN
       in: path
       description: The account number of the bank account
       required: true
       schema:
+        format: 'NL[0-9]{2}INHO0[0-9]{9}'
         type: string
+      example: 'NL04INHO0123456789'
     limitQueryParam:
       name: limit
       in: query
       description: The maximum number of items to return (maximum 50).
-      required: true
+      required: false
       schema:
         type: integer
         maximum: 50
+        default: 50
     offsetQueryParam:
       name: offset
       in: query
       description: The number of items to skip before starting to return items.
-      required: true
+      required: false
       schema:
         type: integer
+        default: 0
     bsnNumberParam:
       name: bsnNumber
       in: path
@@ -444,7 +447,7 @@ paths:
         '409': 
             $ref: '#/components/responses/Conflict'
       
-  /accounts/{accountNumber}:                 
+  /accounts/{IBAN}:                 
     get:
       tags:
           - Employee Access
@@ -511,7 +514,7 @@ paths:
         '400':
            $ref: '#/components/responses/BadRequest'
            
-  /accounts/accountStatus/{accountNumber}:
+  /accounts/accountStatus/{IBAN}:
     put:  
       tags:
           - Employee Access
@@ -548,7 +551,7 @@ paths:
         '400':
            $ref: '#/components/responses/BadRequest'
 
-  /accounts/SearchByCustomerName:
+  /accounts/searchByCustomerName:
     get:
       tags:
         - Customer Access & Employee Access
@@ -696,15 +699,8 @@ paths:
       parameters:
         - $ref: '#/components/parameters/bsnNumberParam'
       responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-               $ref: '#/components/schemas/User'
-              examples:
-                UserAccountEg1:
-                  $ref: "#/components/examples/User123123123"
+        '204':
+          $ref: '#/components/responses/NoContent'
         '404':
           $ref: '#/components/responses/UserNotFound'
   
@@ -803,6 +799,20 @@ paths:
                 type: array
                 items: 
                   $ref: '#/components/schemas/Account'
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+          
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
                   
   /transactions: 
     get:
@@ -830,6 +840,20 @@ paths:
       responses:
         201: 
           description: Succesful transfer
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+          
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
 
   /transactions/{IBAN}:
     get:
@@ -892,3 +916,80 @@ paths:
                 type: array
                 items: 
                   $ref: '#/components/schemas/Transactions'
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+          
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
+
+  /transactions/atm/deposit:
+    post:
+      description: Deposit money to an account through an ATM
+      tags:
+        - Transaction
+      operationId: depositTransaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  minimum: 10.00
+                  example: 10.00
+                AccountTo:
+                  type: string
+                  format: 'NL[0-9]{2}INHO0[0-9]{9}'
+                  example: NL04INHO0123456789
+              required:
+                - amount
+                - AccountTo
+      responses:
+        201: 
+          description: Succesfully deposited
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /transactions/atm/withdraw:
+    post:
+      description: Withdrawing money of an account from an ATM
+      tags:
+        - Transaction
+      operationId: withdrawTransaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  minimum: 50.00
+                  example: 50.00
+                AccountFrom:
+                  type: string
+                  format: 'NL[0-9]{2}INHO0[0-9]{9}'
+                  example: NL04INHO0123456789
+              required:
+                - amount
+                - AccountFrom
+      responses:
+        201: 
+          description: Amount successfully withdrawn!
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
