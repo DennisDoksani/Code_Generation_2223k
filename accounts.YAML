@@ -345,6 +345,22 @@ components:
         Timestamp: 
           type: string
           example: '15:33'
+    TransactionPost:
+      type: object
+      required: 
+        - Amount
+        - AccountTo
+        - AccountFrom
+      properties:
+        Amount: 
+          type: number
+          example: 10.00
+        AccountTo:
+          type: string
+          example: NL90 INHO 0000 0000 01
+        AccountFrom:
+          type: string
+          example: NL90 INHO 0000 0000 02
   
   requestBodies:
     Transfer:
