@@ -275,6 +275,14 @@ components:
           type: string
           description: Phone number of the user
           example: "0612345678"
+        dayLimit:
+          type: number
+          description: Day limit of all transactions for the user
+          example: "1000.00"
+        transactionLimit:
+          type: number
+          description: Limit per transaction for the user
+          example: "1000.00"
     Login:
       type: object
       properties:
@@ -292,11 +300,11 @@ components:
         auth:
           type: string
           description: Auth token
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjMxMjMxMjMiLCJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjIsImV4cCI6NjAwfQ.Sxd8RF689tg329dV66sXRQra9r-oOB5pXo5-1R0pda8
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJic24iOiIxMjMxMjMxMjMiLCJuYW1lIjoiSm9obiBTbWl0aCIsImlhdCI6MTUxNjIzOTAyMiwiZXhwIjo2MDB9.VMvrJ9zXuHyM5JFotss34zadXVeOH40-IXe0fV7XvEo
         refresh:
           type: string
           description: Refresh token
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjMxMjMxMjMiLCJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjIsImV4cCI6NDMyMDAwfQ.6vH7uyNxk7Obz1fOanq-F2dEquIKRyG4ej5urR3Gwrg
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJic24iOiIxMjMxMjMxMjMiLCJuYW1lIjoiSm9obiBTbWl0aCIsImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxMDAwMDB9.wRdpSUV2LTw7CepH42KPVgLnqVCYflr01IsTMSzoLlA
         firstName:
           type: string
           description: First name of the user
