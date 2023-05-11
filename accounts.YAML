@@ -97,7 +97,7 @@ components:
   #Parameters section
   parameters:
     accountNumberPathParam:
-      # name: IBAN
+      name: IBAN
       in: path
       description: The account number of the bank account
       required: true
