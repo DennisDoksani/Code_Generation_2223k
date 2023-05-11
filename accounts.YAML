@@ -1,0 +1,1049 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/CRAZYTHOUGHTSML_1/Users/1.0.0
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/681990/BankkAPIiiv2/1.0.0
+info:
+  version: 1.0.0
+  title: Banking API
+  description: Banking API
+tags:
+  - name: Users
+    description: Endpoints for users
+  - name: Authentication
+    description: Endpoints for authentication/jwt/login
+  - name: Accounts
+    description: Endpoints for bank accounts
+security:
+  - bearerAuth: []
+
+# Components Section
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  examples:
+    FullAccountEg1:
+      value: 
+        accountNumber: NL90 INHO 0987 6543 21
+        accountBalance: 0.00
+        creationDate: 25/04/2023
+        absoluteLimit: 0
+        isActive: true
+        accountType: saving
+        accountHolder:
+          bsn: 1234566
+          daylimit: 1000
+          transactionLimit: 1000
+          firstName: Test2
+          lastName: Inholland2
+    FullAccountEg2:
+      value: 
+        accountNumber: NL90 INHO 0987 6543 23
+        accountBalance: 1500.00
+        creationDate: 25/04/2023
+        absoluteLimit: 500
+        isActive: true
+        accountType: Current
+        accountHolder:
+          bsn: 154841
+          daylimit: 1000
+          transactionLimit: 1000
+          firstName: Test2
+          lastName: Inholland2  
+    TransactionExample1: 
+      value: 
+        TransactionID: 1
+        Amount: 10
+        AccountTo: NL90 INHO 0987 6543 21
+        AccountFrom: NL90 INHO 0987 6543 23
+        Date: 11/05/2023
+        Timestamp: 11:43
+    SearchingAccountExample1:
+      value:
+        accountHolder: Test Inholland
+        accountNumber: NL90 INHO 0987 6543 21
+    SearchingAccountExample2:
+      value:
+        accountHolder: Test2 Inholland
+        accountNumber: NL90 INHO 0987 6543 22
+    Login123123123:
+      value:
+        email: johnsmith@gmail.com
+        password: SomePassword123
+    User123123123:
+      value:
+        bsn: 123123123
+        firstName: John
+        lastName: Smith
+        email: johnsmith@gmail.com
+        password: SomePassword123
+        birthDate: 1999-12-31
+        phoneNumber: "0612345678"
+    User321321321:
+      value:
+        bsn: 321321321
+        firstName: John
+        lastName: Wick
+        email: johnwick@gmail.com
+        password: SomePassword123
+        birthDate: 1990-11-29
+        phoneNumber: "0632165498"
+
+  #Parameters section
+  parameters:
+    accountNumberPathParam:
+      name: IBAN
+      in: path
+      description: The account number of the bank account
+      required: true
+      schema:
+        format: 'NL[0-9]{2}INHO0[0-9]{9}'
+        type: string
+      example: 'NL04INHO0123456789'
+    limitQueryParam:
+      name: limit
+      in: query
+      description: The maximum number of items to return (maximum 50).
+      required: false
+      schema:
+        type: integer
+        maximum: 50
+        default: 50
+    offsetQueryParam:
+      name: offset
+      in: query
+      description: The number of items to skip before starting to return items.
+      required: false
+      schema:
+        type: integer
+        default: 0
+    bsnNumberParam:
+      name: bsnNumber
+      in: path
+      description: The bsn number of the users account
+      required: true
+      schema:
+        type: integer
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+            message: Please log in to access this resource.
+    Forbidden:
+      description: Forbidden 
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+            message: You dont have right permissson to access this resources.
+    InternalServerError:
+      description: Internal Server Error 
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+            message: Something went wrong internally. Try again in 30 seconds.
+    AccountNotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+            message: The requested account was not found.
+    UserNotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+            message: The BSN number does not exist.
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+           message: The request was not valid.
+    Conflict:
+      description: Conflict
+      content: 
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+           message: You already have an account.
+    NoContent:
+      description: No Content.
+          
+  schemas:  
+    SearchingAccount:
+      type: object
+      properties:
+        accountHolder:
+          type: string
+          description: The name of the account holder
+        accountNumber:  
+          type: string
+          description: The account number of the bank account
+    Account:
+      type: object
+      properties:
+        accountNumber:
+          type: string
+        accountBalance:
+          type: number
+        creationDate:
+          type: string
+        isActive:
+          type: boolean
+        accountType:
+          type: string
+          enum: [savings, current]
+          description: The type of account either savings or current.
+        accountHolder:
+          type: object
+          properties:
+            bsn:
+              type: number
+            firstName:
+              type: string
+            lastName:
+              type: string
+            daylimit:
+              type: number
+            transcationLimit:
+              type: number
+    CreatingAccount:
+      type: object
+      properties:
+        daylimit:
+          type: number
+          example: 1000
+        transcationLimit:
+          type: number
+          example: 1000
+        accountType:
+          type: string
+          enum: [savings, current]
+          description: The type of account either savings or current.
+          example: current
+        accountHolderBSN:
+              type: number
+              example: 123456
+    ErrorMessage:
+      type: object
+      properties:
+        message: 
+          type: string
+          description: This message will be sent when there is an error 
+    User:
+      type: object
+      properties:
+        bsn:
+          type: integer
+          format: int64
+          description: Unique identifier for the user/person
+          example: 123123123
+        firstName:
+          type: string
+          description: First name of the user
+          example: John
+        lastName:
+          type: string
+          description: Last name of the user
+          example: Smith
+        email:
+          type: string
+          description: Email of the user
+          example: johnsmith@gmail.com
+        password:
+          type: string
+          description: Password of the user
+          example: Password123
+        birthDate: 
+          type: string
+          format: date
+          description: Birth date of the user
+          example: 1999-12-31
+        phoneNumber:
+          type: string
+          description: Phone number of the user
+          example: "0612345678"
+        dayLimit:
+          type: number
+          description: Day limit of all transactions for the user
+          example: "1000.00"
+        transactionLimit:
+          type: number
+          description: Limit per transaction for the user
+          example: "1000.00"
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email of the user
+          example: johnsmith@gmail.com
+        password:
+          type: string
+          description: Password of the user
+          example: Password123
+    LoginResponse:
+      type: object
+      properties:
+        auth:
+          type: string
+          description: Auth token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJic24iOiIxMjMxMjMxMjMiLCJuYW1lIjoiSm9obiBTbWl0aCIsImlhdCI6MTUxNjIzOTAyMiwiZXhwIjo2MDB9.VMvrJ9zXuHyM5JFotss34zadXVeOH40-IXe0fV7XvEo
+        refresh:
+          type: string
+          description: Refresh token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJic24iOiIxMjMxMjMxMjMiLCJuYW1lIjoiSm9obiBTbWl0aCIsImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxMDAwMDB9.wRdpSUV2LTw7CepH42KPVgLnqVCYflr01IsTMSzoLlA
+        firstName:
+          type: string
+          description: First name of the user
+          example: John
+        lastName:
+          type: string
+          description: Last name of the user
+          example: Smith
+    Transactions: 
+      type: object
+      required: 
+        - TransactionID
+        - Amount
+        - AccountTo
+        - AccountFrom
+        - Date
+        - Timestamp
+        - UserPerforming
+      properties:
+        TransactionID: 
+          type: integer
+          example: 1
+        Amount: 
+          type: number
+          example: 10.00
+        AccountTo: 
+          type: string
+          example: NL90 INHO 0000 0000 01
+        AccountFrom: 
+          type: string
+          example: NL90 INHO 0000 0000 02
+        Date: 
+          type: string
+          example: '25/04/2023'
+        Timestamp: 
+          type: string
+          example: '15:33'
+  
+  requestBodies:
+    Transfer:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - TransactionID
+              - amount
+              - AccountTo
+              - AccountFrom
+              - Date
+              - Timestamp
+            properties:
+              TransactionID: 
+                type: integer
+                example: 1
+              Amount: 
+                type: number
+                example: 10.00
+              AccountTo: 
+                type: string
+                format: 'NL[0-9]{2}INHO0[0-9]{9}' 
+                example: "NL03INHO0123456789"
+              AccountFrom:
+                type: string
+                format: 'NL[0-9]{2}INHO0[0-9]{9}'
+                example: "NL03INHO0987654321"
+              Date:
+                type: string
+                example: '25/04/2023'
+              Timestamp:
+                type: string
+                example: '15:33'
+      
+paths:
+  /accounts:
+    get:
+      tags:
+        - Accounts
+      summary: Get all bank accounts
+      parameters:
+        - $ref: '#/components/parameters/limitQueryParam'
+        - $ref: '#/components/parameters/offsetQueryParam'
+        - in: query
+          name: accountType
+          description: Will return the accounts of the given type
+          required: false
+          schema:
+            type: string
+            enum: [Saving, Current]
+          example: saving
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+              examples:
+                FullAccountEg1:
+                  $ref: '#/components/examples/FullAccountEg1'
+                FullAccountEg2:
+                  $ref: '#/components/examples/FullAccountEg2'      
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+                   
+        '403':           
+          $ref: '#/components/responses/Forbidden'
+          
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatingAccount'
+      tags:
+        - Accounts
+      summary: This endpoint is used to create an Account By Employee
+      responses:
+        '201':
+          description: OK
+          content: 
+            application/json:
+              schema:
+                 $ref: '#/components/schemas/Account'
+              examples:
+                FullAccountEg2:
+                  $ref: '#/components/examples/FullAccountEg2'
+                  
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
+           
+        '409': 
+            $ref: '#/components/responses/Conflict'
+      
+  /accounts/{IBAN}:                 
+    get:
+      tags:
+          - Accounts
+      summary: get one bank account with account number and customer can only access his/her own account
+      parameters:
+        - $ref: '#/components/parameters/accountNumberPathParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/Account'
+              examples:
+                FullAccountEg1:
+                  $ref: '#/components/examples/FullAccountEg1'
+        '404':
+          $ref: '#/components/responses/AccountNotFound'
+  
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+                   
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+  
+             
+    put:
+      tags:
+          - Accounts
+      summary: The endpoint is used to update the details of Account
+      parameters:
+       - $ref: '#/components/parameters/accountNumberPathParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Account'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+                schema:
+                 $ref: '#/components/schemas/Account'
+                examples:
+                  FullAccountEg1:
+                    $ref: '#/components/examples/FullAccountEg1'
+        '404':
+          $ref: '#/components/responses/AccountNotFound'
+          
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
+           
+  /accounts/accountStatus/{IBAN}:
+    put:  
+      tags:
+          - Accounts
+      summary: The endpoint is used to update the status of Account only
+      parameters:
+        - $ref: '#/components/parameters/accountNumberPathParam'
+      requestBody:
+        required: true
+        content:
+           application/json:
+              schema:
+                type: object
+                properties:
+                  isActive:
+                    type: boolean
+              example: 
+                 isActive: true
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
+
+        '404':
+          $ref: '#/components/responses/AccountNotFound'
+          
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
+
+  /accounts/searchByCustomerName:
+    get:
+      tags:
+        - Accounts
+      summary: Get all Current accounts by Searching With Name 
+      parameters:
+        - $ref: '#/components/parameters/limitQueryParam'
+        - $ref: '#/components/parameters/offsetQueryParam'
+        - in: query
+          name: customer Name
+          description: Will return the accounts matching given customer name
+          required: true
+          schema:
+            type: string
+          example: test
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchingAccount'
+              examples:
+                SearchingAccountExample1:
+                  $ref: '#/components/examples/SearchingAccountExample1'
+                SearchingAccountExample2:
+                  $ref: '#/components/examples/SearchingAccountExample2'
+        '404': 
+          $ref: '#/components/responses/AccountNotFound'
+        '400': 
+          $ref: '#/components/responses/BadRequest'
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Gets a JWT token by logging in.
+      description: Gets a JWT token by logging in.
+      operationId: login
+      requestBody:
+        description: Email and password
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Login"
+            examples:
+              Login123123123:
+                $ref: "#/components/examples/Login123123123"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+  
+  /auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refreshes a JWT token
+      description: Refreshes a JWT token
+      operationId: refresh
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+  
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Get all Users
+      parameters:
+        - $ref: '#/components/parameters/limitQueryParam'
+        - $ref: '#/components/parameters/offsetQueryParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+              examples:
+                UserAccountEg1:
+                  $ref: "#/components/examples/User123123123"
+                UserAccountEg2:
+                  $ref: '#/components/examples/User321321321'
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+                   
+        '403':           
+          $ref: '#/components/responses/Forbidden'
+          
+    post:
+      tags:
+        - Users
+      summary: Create user
+      description: This happens when a new user registers themselves. (Employees will be seeded)
+      operationId: createUser
+      requestBody:
+        description: User details
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+            examples:
+                User123123123:
+                  $ref: "#/components/examples/User123123123"
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/responses/BadRequest"
+    delete:
+      tags:
+          - Users
+      summary: Delete one User account with the BSN number of the account.
+      parameters:
+        - $ref: '#/components/parameters/bsnNumberParam'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+  
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+                   
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+  
+  /users/{bsnNumber}:        
+    get:
+      tags:
+          - Users
+      summary: get one user account with bsn number
+      parameters:
+        - $ref: '#/components/parameters/bsnNumberParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/User'
+              examples:
+                UserAccountEg1:
+                  $ref: '#/components/examples/User123123123'
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+  
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+                   
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+          - Users
+      summary: The endpoint is used to update the details of the User
+      parameters:
+       - $ref: '#/components/parameters/bsnNumberParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+                schema:
+                 $ref: '#/components/schemas/User'
+                examples:
+                  UserAccountEg1:
+                    $ref: "#/components/examples/User123123123"
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+          
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
+  
+  /accounts/{Username}: 
+    get: 
+      description: Provides the bank accounts for the specified user
+      tags: 
+        - Accounts
+      parameters:
+        - in: path
+          name: Username
+          schema:
+            type: string
+            example: 'User001'
+          required: true
+      responses:
+        200:
+          description: Accounts for the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Account'
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+          
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
+                  
+  /transactions: 
+    get:
+      tags: 
+        - Transactions
+      summary: Gets the transactions that were made
+      operationId: GetTransactions
+      description: This call provides the transactions made using the system
+      responses: 
+        '200':
+          description: Transaction data
+          content:
+            application/json: 
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Transactions'
+    post:
+      description: Transfer money from one account to another
+      tags:
+        - Transactions
+      operationId: transferTransaction
+      requestBody:
+        $ref: '#/components/requestBodies/Transfer'
+      responses:
+        201: 
+          description: Succesful transfer
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+          
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
+
+  /transactions/{IBAN}:
+    get:
+      description: Provides transactions information for a given account.
+      tags:
+        - Transactions
+      parameters:
+        - in: path
+          name: IBAN
+          schema:
+            type: string
+            format: 'NL[0-9]{2}INHO0[0-9]{9}'
+            example: 'NL04INHO0123456789'
+          required: true
+        - in: query
+          name: dateFrom
+          schema:
+            type: string
+        - in: query
+          name: dateTo
+          schema:
+            type: string
+        - in: query
+          name: IBANTo
+          schema:
+            type: string
+        - in: query
+          name: IBANFrom
+          schema:
+            type: string
+        - in: query
+          name: amountEquals
+          schema:
+            type: number
+            minimum: 0.01
+        - in: query
+          name: amountBigger
+          schema:
+            type: number
+            minimum: 0.01       
+        - in: query
+          name: amountSmaller
+          schema:
+            type: number
+            minimum: 0.01
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          schema:
+            type: integer
+      responses:
+        200:
+          description: List of transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Transactions'
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+          
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
+
+  /transactions/atm/deposit:
+    post:
+      description: Deposit money to an account through an ATM
+      tags:
+        - Transactions
+      operationId: depositTransaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  minimum: 10.00
+                  example: 10.00
+                AccountTo:
+                  type: string
+                  format: 'NL[0-9]{2}INHO0[0-9]{9}'
+                  example: NL04INHO0123456789
+              required:
+                - amount
+                - AccountTo
+      responses:
+        201: 
+          description: Created
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  TransactionID: 
+                    type: integer
+                    example: 1
+                  Amount: 
+                    type: number
+                    example: 10.00
+                  AccountTo: 
+                    type: string
+                    example: NL04INHO0123456789
+                  Date: 
+                    type: string
+                    example: '25/04/2023'
+                  Timestamp: 
+                    type: string
+                    example: '15:33:00'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /transactions/atm/withdraw:
+    post:
+      description: Withdrawing money of an account from an ATM
+      tags:
+        - Transactions
+      operationId: withdrawTransaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  minimum: 50.00
+                  example: 50.00
+                AccountFrom:
+                  type: string
+                  format: 'NL[0-9]{2}INHO0[0-9]{9}'
+                  example: NL04INHO0123456789
+              required:
+                - amount
+                - AccountFrom
+      responses:
+        201: 
+           description: Created
+           content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  TransactionID: 
+                    type: integer
+                    example: 5
+                  Amount: 
+                    type: number
+                    example: 10.00
+                  AccountTo: 
+                    type: string
+                    example: NL04INHO0123456789
+                  Date: 
+                    type: string
+                    example: '25/04/2023'
+                  Timestamp: 
+                    type: string
+                    example: '15:33:00'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
