@@ -10,14 +10,12 @@ info:
   title: Banking API
   description: Banking API
 tags:
-  - name: Employee Access
-    description: Employee Access required in order to access this resource
-  - name: Customer Access & Employee Access
-    description: Customer Access & Employee Access required in order to access this resource
   - name: Users
-    description: For user info
+    description: Endpoints for users
   - name: Authentication
-    description: For authentication
+    description: Endpoints for authentication/jwt/login
+  - name: Accounts
+    description: Endpoints for bank accounts
 security:
   - bearerAuth: []
 
@@ -376,7 +374,7 @@ paths:
   /accounts:
     get:
       tags:
-        - Employee Access
+        - Accounts
       summary: Get all bank accounts
       parameters:
         - $ref: '#/components/parameters/limitQueryParam'
@@ -419,7 +417,7 @@ paths:
             schema:
               $ref: '#/components/schemas/CreatingAccount'
       tags:
-        - Employee Access
+        - Accounts
       summary: This endpoint is used to create an Account By Employee
       responses:
         '201':
@@ -450,7 +448,7 @@ paths:
   /accounts/{IBAN}:                 
     get:
       tags:
-          - Employee Access
+          - Accounts
       summary: get one bank account with account number and customer can only access his/her own account
       parameters:
         - $ref: '#/components/parameters/accountNumberPathParam'
@@ -479,7 +477,7 @@ paths:
              
     put:
       tags:
-          - Employee Access
+          - Accounts
       summary: The endpoint is used to update the details of Account
       parameters:
        - $ref: '#/components/parameters/accountNumberPathParam'
@@ -517,7 +515,7 @@ paths:
   /accounts/accountStatus/{IBAN}:
     put:  
       tags:
-          - Employee Access
+          - Accounts
       summary: The endpoint is used to update the status of Account only
       parameters:
         - $ref: '#/components/parameters/accountNumberPathParam'
@@ -554,7 +552,7 @@ paths:
   /accounts/searchByCustomerName:
     get:
       tags:
-        - Customer Access & Employee Access
+        - Accounts
       summary: Get all Current accounts by Searching With Name 
       parameters:
         - $ref: '#/components/parameters/limitQueryParam'
@@ -782,7 +780,7 @@ paths:
     get: 
       description: Provides the bank accounts for the specified user
       tags: 
-        - Bank Accounts
+        - Accounts
       parameters:
         - in: path
           name: Username
@@ -833,7 +831,7 @@ paths:
     post:
       description: Transfer money from one account to another
       tags:
-        - Transaction
+        - Transactions
       operationId: transferTransaction
       requestBody:
         $ref: '#/components/requestBodies/Transfer'
@@ -859,7 +857,7 @@ paths:
     get:
       description: Provides transactions information for a given account.
       tags:
-        - Transaction
+        - Transactions
       parameters:
         - in: path
           name: IBAN
@@ -935,7 +933,7 @@ paths:
     post:
       description: Deposit money to an account through an ATM
       tags:
-        - Transaction
+        - Transactions
       operationId: depositTransaction
       requestBody:
         required: true
@@ -966,7 +964,7 @@ paths:
     post:
       description: Withdrawing money of an account from an ATM
       tags:
-        - Transaction
+        - Transactions
       operationId: withdrawTransaction
       requestBody:
         required: true
