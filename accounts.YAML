@@ -797,6 +797,20 @@ paths:
                 type: array
                 items: 
                   $ref: '#/components/schemas/Account'
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+          
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
                   
   /transactions: 
     get:
@@ -824,6 +838,20 @@ paths:
       responses:
         201: 
           description: Succesful transfer
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+          
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
 
   /transactions/{IBAN}:
     get:
@@ -886,6 +914,21 @@ paths:
                 type: array
                 items: 
                   $ref: '#/components/schemas/Transactions'
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+          
+        '403':           
+           $ref: '#/components/responses/Forbidden'
+           
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+            
+        '500':
+           $ref: '#/components/responses/InternalServerError'
+        
+        '400':
+           $ref: '#/components/responses/BadRequest'
+
   /transactions/atm/deposit:
     post:
       description: Deposit money to an account through an ATM
@@ -948,4 +991,3 @@ paths:
           $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/InternalServerError'
-        
