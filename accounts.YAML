@@ -54,7 +54,15 @@ components:
           daylimit: 1000
           transactionLimit: 1000
           firstName: Test2
-          lastName: Inholland2   
+          lastName: Inholland2  
+    TransactionExample1: 
+      value: 
+        TransactionID: 1
+        Amount: 10
+        AccountTo: NL90 INHO 0987 6543 21
+        AccountFrom: NL90 INHO 0987 6543 23
+        Date: 11/05/2023
+        Timestamp: 11:43
     SearchingAccountExample1:
       value:
         accountHolder: Test Inholland
@@ -89,7 +97,7 @@ components:
   #Parameters section
   parameters:
     accountNumberPathParam:
-      name: IBAN
+      # name: IBAN
       in: path
       description: The account number of the bank account
       required: true
