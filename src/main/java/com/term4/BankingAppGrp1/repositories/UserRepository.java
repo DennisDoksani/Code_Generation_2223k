@@ -1,0 +1,10 @@
+package com.term4.BankingAppGrp1.repositories;
+
+import com.term4.BankingAppGrp1.models.User;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+
+//public interface UserRepository extends CrudRepository<User, Integer> {
+//
+//}

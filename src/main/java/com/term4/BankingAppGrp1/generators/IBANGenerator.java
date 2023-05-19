@@ -23,8 +23,8 @@ public class IBANGenerator implements IdentifierGenerator {
         Random random = new Random();
         long accountNumber = random.nextLong();
 
-        // Format account number to 10 digits
-        String formattedAccountNumber = String.format("%010d", Math.abs(accountNumber));
+        // Format account number to 9 digits
+        String formattedAccountNumber = String.valueOf(Math.abs(accountNumber)).substring(0,9);
 
         // Generate random digits for "xx" portion
         int randomDigits = random.nextInt(100);
