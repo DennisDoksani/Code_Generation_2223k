@@ -8,12 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity(name = "users")
 @Inheritance
 public abstract class User{
@@ -24,9 +24,19 @@ public abstract class User{
     protected int bsn;
     protected String firstName;
     protected String lastName;
-    protected Date dateOfBirth;
+    protected LocalDate dateOfBirth;
     protected String phoneNumber;
     protected String email;
     protected String password;
-    protected boolean isActive;
+    protected boolean isActive=true;
+
+    public User(int bsn, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String email, String password) {
+        this.bsn = bsn;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.password = password;
+    }
 }
