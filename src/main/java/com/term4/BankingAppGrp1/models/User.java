@@ -4,14 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
-
 @Data
 @NoArgsConstructor
 @Entity(name = "users")
@@ -29,9 +24,9 @@ public abstract class User{
     protected String email;
     protected String password;
     protected boolean isActive=true;
-    protected String name= String.format("%s %s",firstName,lastName);
+    protected String name ;
 
-    public User(int bsn, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String email, String password) {
+    protected User(int bsn, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String email, String password) {
         this.bsn = bsn;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -39,5 +34,6 @@ public abstract class User{
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.password = password;
+        this.name = firstName + " " + lastName;
     }
 }
