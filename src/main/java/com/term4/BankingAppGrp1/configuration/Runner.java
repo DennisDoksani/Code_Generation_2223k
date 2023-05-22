@@ -28,9 +28,9 @@ public class Runner implements ApplicationRunner {
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
 
-        Customer joshMf= new Customer(234445,"Joshua","Mf", LocalDate.now(),"680000000000","josh@mf.com","josh",0,0);
+        Customer joshMf= new Customer(234445,"Joshua","Mf", LocalDate.now(),"680000000000","josh@mf.com","josh",true, 0.0,0.0);
         userService.saveUser(joshMf);
         Account seedAccount = new Account(AccountType.CURRENT,joshMf);
-        accountService.SaveAccount(seedAccount);
+        accountService.saveAccount(seedAccount);
     }
 }

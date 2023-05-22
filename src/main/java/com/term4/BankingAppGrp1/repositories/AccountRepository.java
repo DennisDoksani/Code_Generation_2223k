@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AccountRepository extends CrudRepository<Account, String> {
+    void saveAccount(Account newAccount);
 
 }
