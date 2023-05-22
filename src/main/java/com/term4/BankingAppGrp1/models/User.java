@@ -8,8 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -20,11 +19,11 @@ public abstract class User{
 
     @Id
     @GeneratedValue
-    protected int id;
+    protected long id;
     protected int bsn;
     protected String firstName;
     protected String lastName;
-    protected Date dateOfBirth;
+    protected LocalDate dateOfBirth;
     protected String phoneNumber;
     protected String email;
     protected String password;
