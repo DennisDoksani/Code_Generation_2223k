@@ -6,7 +6,7 @@ servers:
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/681990/BankkAPIiiv2/1.0.0
 info:
-  version: 1.0.0
+  version: '1.0'
   title: Banking API
   description: Banking API
 tags:
@@ -57,9 +57,10 @@ components:
           daylimit: 1000
           transactionLimit: 1000
           firstName: Test2
+    SearchedAccountExample1:
       value:
-        accountHolder: Test Inholland
-        accountNumber: NL90 INHO 0987 6543 21
+        accountHolder: Test1 Inholland
+        accountNumber: NL61 INHO 0800 3442 33
     SearchedAccountExample2:
       value:
         accountHolder: Test2 Inholland
@@ -91,7 +92,7 @@ components:
         dayLimit: 500.00
         transactionLimit: 100.00
 
-  #Parameters section
+  #Parameters
   parameters:
     accountNumberPathParam:
       name: IBAN
@@ -119,8 +120,8 @@ components:
       schema:
         type: integer
         default: 0
-    userIdparam:
-      name: userID
+    userId:
+      name: userId
       in: path
       description: The ID of a user.
       required: true
@@ -344,22 +345,6 @@ components:
         Timestamp: 
           type: string
           example: '15:33'
-    TransactionPost:
-      type: object
-      required: 
-        - Amount
-        - AccountTo
-        - AccountFrom
-      properties:
-        Amount: 
-          type: number
-          example: 10.00
-        AccountTo:
-          type: string
-          example: NL90 INHO 0000 0000 01
-        AccountFrom:
-          type: string
-          example: NL90 INHO 0000 0000 02
   
   requestBodies:
     Transfer:
@@ -604,7 +589,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Login"
+              $ref: "#/components/schemas/LoginRequest"
             examples:
               LoginRequest123123123:
                 $ref: "#/components/examples/LoginRequest123123123"
@@ -651,7 +636,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/User"
+                  $ref: "#/components/schemas/UserResponse"
               examples:
                 UserAccountEg1:
                   $ref: "#/components/examples/User123123123"
@@ -675,7 +660,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/User"
+              $ref: "#/components/schemas/UserResponse"
             examples:
                 User123123123:
                   $ref: "#/components/examples/User123123123"
@@ -686,20 +671,81 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: "#/components/schemas/UserResponse"
         "409":
           description: Conflict
           content:
             application/json:
               schema:
                 $ref: "#/components/responses/BadRequest"
+    
+  
+  /users/{userId}:
+    get:
+      tags:
+        - Users
+      summary: Get one user.
+      description: Get one user by the user ID.
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/UserResponse'
+              examples:
+                UserAccountEg1:
+                  $ref: '#/components/examples/User123123123'
+        '404':
+          $ref: '#/components/responses/UserNotFound'  
+        '401':
+          $ref: '#/components/responses/Unauthorized'                   
+        '403':           
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - Users
+      summary: Update user details.
+      description: Update a user object and return the updated user.
+      parameters:
+       - $ref: '#/components/parameters/userId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserResponse'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+                schema:
+                 $ref: '#/components/schemas/UserResponse'
+                examples:
+                  UserAccountEg1:
+                    $ref: "#/components/examples/User123123123"
+        '404':
+          $ref: '#/components/responses/UserNotFound'          
+        '403':           
+          $ref: '#/components/responses/Forbidden'           
+        '401':
+          $ref: '#/components/responses/Unauthorized'            
+        '500':
+          $ref: '#/components/responses/InternalServerError'        
+        '400':
+          $ref: '#/components/responses/BadRequest'
     delete:
       tags:
-          - Users
+        - Users
       summary: Delete one user.
       description: Delete one user with the ID. Only possible to delete users without a bank account.
       parameters:
-        - $ref: '#/components/parameters/userIdParam'
+        - $ref: '#/components/parameters/userId'
       responses:
         '204':
           $ref: '#/components/responses/NoContent'
@@ -711,66 +757,6 @@ paths:
            $ref: '#/components/responses/Forbidden'
         '500':
            $ref: '#/components/responses/InternalServerError'
-  
-  /users/{userId}:        
-    get:
-      tags:
-          - Users
-      summary: Get one user.
-      description: Get one user by the userID.
-      parameters:
-        - $ref: '#/components/parameters/userIdParam'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-               $ref: '#/components/schemas/User'
-              examples:
-                UserAccountEg1:
-                  $ref: '#/components/examples/User123123123'
-        '404':
-          $ref: '#/components/responses/UserNotFound'  
-        '401':
-            $ref: '#/components/responses/Unauthorized'                   
-        '403':           
-           $ref: '#/components/responses/Forbidden'
-        '500':
-           $ref: '#/components/responses/InternalServerError'
-    put:
-      tags:
-          - Users
-      summary: Update user details.
-      description: Update a user object and return the updated user.
-      parameters:
-       - $ref: '#/components/parameters/userIdParam'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        '200':
-          description: ok
-          content:
-            application/json:
-                schema:
-                 $ref: '#/components/schemas/User'
-                examples:
-                  UserAccountEg1:
-                    $ref: "#/components/examples/User123123123"
-        '404':
-          $ref: '#/components/responses/UserNotFound'          
-        '403':           
-           $ref: '#/components/responses/Forbidden'           
-        '401':
-            $ref: '#/components/responses/Unauthorized'            
-        '500':
-           $ref: '#/components/responses/InternalServerError'        
-        '400':
-           $ref: '#/components/responses/BadRequest'
   
   /accounts/{Username}: 
     get: 
@@ -994,7 +980,7 @@ paths:
       responses:
         '201': 
           description: Amount successfully withdrawn!
-           content: 
+          content: 
             application/json:
               schema:
                 type: object
