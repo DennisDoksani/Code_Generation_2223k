@@ -29,6 +29,7 @@ public abstract class User{
     protected String email;
     protected String password;
     protected boolean isActive=true;
+    protected String name= String.format("%s %s",firstName,lastName);
 
     public User(int bsn, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String email, String password) {
         this.bsn = bsn;

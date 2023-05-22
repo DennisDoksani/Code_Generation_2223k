@@ -31,4 +31,10 @@ public class AccountService {
         return accountRepository.findById(iBAN).orElseThrow(() ->
                 new EntityNotFoundException("Account with IBAN: " + iBAN + " was not found"));
     }
+    public List<Account> searchAccountByCustomerName(String customerName, Pageable pageable) {
+//        Page<Account> accounts = accountRepository.
+//                findByCustomerNameIgnoreCase(customerName);
+//        return accounts.getContent();
+        return accountRepository.findByCustomerFirstNameIgnoreCaseOrCustomerLastNameIgnoreCase(customerName);
+    }
 }
