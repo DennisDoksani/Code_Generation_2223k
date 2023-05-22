@@ -57,9 +57,6 @@ components:
           daylimit: 1000
           transactionLimit: 1000
           firstName: Test2
-      value:
-        accountHolder: Test Inholland
-        accountNumber: NL90 INHO 0987 6543 21
     SearchedAccountExample2:
       value:
         accountHolder: Test2 Inholland
@@ -994,7 +991,7 @@ paths:
       responses:
         '201': 
           description: Amount successfully withdrawn!
-           content: 
+          content: 
             application/json:
               schema:
                 type: object
