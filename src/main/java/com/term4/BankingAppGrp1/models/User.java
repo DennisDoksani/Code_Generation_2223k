@@ -16,7 +16,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity(name = "users")
 @Inheritance
-public abstract class User{
+public abstract class User {
 
     @Id
     @GeneratedValue
