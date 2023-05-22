@@ -5,6 +5,8 @@ import com.term4.BankingAppGrp1.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserService implements UserServiceInterface{
 
@@ -30,6 +32,11 @@ public class UserService implements UserServiceInterface{
         } else {
             return "User not found in the database";
         }
+    }
+
+    @Override
+    public Optional<User> getUser(User id) {
+        return userRepository.findById(id.getId());
     }
 
 }

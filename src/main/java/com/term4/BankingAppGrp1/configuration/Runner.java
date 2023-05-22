@@ -10,11 +10,14 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Component
 public class Runner implements ApplicationRunner {
@@ -33,6 +36,12 @@ public class Runner implements ApplicationRunner {
         return userService.deleteUser(id);
     }
 
+    @GetMapping("/users/getone/{id}")
+        public ResponseEntity<User> getUser(@PathVariable User id){
+            Optional<User> user = userService.getUser(id);
+            return user.map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+        }
 
     @Override
     @Transactional
