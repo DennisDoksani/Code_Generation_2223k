@@ -23,7 +23,7 @@ public class BankingUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException(email);
         }
 
-        return new org.springframework.security.core.userdetails.User(userEntity.getUsername(), userEntity.getPassword(), userEntity.getAuthorities());
+        return new org.springframework.security.core.userdetails.User(userEntity.getEmail(), userEntity.getPassword(), userEntity.getRoles());
     }
     
 }
