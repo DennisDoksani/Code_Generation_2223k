@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.List;
 
+
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity(name = "users")
 @Inheritance
 public abstract class User{

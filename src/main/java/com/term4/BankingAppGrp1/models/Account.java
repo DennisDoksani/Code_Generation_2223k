@@ -27,8 +27,11 @@ public class Account {
     private boolean isActive = true;
     @Enumerated(EnumType.ORDINAL)
     private AccountType accountType;
+    @ManyToOne
+    private Customer customer;
 
-    public Account(AccountType accountType) {
+    public Account(AccountType accountType,Customer customer) {
         this.accountType = accountType;
+        this.customer = customer;
     }
 }

@@ -7,7 +7,6 @@ import jakarta.persistence.Inheritance;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @Entity
 @NoArgsConstructor

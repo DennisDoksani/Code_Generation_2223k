@@ -12,7 +12,7 @@ public class AccountService {
         this.repository = repository;
     }
 
-    public void SaveAccount(Account newAccount){
+    public void saveAccount(Account newAccount){
         repository.save(newAccount);
     }
 }
