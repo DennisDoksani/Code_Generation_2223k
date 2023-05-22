@@ -9,8 +9,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Date;
+
 
 @Data
 @NoArgsConstructor
@@ -20,7 +21,7 @@ public abstract class User{
 
     @Id
     @GeneratedValue
-    protected int id;
+    protected long id;
     protected int bsn;
     protected String firstName;
     protected String lastName;
