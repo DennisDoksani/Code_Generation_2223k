@@ -17,29 +17,29 @@ public class Transaction {
 
     @GeneratedValue
     @Id
-    private long TransactionID;
+    private long transactionID;
 
     public Transaction(double amount, Account accountTo, Account accountFrom, Date date, Time timestamp, User userPerforming) {
-        Amount = amount;
-        AccountTo = accountTo;
-        AccountFrom = accountFrom;
+        this.amount = amount;
+        this.accountTo = accountTo;
+        this.accountFrom = accountFrom;
         this.date = date;
         this.timestamp = timestamp;
-        UserPerforming = userPerforming;
+        this.userPerforming = userPerforming;
     }
 
-    private double Amount;
+    private double amount;
 
     @OneToOne
-    private Account AccountTo;
+    private Account accountTo;
 
     @OneToOne
-    private Account AccountFrom;
+    private Account accountFrom;
 
     private Date date;
 
     private Time timestamp;
 
     @OneToOne
-    private User UserPerforming;
+    private User userPerforming;
 }

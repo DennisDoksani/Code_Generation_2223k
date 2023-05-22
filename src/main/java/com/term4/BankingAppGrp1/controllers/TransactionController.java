@@ -20,6 +20,11 @@ public class TransactionController {
         return ResponseEntity.ok().body(transactionService.getAllTransactions());
     }
 
+    @GetMapping("/from/{iban}")
+    public ResponseEntity<Object> getTransactionsFromAccount(@PathVariable String iban) {
+        return ResponseEntity.ok().body(transactionService.getTransactionsFromAccount(iban));
+    }
+
     @PostMapping
     public ResponseEntity<Object> addTransaction(@RequestBody Transaction transaction) {
         return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.addTransaction(transaction));
