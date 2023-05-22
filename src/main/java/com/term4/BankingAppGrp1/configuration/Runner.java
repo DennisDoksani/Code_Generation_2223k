@@ -47,9 +47,24 @@ public class Runner implements ApplicationRunner {
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
 
-        Customer joshMf= new Customer(234445,"Joshua","Mf", LocalDate.now(),"680000000000","josh@mf.com","josh",0,0);
+        Customer joshMf= new Customer(234445,"Joshua","Mf", LocalDate.now(),
+                "680000000000","josh@mf.com","josh",0,0);
+
         userService.saveUser(joshMf);
+//        for (int i = 0; i < 800; i++) {
+//            Account seedAccount = new Account(AccountType.CURRENT,joshMf);
+//            accountService.saveAccount(seedAccount);
+//        }
         Account seedAccount = new Account(AccountType.CURRENT,joshMf);
-        accountService.SaveAccount(seedAccount);
+        accountService.saveAccount(seedAccount);
+        seedBankAccount();
+    }
+    private void seedBankAccount(){
+        Customer inhollandBank= new Customer(111111,"Inholland","Bank", LocalDate.now(),
+                "680000000000", "inholland@bank.nl","Inholland",
+                9999999999999999L,9999999999999999L);
+        userService.saveUser(inhollandBank);
+        Account seedAccount = new Account("NL01INHO0000000001",9999999999999.0,LocalDate.now(),0,true,AccountType.CURRENT,inhollandBank);
+        accountService.saveAccount(seedAccount);
     }
 }
