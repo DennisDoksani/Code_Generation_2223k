@@ -4,9 +4,13 @@ import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
+import com.term4.BankingAppGrp1.models.User;
+import com.term4.BankingAppGrp1.repositories.UserRepository;
+
+
 @Service
 public class UserService {
-
+    
     private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
@@ -15,4 +19,5 @@ public class UserService {
     public User saveUser(User user){
         return userRepository.save(user);
     }
+    
 }
