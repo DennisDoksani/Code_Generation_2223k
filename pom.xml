@@ -65,7 +65,19 @@
 			<artifactId>jjwt-gson</artifactId>
 			<version>0.11.5</version>
 		</dependency>
-	</dependencies>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-spring</artifactId>
+			<version>${cucumber.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-java</artifactId>
+			<version>${cucumber.version}</version>
+			<scope>test</scope>
+		</dependency>
+ </dependencies>
 
 	<build>
 		<plugins>
