@@ -27,8 +27,19 @@ public class AccountService {
         return accounts.getContent();
     }
 
-    public Account getAccountByIBAN(String iBAN) {
-        return accountRepository.findById(iBAN).orElseThrow(() ->
-                new EntityNotFoundException("Account with IBAN: " + iBAN + " was not found"));
+    public Account getAccountByIBAN(String iban) {
+        return accountRepository.findById(iban).orElseThrow(() ->
+                new EntityNotFoundException("Account with IBAN: " + iban + " was not found"));
+    }
+    public List<Account> searchAccountByCustomerName(String customerName, Pageable pageable) {
+        Page<Account> accounts = accountRepository.findByCustomerNameContainingIgnoreCase(customerName, pageable);
+        return accounts.getContent();
+    }
+
+    public void  changeAccountStatus(String iban, boolean isActive) {
+        Account updatingAccount = accountRepository.findById(iban).orElseThrow(() ->
+                new EntityNotFoundException("The updating account with IBAN: " + iban + " was not found"));
+        updatingAccount.setActive(isActive);
+        accountRepository.save(updatingAccount);
     }
 }

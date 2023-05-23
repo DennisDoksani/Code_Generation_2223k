@@ -51,10 +51,10 @@ public class Runner implements ApplicationRunner {
                 "680000000000","josh@mf.com","josh",0,0);
 
         userService.saveUser(joshMf);
-//        for (int i = 0; i < 800; i++) {
-//            Account seedAccount = new Account(AccountType.CURRENT,joshMf);
-//            accountService.saveAccount(seedAccount);
-//        }
+        for (int i = 0; i < 800; i++) {
+            Account seedAccount = new Account(AccountType.CURRENT,joshMf);
+            accountService.saveAccount(seedAccount);
+        }
         Account seedAccount = new Account(AccountType.CURRENT,joshMf);
         accountService.saveAccount(seedAccount);
         seedBankAccount();
