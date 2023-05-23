@@ -35,8 +35,6 @@ public class IBANGenerator implements IdentifierGenerator {
         String formattedRandomDigits = String.format("%02d", randomDigits);
 
         // Generate IBAN with NLxxINHO0 prefix and random values
-        String iban = "NL" + formattedRandomDigits + "INHO0" + formattedAccountNumber;
-
-        return iban;
+        return "NL" + formattedRandomDigits + "INHO0" + formattedAccountNumber;
     }
 }

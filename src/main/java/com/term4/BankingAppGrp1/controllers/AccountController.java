@@ -1,6 +1,8 @@
 package com.term4.BankingAppGrp1.controllers;
 
 import com.term4.BankingAppGrp1.models.Account;
+import com.term4.BankingAppGrp1.requestDTOs.AccountStatusDTO;
+import com.term4.BankingAppGrp1.requestDTOs.CreatingAccountDTO;
 import com.term4.BankingAppGrp1.responseDTOs.AccountDTO;
 import com.term4.BankingAppGrp1.responseDTOs.AccountHolderDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
@@ -10,6 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_LIMIT_STRING;
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_OFFSET_STRING;
@@ -31,7 +35,8 @@ public class AccountController {
                                                  @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset)
     // Spring boot is asking for a default value for limit and offset to be string
     {
-        return ResponseEntity.ok(accountService.getAllAccounts(getPageable(limit, offset)));
+        List<Account> accounts = accountService.getAllAccounts(getPageableByLimitAndOffset(limit, offset));
+        return ResponseEntity.ok(accounts.stream().map(this::parseAccountObjectToDTO).toList());
     }
 
     // to get Account by IBAN
@@ -45,17 +50,22 @@ public class AccountController {
     public ResponseEntity<Object> searchAccountByCustomerName(@NotBlank @RequestParam String customerName,
                                                               @RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
                                                               @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset) {
-        return ResponseEntity.ok(accountService.searchAccountByCustomerName(customerName, getPageable(limit, offset)));
+        return ResponseEntity.ok(accountService.searchAccountByCustomerName(customerName, getPageableByLimitAndOffset(limit, offset)));
     }
+
     // Requires Employee Role to change account status
     // ToDO : Role Based Security for this endpoint
     @PostMapping("/accountStatus/{iban}")
-    public ResponseEntity<Object> changeAccountStatus(@NotBlank @PathVariable String iban, @Valid @RequestBody boolean isActive) {
-        accountService.changeAccountStatus(iban, isActive);
+    public ResponseEntity<Object> changeAccountStatus(@NotBlank @PathVariable String iban, @Valid @RequestBody AccountStatusDTO accountStatusDTO) {
+        accountService.changeAccountStatus(iban, accountStatusDTO.isActive());
+        return ResponseEntity.noContent().build();
+    }
+    @PostMapping
+    public ResponseEntity<Object> saveAccount(@Valid @RequestBody CreatingAccountDTO accountDTO) {
         return ResponseEntity.noContent().build();
     }
 
-    private Pageable getPageable(int limit, int offset) {
+    private Pageable getPageableByLimitAndOffset(int limit, int offset) {
         return PageRequest.of(offset / limit, limit); // offset/limit = page number
     }
 
@@ -66,9 +76,7 @@ public class AccountController {
                 account.getCustomer().getDayLimit(), account.getCustomer().getTransactionLimit()
                 , account.getCustomer().getFirstName(), account.getCustomer().getLastName());
 
-        return new AccountDTO(account.getIban(), account.getBalance(),account.getAbsoluteLimit(), account.getCreationDate(), account.isActive(),
+        return new AccountDTO(account.getIban(), account.getBalance(), account.getAbsoluteLimit(), account.getCreationDate(), account.isActive(),
                 account.getAccountType(), accountHolderDTO);
     }
-
-
 }
