@@ -1,9 +1,6 @@
 package com.term4.BankingAppGrp1.configuration;
 
-import com.term4.BankingAppGrp1.models.Account;
-import com.term4.BankingAppGrp1.models.AccountType;
-import com.term4.BankingAppGrp1.models.Customer;
-import com.term4.BankingAppGrp1.models.User;
+import com.term4.BankingAppGrp1.models.*;
 import com.term4.BankingAppGrp1.services.AccountService;
 import com.term4.BankingAppGrp1.services.UserService;
 import jakarta.transaction.Transactional;
@@ -15,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -47,9 +43,7 @@ public class Runner implements ApplicationRunner {
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
 
-        Customer joshMf= new Customer(234445,"Joshua","Mf", LocalDate.now(),
-                "680000000000","josh@mf.com","josh",0,0);
-
+        User joshMf= new User(234445,"Joshua","Mf", LocalDate.now(),"680000000000","josh@mf.com","josh",true, 0,0);
         userService.saveUser(joshMf);
         for (int i = 0; i < 800; i++) {
             Account seedAccount = new Account(AccountType.CURRENT,joshMf);
@@ -60,8 +54,8 @@ public class Runner implements ApplicationRunner {
         seedBankAccount();
     }
     private void seedBankAccount(){
-        Customer inhollandBank= new Customer(111111,"Inholland","Bank", LocalDate.now(),
-                "680000000000", "inholland@bank.nl","Inholland",
+        User inhollandBank= new User(111111,"Inholland","Bank", LocalDate.now(),
+                "680000000000", "inholland@bank.nl","Inholland", true,
                 9999999999999999L,9999999999999999L);
         userService.saveUser(inhollandBank);
         Account seedAccount = new Account("NL01INHO0000000001",9999999999999.0,LocalDate.now(),0,true,AccountType.CURRENT,inhollandBank);
