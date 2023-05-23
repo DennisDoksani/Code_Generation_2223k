@@ -19,7 +19,7 @@ public class Transaction {
     @Id
     private long transactionID;
 
-    public Transaction(double amount, String accountTo, String accountFrom, Date date, Time timestamp, User userPerforming) {
+    public Transaction(Double amount, String accountTo, String accountFrom, Date date, Time timestamp, User userPerforming) {
         this.amount = amount;
         this.accountTo = accountTo;
         this.accountFrom = accountFrom;
@@ -28,7 +28,7 @@ public class Transaction {
         this.userPerforming = userPerforming;
     }
 
-    private double amount;
+    private Double amount;
 
     private String accountTo;
 

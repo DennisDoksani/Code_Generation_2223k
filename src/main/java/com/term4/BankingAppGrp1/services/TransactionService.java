@@ -19,8 +19,8 @@ public class TransactionService {
         return (List<Transaction>) transactionRepository.findAll();
     }
 
-    public List<Transaction> getTransactionsFromAccount(String iban) {
-        return (List<Transaction>) transactionRepository.getTransactionByAccountFrom(iban);
+    public List<Transaction> getTransactionsFromAccount(String iban, Double amount) {
+        return (List<Transaction>) transactionRepository.getTransactionByAccountFromAndAmountGreaterThanEqual(iban, amount);
     }
     public List<Transaction> getTransactionsToAccount(String iban) {
         return (List<Transaction>) transactionRepository.getTransactionByAccountTo(iban);

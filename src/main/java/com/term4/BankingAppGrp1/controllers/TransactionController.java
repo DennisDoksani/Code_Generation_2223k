@@ -20,9 +20,9 @@ public class TransactionController {
         return ResponseEntity.ok().body(transactionService.getAllTransactions());
     }
 
-    @GetMapping("/from/{iban}")
-    public ResponseEntity<Object> getTransactionsFromAccount(@PathVariable String iban) {
-        return ResponseEntity.ok().body(transactionService.getTransactionsFromAccount(iban));
+    @GetMapping(value = {"/from/{iban}", "/from/{iban}/{amount}"})
+    public ResponseEntity<Object> getTransactionsFromAccount(@PathVariable String iban, @PathVariable(required = false) Double amount) {
+        return ResponseEntity.ok().body(transactionService.getTransactionsFromAccount(iban, amount));
     }
     @GetMapping("/to/{iban}")
     public ResponseEntity<Object> getTransactionsToAccount(@PathVariable String iban) {
