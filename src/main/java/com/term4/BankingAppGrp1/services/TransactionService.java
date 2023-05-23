@@ -22,5 +22,8 @@ public class TransactionService {
     public List<Transaction> getTransactionsFromAccount(String iban) {
         return (List<Transaction>) transactionRepository.getTransactionByAccountFrom(iban);
     }
+    public List<Transaction> getTransactionsToAccount(String iban) {
+        return (List<Transaction>) transactionRepository.getTransactionByAccountTo(iban);
+    }
     public Transaction addTransaction(Transaction transaction) { return transactionRepository.save(transaction); }
 }

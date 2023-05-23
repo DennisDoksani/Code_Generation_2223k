@@ -41,7 +41,7 @@ public class Runner implements ApplicationRunner {
         accountService.SaveAccount(seedAccount);
         accountService.SaveAccount(seedSavings);
 
-        Transaction newTransaction = new Transaction(10.00, seedSavings, seedAccount, new Date(2023, 5, 22), new Time(21, 4, 0), joshMf);
+        Transaction newTransaction = new Transaction(10.00, seedSavings.getIBAN(), seedAccount.getIBAN(), new Date(2023, 5, 22), new Time(21, 4, 0), joshMf);
         transactionService.addTransaction(newTransaction);
     }
 }

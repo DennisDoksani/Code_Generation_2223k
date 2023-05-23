@@ -24,7 +24,10 @@ public class TransactionController {
     public ResponseEntity<Object> getTransactionsFromAccount(@PathVariable String iban) {
         return ResponseEntity.ok().body(transactionService.getTransactionsFromAccount(iban));
     }
-
+    @GetMapping("/to/{iban}")
+    public ResponseEntity<Object> getTransactionsToAccount(@PathVariable String iban) {
+        return ResponseEntity.ok().body(transactionService.getTransactionsToAccount(iban));
+    }
     @PostMapping
     public ResponseEntity<Object> addTransaction(@RequestBody Transaction transaction) {
         return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.addTransaction(transaction));
