@@ -26,12 +26,13 @@ public class JwtKeyProvider {
     @Value("${jwt.key-alias}")
     private String keyAlias;
 
+    
     private Key privateKey;
 
     @PostConstruct
     public void init() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
         Resource resource = new ClassPathResource(keystore);
-        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        KeyStore keyStore = KeyStore.getInstance("PKCS12");
         keyStore.load(resource.getInputStream(), keystorePassword.toCharArray());
         privateKey = keyStore.getKey(keyAlias, keystorePassword.toCharArray());
     }

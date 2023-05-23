@@ -32,12 +32,12 @@ public class User{
     private String email;
     private String password;
     private boolean isActive;
-    private double dayLimit;
-    private double transactionLimit;
+    private double dayLimit = 0;
+    private double transactionLimit = 0;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Role> roles;
 
-    public User(int bsn, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String email, String password, boolean isActive){
+    public User(int bsn, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String email, String password, boolean isActive, double dayLimit, double transactionLimit){
         this.bsn = bsn;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -46,5 +46,8 @@ public class User{
         this.email = email;
         this.password = password;
         this.name = firstName + " " + lastName;
+        this.isActive = isActive;
+        this.dayLimit = dayLimit;
+        this.transactionLimit = transactionLimit;
     }
 }
