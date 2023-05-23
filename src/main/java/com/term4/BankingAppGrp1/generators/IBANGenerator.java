@@ -16,7 +16,6 @@ public class IBANGenerator implements IdentifierGenerator {
                 return account.getIban();
             }
         }
-
         return generateIban();
     }
 

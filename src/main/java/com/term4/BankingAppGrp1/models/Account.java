@@ -27,9 +27,9 @@ public class Account {
     @Enumerated(EnumType.ORDINAL)
     private AccountType accountType;
     @ManyToOne
-    private Customer customer;
+    private User customer;
 
-    public Account(AccountType accountType,Customer customer) {
+    public Account(AccountType accountType, User customer) {
         this.accountType = accountType;
         this.customer = customer;
     }
