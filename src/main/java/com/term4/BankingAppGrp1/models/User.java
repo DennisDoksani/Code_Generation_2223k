@@ -9,7 +9,6 @@ import jakarta.persistence.FetchType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -27,6 +26,7 @@ public class User{
     private int bsn;
     private String firstName;
     private String lastName;
+    private String name;
     private LocalDate dateOfBirth;
     private String phoneNumber;
     private String email;
@@ -45,7 +45,6 @@ public class User{
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.password = password;
-        this.isActive = isActive;
-        this.roles = List.of(Role.ROLE_CUSTOMER);
+        this.name = firstName + " " + lastName;
     }
 }

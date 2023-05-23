@@ -2,17 +2,44 @@ package com.term4.BankingAppGrp1.services;
 
 import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.repositories.AccountRepository;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class AccountService {
-    private final AccountRepository repository;
+    private final AccountRepository accountRepository;
 
-    public AccountService(AccountRepository repository) {
-        this.repository = repository;
+    public AccountService(AccountRepository accountRepository) {
+
+        this.accountRepository = accountRepository;
     }
 
-    public void saveAccount(Account newAccount){
-        repository.save(newAccount);
+    public void saveAccount(Account newAccount) {
+        accountRepository.save(newAccount);
+    }
+
+    public List<Account> getAllAccounts(Pageable pageable) {
+        Page<Account> accounts = accountRepository.findAll(pageable);
+        return accounts.getContent();
+    }
+
+    public Account getAccountByIBAN(String iban) {
+        return accountRepository.findById(iban).orElseThrow(() ->
+                new EntityNotFoundException("Account with IBAN: " + iban + " was not found"));
+    }
+    public List<Account> searchAccountByCustomerName(String customerName, Pageable pageable) {
+        Page<Account> accounts = accountRepository.findByCustomerNameContainingIgnoreCase(customerName, pageable);
+        return accounts.getContent();
+    }
+
+    public void  changeAccountStatus(String iban, boolean isActive) {
+        Account updatingAccount = accountRepository.findById(iban).orElseThrow(() ->
+                new EntityNotFoundException("The updating account with IBAN: " + iban + " was not found"));
+        updatingAccount.setActive(isActive);
+        accountRepository.save(updatingAccount);
     }
 }
