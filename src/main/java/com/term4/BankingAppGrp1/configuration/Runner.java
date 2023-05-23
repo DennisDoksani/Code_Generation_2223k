@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
+import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_INHOLLAND_BANK_IBAN;
+
 @Component
 public class Runner implements ApplicationRunner {
     private final AccountService accountService;
@@ -32,10 +34,10 @@ public class Runner implements ApplicationRunner {
                 "680000000000","josh@mf.com","josh",0,0);
 
         userService.saveUser(joshMf);
-        for (int i = 0; i < 800; i++) {
-            Account seedAccount = new Account(AccountType.CURRENT,joshMf);
-            accountService.saveAccount(seedAccount);
-        }
+//        for (int i = 0; i < 800; i++) {
+//            Account seedAccount = new Account(AccountType.CURRENT,joshMf);
+//            accountService.saveAccount(seedAccount);
+//        }
         Account seedAccount = new Account(AccountType.CURRENT,joshMf);
         accountService.saveAccount(seedAccount);
         seedBankAccount();
@@ -45,7 +47,7 @@ public class Runner implements ApplicationRunner {
                 "680000000000", "inholland@bank.nl","Inholland",
                 9999999999999999L,9999999999999999L);
         userService.saveUser(inhollandBank);
-        Account seedAccount = new Account("NL01INHO0000000001",9999999999999.0,LocalDate.now(),0,true,AccountType.CURRENT,inhollandBank);
+        Account seedAccount = new Account(DEFAULT_INHOLLAND_BANK_IBAN,9999999999999.0,LocalDate.now(),0,true,AccountType.CURRENT,inhollandBank);
         accountService.saveAccount(seedAccount);
     }
 }

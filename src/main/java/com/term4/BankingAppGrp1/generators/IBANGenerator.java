@@ -1,21 +1,23 @@
 package com.term4.BankingAppGrp1.generators;
 
+import com.term4.BankingAppGrp1.models.Account;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGenerator;
-
 import java.io.Serializable;
-import java.sql.Connection;
 import java.util.Random;
 
 public class IBANGenerator implements IdentifierGenerator {
 
     @Override
     public Serializable generate(SharedSessionContractImplementor sharedSessionContractImplementor, Object o) throws HibernateException {
+        if (o instanceof Account account) {
+            if (account.getIban() != null) {
+                return account.getIban();
+            }
+        }
 
-        String iban = generateIban();
-
-        return iban;
+        return generateIban();
     }
 
     private String generateIban() {
