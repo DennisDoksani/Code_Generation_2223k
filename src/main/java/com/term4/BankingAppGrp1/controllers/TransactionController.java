@@ -6,6 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_LIMIT_STRING;
+import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_OFFSET_STRING;
+
 @RestController
 @RequestMapping("/transactions")
 public class TransactionController {
@@ -20,12 +23,14 @@ public class TransactionController {
         return ResponseEntity.ok().body(transactionService.getAllTransactions());
     }
 
-    @GetMapping(value = {"/from/{iban}", "/from/{iban}/{amount}"})
-    public ResponseEntity<Object> getTransactionsFromAccount(@PathVariable String iban, @PathVariable(required = false) Double amount) {
+    @GetMapping("/from")
+    public ResponseEntity<Object> getTransactionsFromAccount(@RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
+                                                             @RequestParam String iban,
+                                                             @RequestParam(required = false) Double amount) {
         return ResponseEntity.ok().body(transactionService.getTransactionsFromAccount(iban, amount));
     }
-    @GetMapping("/to/{iban}")
-    public ResponseEntity<Object> getTransactionsToAccount(@PathVariable String iban) {
+    @GetMapping("/to")
+    public ResponseEntity<Object> getTransactionsToAccount(@RequestParam String iban) {
         return ResponseEntity.ok().body(transactionService.getTransactionsToAccount(iban));
     }
     @PostMapping
