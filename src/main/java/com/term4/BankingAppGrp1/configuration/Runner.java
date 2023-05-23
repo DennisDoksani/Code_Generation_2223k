@@ -1,8 +1,6 @@
 package com.term4.BankingAppGrp1.configuration;
 
-import com.term4.BankingAppGrp1.models.Account;
-import com.term4.BankingAppGrp1.models.AccountType;
-import com.term4.BankingAppGrp1.models.Customer;
+import com.term4.BankingAppGrp1.models.*;
 import com.term4.BankingAppGrp1.services.AccountService;
 import com.term4.BankingAppGrp1.services.UserService;
 import jakarta.transaction.Transactional;
@@ -11,6 +9,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Component
 public class Runner implements ApplicationRunner {
@@ -28,7 +27,7 @@ public class Runner implements ApplicationRunner {
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
 
-        Customer joshMf= new Customer(234445,"Joshua","Mf", LocalDate.now(),"680000000000","josh@mf.com","josh",true, 0.0,0.0);
+        User joshMf= new User(234445,"Joshua","Mf", LocalDate.now(),"680000000000","josh@mf.com","josh",true);
         userService.saveUser(joshMf);
         Account seedAccount = new Account(AccountType.CURRENT,joshMf);
         accountService.saveAccount(seedAccount);

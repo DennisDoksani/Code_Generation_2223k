@@ -16,23 +16,26 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "users")
 @Inheritance
-public abstract class User{
+public class User{
 
     @Id
     @GeneratedValue
-    protected long id;
-    protected int bsn;
-    protected String firstName;
-    protected String lastName;
-    protected LocalDate dateOfBirth;
-    protected String phoneNumber;
-    protected String email;
-    protected String password;
-    protected boolean isActive;
+    private long id;
+    private int bsn;
+    private String firstName;
+    private String lastName;
+    private LocalDate dateOfBirth;
+    private String phoneNumber;
+    private String email;
+    private String password;
+    private boolean isActive;
+    private double dayLimit;
+    private double transactionLimit;
     @ElementCollection(fetch = FetchType.EAGER)
-    protected List<Role> roles;
+    private List<Role> roles;
 
     public User(int bsn, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String email, String password, boolean isActive){
         this.bsn = bsn;
@@ -43,6 +46,6 @@ public abstract class User{
         this.email = email;
         this.password = password;
         this.isActive = isActive;
-        this.roles = List.of(Role.getRole(this));
+        this.roles = List.of(Role.ROLE_CUSTOMER);
     }
 }

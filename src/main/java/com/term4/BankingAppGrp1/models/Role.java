@@ -4,8 +4,8 @@ import org.springframework.security.core.GrantedAuthority;
 
 public enum Role implements GrantedAuthority{
     
-    EMPLOYEE,
-    CUSTOMER;
+    ROLE_EMPLOYEE,
+    ROLE_CUSTOMER;
 
     @Override
     public String getAuthority() {
@@ -13,12 +13,11 @@ public enum Role implements GrantedAuthority{
     }
 
     public static Role getRole(Object object) {
-        
         switch (object.getClass().getSimpleName()) {
             case "Employee":
-                return EMPLOYEE;
+                return ROLE_EMPLOYEE;
             case "Customer":
-                return CUSTOMER;
+                return ROLE_CUSTOMER;
             default:
                 throw new IllegalArgumentException("Invalid object type");
         }
