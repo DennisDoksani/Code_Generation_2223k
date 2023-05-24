@@ -4,6 +4,7 @@ import com.term4.BankingAppGrp1.models.Account;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGenerator;
+
 import java.io.Serializable;
 import java.util.Random;
 
@@ -25,7 +26,7 @@ public class IBANGenerator implements IdentifierGenerator {
         long accountNumber = random.nextLong();
 
         // Format account number to 9 digits
-        String formattedAccountNumber = String.valueOf(Math.abs(accountNumber)).substring(0,9);
+        String formattedAccountNumber = String.valueOf(Math.abs(accountNumber)).substring(0, 9);
 
         // Generate random digits for "xx" portion
         int randomDigits = random.nextInt(100);

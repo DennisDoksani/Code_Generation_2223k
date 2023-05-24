@@ -12,7 +12,7 @@ import java.util.Optional;
 import javax.naming.AuthenticationException;
 
 @Service
-public class UserService implements UserServiceInterface{
+public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -29,7 +29,6 @@ public class UserService implements UserServiceInterface{
         return userRepository.save(user);
     }
 
-    @Override
     public String deleteUser(long id) {
 
         if (userRepository.existsById(id)){
@@ -39,11 +38,9 @@ public class UserService implements UserServiceInterface{
             return "User not found in the database";
         }
     }
+    public Optional<User> getUser(long id) {
 
-    @Override
-    public Optional<User> getUser(User id) {
-
-        return userRepository.findById(id.getId());
+        return userRepository.findById(id);
     }
 
     public String login(String email, String password) throws Exception {
