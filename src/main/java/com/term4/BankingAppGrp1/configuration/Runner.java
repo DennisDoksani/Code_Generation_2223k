@@ -20,11 +20,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.sql.Time;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Component
 public class Runner implements ApplicationRunner {
@@ -55,9 +52,7 @@ public class Runner implements ApplicationRunner {
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
 
-        Customer joshMf= new Customer(234445,"Joshua","Mf", LocalDate.now(),
-                "680000000000","josh@mf.com","josh",0,0);
-
+        User joshMf= new User(234445,"Joshua","Mf", LocalDate.now(),"680000000000","josh@mf.com","josh",true, 0,0);
         userService.saveUser(joshMf);
         for (int i = 0; i < 800; i++) {
             Account seedAccount = new Account(AccountType.CURRENT,joshMf);
@@ -335,8 +330,8 @@ public class Runner implements ApplicationRunner {
     }
     
     private void seedBankAccount(){
-        Customer inhollandBank= new Customer(111111,"Inholland","Bank", LocalDate.now(),
-                "680000000000", "inholland@bank.nl","Inholland",
+        User inhollandBank= new User(111111,"Inholland","Bank", LocalDate.now(),
+                "680000000000", "inholland@bank.nl","Inholland", true,
                 9999999999999999L,9999999999999999L);
         userService.saveUser(inhollandBank);
         Account seedAccount = new Account("NL01INHO0000000001",9999999999999.0,LocalDate.now(),0,true,AccountType.CURRENT,inhollandBank);

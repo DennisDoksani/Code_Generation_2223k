@@ -12,10 +12,7 @@ public class IBANGenerator implements IdentifierGenerator {
 
     @Override
     public Serializable generate(SharedSessionContractImplementor sharedSessionContractImplementor, Object o) throws HibernateException {
-
-        String iban = generateIban();
-
-        return iban;
+        return generateIban();
     }
 
     private String generateIban() {
