@@ -5,7 +5,6 @@ import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGenerator;
 
 import java.io.Serializable;
-import java.sql.Connection;
 import java.util.Random;
 
 public class IBANGenerator implements IdentifierGenerator {

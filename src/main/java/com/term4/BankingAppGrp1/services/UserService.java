@@ -18,7 +18,6 @@ public class UserService implements UserServiceInterface{
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
     public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtTokenProvider jwtTokenProvider) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -30,12 +29,10 @@ public class UserService implements UserServiceInterface{
     }
 
     @Override
-    public String deleteUser(User id) {
-        //supposedly the exist and deleteById are methods provided by the Spring Data JPA framework right? Why this error then?
-        //Solved problem by adding id.getId(). Correct?
+    public String deleteUser(long id) {
 
-        if (userRepository.existsById(id.getId())){
-            userRepository.deleteById(id.getId());
+        if (userRepository.existsById(id)){
+            userRepository.deleteById(id);
             return "User deleted successfully";
         } else {
             return "User not found in the database";
@@ -43,8 +40,8 @@ public class UserService implements UserServiceInterface{
     }
 
     @Override
-    public Optional<User> getUser(User id) {
-        return userRepository.findById(id.getId());
+    public Optional<User> getUser(long id) {
+        return userRepository.findById(id);
     }
 
     public String login(String email, String password) throws Exception {
