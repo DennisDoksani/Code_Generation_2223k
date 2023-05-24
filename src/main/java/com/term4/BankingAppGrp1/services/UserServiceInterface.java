@@ -8,6 +8,6 @@ import java.util.Optional;
 //Not sure if I should mention the @Service here... and if I need to extend just like the other interfaces are.
 @Service
 public interface UserServiceInterface {
-    String deleteUser(User id);
-    Optional<User> getUser(User id);
+    String deleteUser(long id);
+    Optional<User> getUser(long id);
 }
