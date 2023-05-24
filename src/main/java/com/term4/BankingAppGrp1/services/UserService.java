@@ -17,6 +17,7 @@ public class UserService implements UserServiceInterface{
     }
 
     public User saveUser(User user){
+
         return userRepository.save(user);
     }
 
@@ -35,6 +36,7 @@ public class UserService implements UserServiceInterface{
 
     @Override
     public Optional<User> getUser(User id) {
+
         return userRepository.findById(id.getId());
     }
 
