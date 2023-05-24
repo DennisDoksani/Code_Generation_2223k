@@ -18,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity(name = "users")
 @Inheritance
+
 public class User{
 
     @Id
