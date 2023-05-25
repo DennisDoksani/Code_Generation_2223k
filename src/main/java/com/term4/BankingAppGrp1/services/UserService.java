@@ -14,13 +14,9 @@ import javax.naming.AuthenticationException;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
 
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtTokenProvider jwtTokenProvider) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     public User saveUser(User user){
@@ -37,23 +33,13 @@ public class UserService {
             return "User not found in the database";
         }
     }
-    public Optional<User> getUser(long id) {
+    public User getUser(long id)  throws AuthenticationException{ 
 
-        return userRepository.findById(id);
-    }
-
-    public String login(String email, String password) throws Exception {
-        // See if a user with the provided username exists or throw exception
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new AuthenticationException("User not found"));
-
-        // Check if the password hash matches
-        if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
-            // Return a JWT to the client
-            return jwtTokenProvider.createToken(user.getEmail(), user.getRoles());
-        } else {
-            throw new AuthenticationException("Invalid username/password");
-        }
+        return user;
     }
+
+    
 
 }
