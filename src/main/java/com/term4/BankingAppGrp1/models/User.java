@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.term4.BankingAppGrp1.requestDTOs.RegistrationDTO;
+
 
 @Data
 @NoArgsConstructor
@@ -50,5 +52,19 @@ public class User{
         this.isActive = isActive;
         this.dayLimit = dayLimit;
         this.transactionLimit = transactionLimit;
+    }
+
+    public User(int bsn, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String email, String password){
+        this.bsn = bsn;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.password = password;
+        this.name = firstName + " " + lastName;
+        this.isActive = true;
+        this.dayLimit = 0;
+        this.transactionLimit = 0;
     }
 }

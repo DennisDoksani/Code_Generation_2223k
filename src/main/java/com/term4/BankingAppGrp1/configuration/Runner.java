@@ -17,18 +17,13 @@ import jakarta.transaction.Transactional;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.sql.Time;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_INHOLLAND_BANK_IBAN;
 
@@ -44,8 +39,6 @@ public class Runner implements ApplicationRunner {
         this.userService = userService;
         this.transactionService = transactionService;
     }
-
-   
 
     @Override
     @Transactional
