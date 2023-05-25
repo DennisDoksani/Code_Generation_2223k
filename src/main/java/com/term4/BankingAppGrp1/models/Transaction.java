@@ -41,4 +41,11 @@ public class Transaction {
 
     @OneToOne
     private User userPerforming;
+
+    public void setAmount(double amount) {
+        if(amount <= 0)
+            throw new IllegalArgumentException("Amount can not be zero or under");
+
+        this.amount = amount;
+    }
 }
