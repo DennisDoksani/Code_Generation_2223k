@@ -19,7 +19,7 @@ public class UserController {
         this.userService = userService;
     }
     
-    @PostMapping
+    @PostMapping("/login")
     public Object login(@RequestBody LoginRequestDTO dto) throws Exception {
             return new TokenDTO(
                     userService.login(dto.email(), dto.password())
