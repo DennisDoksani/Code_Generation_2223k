@@ -1,5 +1,6 @@
 package com.term4.BankingAppGrp1.generators;
 
+import com.term4.BankingAppGrp1.models.Account;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGenerator;
@@ -11,6 +12,11 @@ public class IBANGenerator implements IdentifierGenerator {
 
     @Override
     public Serializable generate(SharedSessionContractImplementor sharedSessionContractImplementor, Object o) throws HibernateException {
+        if (o instanceof Account account) {
+            if (account.getIban() != null) {
+                return account.getIban();
+            }
+        }
         return generateIban();
     }
 
@@ -20,7 +26,7 @@ public class IBANGenerator implements IdentifierGenerator {
         long accountNumber = random.nextLong();
 
         // Format account number to 9 digits
-        String formattedAccountNumber = String.valueOf(Math.abs(accountNumber)).substring(0,9);
+        String formattedAccountNumber = String.valueOf(Math.abs(accountNumber)).substring(0, 9);
 
         // Generate random digits for "xx" portion
         int randomDigits = random.nextInt(100);
@@ -29,8 +35,6 @@ public class IBANGenerator implements IdentifierGenerator {
         String formattedRandomDigits = String.format("%02d", randomDigits);
 
         // Generate IBAN with NLxxINHO0 prefix and random values
-        String iban = "NL" + formattedRandomDigits + "INHO0" + formattedAccountNumber;
-
-        return iban;
+        return "NL" + formattedRandomDigits + "INHO0" + formattedAccountNumber;
     }
 }
