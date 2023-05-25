@@ -45,28 +45,16 @@ public class Runner implements ApplicationRunner {
         this.transactionService = transactionService;
     }
 
-    @DeleteMapping("/users/delete/{id}")
-    public String deleteUser(@PathVariable long id) {
-        return userService.deleteUser(id);
-    }
-
-    @GetMapping("/users/getone/{id}")
-    public ResponseEntity<User> getUser(@PathVariable long id) {
-        Optional<User> user = userService.getUser(id);
-        return user.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
 
         User joshMf = new User(234445, "Joshua", "Mf", LocalDate.now(), "680000000000", "josh@mf.com", "josh", true, 0, 0);
         userService.saveUser(joshMf);
-        for (int i = 0; i < 800; i++) {
-            Account seedAccount = new Account(AccountType.CURRENT, joshMf);
-            accountService.saveAccount(seedAccount);
-        }
+//        for (int i = 0; i < 800; i++) {
+//            Account seedAccount = new Account(AccountType.CURRENT, joshMf);
+//            accountService.saveAccount(seedAccount);
+//        }
         Account seedAccount = new Account(AccountType.CURRENT, joshMf);
         Account seedSavings = new Account(AccountType.SAVINGS, joshMf);
         accountService.saveAccount(seedAccount);
