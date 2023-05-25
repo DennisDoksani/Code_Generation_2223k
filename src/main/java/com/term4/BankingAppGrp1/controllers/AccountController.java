@@ -11,8 +11,12 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.naming.LimitExceededException;
 import java.util.List;
 import java.util.function.Function;
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_LIMIT_STRING;
@@ -74,9 +78,9 @@ public class AccountController {
 
     // Requires Employee Role
     @PostMapping
-    public ResponseEntity<Object> saveAccount(@Valid @RequestBody CreatingAccountDTO accountDTO) {
-       // accountService.saveAccount(accountDTO);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Object> saveAccount(@Valid @RequestBody CreatingAccountDTO accountDTO) throws LimitExceededException {
+       ;
+        return ResponseEntity.status(HttpStatus.CREATED).body(accountService.saveAccount(accountDTO));
     }
 
     private Pageable getPageableByLimitAndOffset(int limit, int offset) {

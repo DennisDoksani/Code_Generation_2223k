@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 public interface AccountRepository extends CrudRepository<Account,String> ,PagingAndSortingRepository<Account, String> {
   //TODO : Add active status and current Accounts only
    Page<Account> findByCustomerNameContainingIgnoreCase(String customerName, Pageable pageable);
-   Page<Account> findAccountByAccountTypeEquals( Pageable pageable,AccountType accountType);
+   Page<Account> findAccountByAccountTypeEqualsAndIbanNot( Pageable pageable,AccountType accountType,String iban);
+   Page<Account> findByAndIbanNot(Pageable pageable,String iban);
+    int countAccountByCustomer_IdEqualsAndAccountTypeEquals(long customerId, AccountType accountType);
 
 }
