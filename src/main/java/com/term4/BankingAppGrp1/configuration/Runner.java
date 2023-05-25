@@ -45,17 +45,7 @@ public class Runner implements ApplicationRunner {
         this.transactionService = transactionService;
     }
 
-    @DeleteMapping("/users/delete/{id}")
-    public String deleteUser(@PathVariable long id){
-        return userService.deleteUser(id);
-    }
-
-    @GetMapping("/users/{id}")
-    public ResponseEntity<User> getUser(@PathVariable long id) {
-        Optional<User> user = userService.getUser(id);
-        return user.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+   
 
     @Override
     @Transactional

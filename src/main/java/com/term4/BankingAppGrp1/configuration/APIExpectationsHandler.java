@@ -2,6 +2,9 @@ package com.term4.BankingAppGrp1.configuration;
 
 import com.term4.BankingAppGrp1.responseDTOs.ErrorMessageDTO;
 import jakarta.persistence.EntityNotFoundException;
+
+import javax.naming.AuthenticationException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,6 +16,11 @@ public class APIExpectationsHandler {
     @ExceptionHandler(value = {EntityNotFoundException.class})
     public ResponseEntity<Object> handleException(EntityNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorMessageDTO(e.getMessage()));
+    }
+
+    @ExceptionHandler(value = {AuthenticationException.class})
+    public ResponseEntity<Object> handleException(AuthenticationException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessageDTO(e.getMessage()));
     }
 
 }

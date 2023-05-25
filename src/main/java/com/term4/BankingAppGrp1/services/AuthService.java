@@ -9,6 +9,7 @@ import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
 import com.term4.BankingAppGrp1.util.JwtTokenProvider;
 
+
 @Service
 public class AuthService {
     
@@ -17,8 +18,10 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
 
     
-    public AuthService(UserRepository userRepository) {
+    public AuthService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtTokenProvider jwtTokenProvider) {
         this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     public String login(String email, String password) throws AuthenticationException {
@@ -30,7 +33,8 @@ public class AuthService {
         if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
             // Return a JWT to the client
             return jwtTokenProvider.createToken(user.getEmail(), user.getRoles());
-        } else {
+        } 
+        else {
             throw new AuthenticationException("Invalid username/password");
         }
     }

@@ -16,8 +16,6 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final UserService userService;
 
-
-
     public AccountService(AccountRepository accountRepository, UserService userService) {
         this.accountRepository = accountRepository;
         this.userService = userService;
@@ -52,6 +50,7 @@ public class AccountService {
         updatingAccount.setActive(isActive);
         accountRepository.save(updatingAccount);
     }
+    
     private Account parseCreatingAccountDTOToAccount(CreatingAccountDTO creatingAccountDTO){
         return new Account(); // TODO: i have to make it
     }
