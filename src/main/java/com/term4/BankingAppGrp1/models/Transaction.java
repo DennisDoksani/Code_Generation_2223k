@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Time;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -19,7 +20,7 @@ public class Transaction {
     @Id
     private long transactionID;
 
-    public Transaction(Double amount, String accountTo, String accountFrom, Date date, Time timestamp, User userPerforming) {
+    public Transaction(Double amount, String accountTo, String accountFrom, LocalDate date, Time timestamp, User userPerforming) {
         this.amount = amount;
         this.accountTo = accountTo;
         this.accountFrom = accountFrom;
@@ -34,7 +35,7 @@ public class Transaction {
 
     private String accountFrom;
 
-    private Date date;
+    private LocalDate date;
 
     private Time timestamp;
 
