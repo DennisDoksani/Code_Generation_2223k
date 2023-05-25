@@ -20,8 +20,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.sql.Time;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class Runner implements ApplicationRunner {
@@ -60,10 +63,11 @@ public class Runner implements ApplicationRunner {
         }
         Account seedAccount = new Account(AccountType.CURRENT,joshMf);
         Account seedSavings = new Account(AccountType.SAVINGS, joshMf);
-        accountService.SaveAccount(seedAccount);
-        accountService.SaveAccount(seedSavings);
+        accountService.saveAccount(seedAccount);
+        accountService.saveAccount(seedSavings);
+        seedBankAccount();
 
-        Transaction newTransaction = new Transaction(10.00, seedSavings.getIBAN(), seedAccount.getIBAN(), new Date(2023, 5, 22), new Time(21, 4, 0), joshMf);
+        Transaction newTransaction = new Transaction(10.00, seedSavings.getIban(), seedAccount.getIban(), new Date(2023, 5, 22), new Time(21, 4, 0), joshMf);
         transactionService.addTransaction(newTransaction);
     }
 
@@ -325,8 +329,6 @@ public class Runner implements ApplicationRunner {
                 return null;
             }
         };
-        accountService.saveAccount(seedAccount);
-        seedBankAccount();
     }
     
     private void seedBankAccount(){
