@@ -1,13 +1,17 @@
 package com.term4.BankingAppGrp1.services;
 
+import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
 import com.term4.BankingAppGrp1.util.JwtTokenProvider;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.naming.AuthenticationException;
+import java.awt.print.Pageable;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -34,6 +38,15 @@ public class UserService {
         } else {
             return "User not found in the database";
         }
+    }
+
+    public List<User> getAllUsers(Pageable pageable, Role usersRole) {
+        Page<User> users;
+        if (usersRole != null)
+            users = userRepository.findUserByRolesEqualsAndIdNot(pageable, usersRole, //DEFAULT_ID)
+        else
+            users = userRepository.findByIdNot(pageable, //DEFAULT_ID);
+        return users.getContent();
     }
 
     public User getUser(long id) {
