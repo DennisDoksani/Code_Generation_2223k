@@ -3,6 +3,7 @@ package com.term4.BankingAppGrp1.services;
 import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
+import com.term4.BankingAppGrp1.requestDTOs.UserUpdateDTO;
 import com.term4.BankingAppGrp1.util.JwtTokenProvider;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
@@ -47,6 +48,25 @@ public class UserService {
         else
             users = userRepository.findByIdNot(pageable, //DEFAULT_ID);
         return users.getContent();
+    }
+
+    public User updateUser(UserUpdateDTO userUpdateDTO){
+        User updatingUser = userRepository.findById(userUpdateDTO.bsn()).orElseThrow(() ->
+                new EntityNotFoundException("The updating user with BSN: " + userUpdateDTO.bsn() + " was not found"));
+
+        updatingUser.setFirstName(userUpdateDTO.firstName());
+        updatingUser.setLastName(userUpdateDTO.lastName());
+        updatingUser.setDateOfBirth(userUpdateDTO.dateOfBirth());
+        updatingUser.setPhoneNumber(userUpdateDTO.phoneNumber());
+        updatingUser.setEmail(userUpdateDTO.email());
+        updatingUser.setPassword(userUpdateDTO.password());
+        //setActive or setIsActive??
+        updatingUser.setActive(userUpdateDTO.isActive());
+        //setActive or setIsActive??
+        updatingUser.setDayLimit(userUpdateDTO.dayLimit());
+        updatingUser.setTransactionLimit(userUpdateDTO.transactionLimit());
+
+        return userRepository.save(updatingUser);
     }
 
     public User getUser(long id) {
