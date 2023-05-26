@@ -50,8 +50,8 @@ public class User{
         this.password = password;
         this.name = firstName + " " + lastName;
         this.isActive = isActive;
-        this.dayLimit = dayLimit;
-        this.transactionLimit = transactionLimit;
+        setDayLimit(dayLimit);
+        setTransactionLimit(transactionLimit);
     }
 
     public User(int bsn, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String email, String password){
@@ -66,5 +66,19 @@ public class User{
         this.isActive = true;
         this.dayLimit = 0;
         this.transactionLimit = 0;
+    }
+
+    public void setDayLimit(double dayLimit) {
+        if (dayLimit > 0)
+            this.dayLimit = dayLimit;
+        else 
+            this.dayLimit = 0;
+    }
+
+    public void setTransactionLimit(double transactionLimit) {
+        if (transactionLimit > 0)
+            this.transactionLimit = transactionLimit;
+        else 
+            this.transactionLimit = 0;
     }
 }
