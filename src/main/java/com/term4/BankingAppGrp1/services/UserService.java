@@ -34,17 +34,21 @@ public class UserService {
 
     public User registerUser(RegistrationDTO registrationDTO) {
 
-        if(registrationDTOIsValid(registrationDTO)){
-            User newUser = new User(registrationDTO.bsn(),
-                                registrationDTO.firstName(),
-                                registrationDTO.lastName(),
-                                LocalDate.parse(registrationDTO.dateOfBirth()),
-                                registrationDTO.phoneNumber(),
-                                registrationDTO.email(),
-                                bCryptPasswordEncoder.encode(registrationDTO.password()));
-                                
-        return userRepository.save(newUser);
+        if(!registrationDTOIsValid(registrationDTO)){
+            return null;
         }
+
+        User newUser = new User(registrationDTO.bsn(),
+                            registrationDTO.firstName(),
+                            registrationDTO.lastName(),
+                            LocalDate.parse(registrationDTO.dateOfBirth()),
+                            registrationDTO.phoneNumber(),
+                            registrationDTO.email(),
+                            bCryptPasswordEncoder.encode(registrationDTO.password()));
+                            
+    return userRepository.save(newUser);
+        
+        
     }
 
     public String deleteUser(long id) {
