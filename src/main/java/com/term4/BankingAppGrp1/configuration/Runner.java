@@ -57,7 +57,10 @@ public class Runner implements ApplicationRunner {
 //        }
         Account seedAccount = new Account(AccountType.CURRENT, joshMf);
         Account seedSavings = new Account(AccountType.SAVINGS, joshMf);
+        Account seedHardcodedIban= new Account("NL72INHO0579629781",
+                900,LocalDate.now(),900,true,AccountType.CURRENT,joshMf);
         accountService.saveAccount(seedAccount);
+        accountService.saveAccount(seedHardcodedIban);
         accountService.saveAccount(seedSavings);
 
         Transaction newTransaction = new Transaction(10.00, seedSavings.getIban(), seedAccount.getIban(),
