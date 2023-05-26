@@ -26,9 +26,9 @@ public class LargeRequestFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         int size = servletRequest.getContentLength();
-        // if (size > maxContentSize) {
-        //     throw new ServletException("Request too large");
-        // }
+        if (size > maxContentSize) {
+             throw new ServletException("Request too large");
+        }
         filterChain.doFilter(servletRequest, servletResponse);
     }
 }
