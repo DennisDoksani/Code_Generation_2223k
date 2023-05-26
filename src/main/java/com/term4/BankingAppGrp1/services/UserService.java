@@ -23,17 +23,16 @@ public class UserService {
 
     public User saveUser(User user){
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-
         return userRepository.save(user);
     }
 
     public User registerUser(RegistrationDTO registrationDTO) {
-        User newUser = new User(registrationDTO.bsn(), 
-                                registrationDTO.firstName(), 
+        User newUser = new User(registrationDTO.bsn(),
+                                registrationDTO.firstName(),
                                 registrationDTO.lastName(),
                                 LocalDate.parse(registrationDTO.dateOfBirth()),
-                                registrationDTO.phoneNumber(), 
-                                registrationDTO.email(), 
+                                registrationDTO.phoneNumber(),
+                                registrationDTO.email(),
                                 bCryptPasswordEncoder.encode(registrationDTO.password()));
                                 
         return userRepository.save(newUser);
@@ -54,19 +53,4 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("User with id: " + id + " was not found"));
     }
-
-    public String login(String email, String password) throws Exception {
-        // See if a user with the provided username exists or throw exception
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new AuthenticationException("User not found"));
-
-        // Check if the password hash matches
-        if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
-            // Return a JWT to the client
-            return jwtTokenProvider.createToken(user.getEmail(), user.getRoles());
-        } else {
-            throw new AuthenticationException("Invalid username/password");
-        }
-    }
-
 }
