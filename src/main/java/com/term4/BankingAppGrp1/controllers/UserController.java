@@ -31,14 +31,11 @@ public class UserController {
         return ResponseEntity.ok(userService.getUser(id));
     }
 
-    @PutMapping("/update")
+    @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@RequestBody UserUpdateDTO userUpdateDTO) {
-        try {
-            User updatedUser = userService.updateUser(userUpdateDTO);
-            return ResponseEntity.ok(updatedUser);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        User updatedUser = userService.updateUser(userUpdateDTO);
+        return ResponseEntity.ok(updatedUser);
+    }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> saveUser(@RequestBody RegistrationDTO user){

@@ -4,19 +4,15 @@ import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
 import com.term4.BankingAppGrp1.requestDTOs.UserUpdateDTO;
-import com.term4.BankingAppGrp1.util.JwtTokenProvider;
 import com.term4.BankingAppGrp1.requestDTOs.RegistrationDTO;
 
 import jakarta.persistence.EntityNotFoundException;
 
-import javax.naming.AuthenticationException;
 import java.awt.print.Pageable;
 import java.util.List;
 import java.time.LocalDate;
 
 import org.springframework.data.domain.Page;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -67,6 +63,7 @@ public class UserService {
       //  else
          //   users = userRepository.findByIdNot(pageable, //DEFAULT_ID);
       //  return users.getContent();
+        return null;
     }
     //dont use at all the Role userRole
 
