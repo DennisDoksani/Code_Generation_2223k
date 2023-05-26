@@ -2,6 +2,7 @@ package com.term4.BankingAppGrp1.services;
 
 import com.term4.BankingAppGrp1.models.Transaction;
 import com.term4.BankingAppGrp1.repositories.TransactionRepository;
+import com.term4.BankingAppGrp1.responseDTOs.TransactionDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 
@@ -27,5 +28,16 @@ public class TransactionService {
 //    public List<Transaction> getTransactionsToAccount(String iban) {
 //        return transactionRepository.getTransactionByAccountTo(iban).getContent();
 //    }
-    public Transaction addTransaction(Transaction transaction) { return transactionRepository.save(transaction); }
+    public Transaction addTransaction(TransactionDTO transactionDTO) { return transactionRepository.save(mapDtoToTransaction(transactionDTO)); }
+
+    private Transaction mapDtoToTransaction(TransactionDTO dto) {
+        Transaction transaction = new Transaction();
+        transaction.setAccountFrom(dto.accountFrom());
+        transaction.setAccountTo(dto.accountTo());
+        transaction.setAmount(dto.amount());
+        transaction.setDate(dto.date());
+        transaction.setTimestamp(dto.timestamp());
+        transaction.setUserPerforming(dto.userPerforming());
+        return transaction;
+    }
 }

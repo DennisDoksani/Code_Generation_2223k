@@ -1,6 +1,7 @@
 package com.term4.BankingAppGrp1.configuration;
 
 import com.term4.BankingAppGrp1.models.*;
+import com.term4.BankingAppGrp1.responseDTOs.TransactionDTO;
 import com.term4.BankingAppGrp1.services.*;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -54,9 +56,13 @@ public class Runner implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
-
         User joshMf= new User(234445,"Joshua","Mf", LocalDate.now(),"680000000000","josh@mf.com","josh",true, 0,0);
-        userService.saveUser(joshMf);
+        User ruubio= new User(123456, "Ruubyo", "Gaming", LocalDate.of(2003, 10, 1), "0611111121", "Ruubyo@isgaming.com", "secretword", true, 500, 300);
+        List.of(joshMf, ruubio)
+                        .forEach(
+                                User -> userService.saveUser(User)
+                        );
+
         for (int i = 0; i < 800; i++) {
             Account seedAccount = new Account(AccountType.CURRENT,joshMf);
             accountService.saveAccount(seedAccount);
@@ -66,7 +72,9 @@ public class Runner implements ApplicationRunner {
         accountService.saveAccount(seedAccount);
         accountService.saveAccount(seedSavings);
 
-        Transaction newTransaction = new Transaction(10.00, seedSavings.getIban(), seedAccount.getIban(), LocalDate.now(), new Time(21, 4, 0), joshMf);
+        makeDummyBankaccounts(ruubio);
+
+        TransactionDTO newTransaction = new TransactionDTO(10.00, seedSavings.getIban(), seedAccount.getIban(), LocalDate.now(), LocalTime.now(), ruubio);
         transactionService.addTransaction(newTransaction);
     }
 
@@ -77,5 +85,13 @@ public class Runner implements ApplicationRunner {
         userService.saveUser(inhollandBank);
         Account seedAccount = new Account("NL01INHO0000000001",9999999999999.0,LocalDate.now(),0,true,AccountType.CURRENT,inhollandBank);
         accountService.saveAccount(seedAccount);
+    }
+    private void makeDummyBankaccounts(User user) {
+        Account savings = new Account(AccountType.SAVINGS, user);
+        Account current = new Account(AccountType.CURRENT, user);
+        current.setIban("NL01INHO0000000001");
+        savings.setIban("NL01INHO0000000002");
+        accountService.saveAccount(savings);
+        accountService.saveAccount(current);
     }
 }

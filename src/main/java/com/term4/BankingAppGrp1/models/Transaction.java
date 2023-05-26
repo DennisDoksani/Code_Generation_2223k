@@ -7,9 +7,8 @@ import jakarta.persistence.OneToOne;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Time;
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalTime;
 
 @Entity
 @Data
@@ -20,7 +19,7 @@ public class Transaction {
     @Id
     private long transactionID;
 
-    public Transaction(Double amount, String accountTo, String accountFrom, LocalDate date, Time timestamp, User userPerforming) {
+    public Transaction(Double amount, String accountTo, String accountFrom, LocalDate date, LocalTime timestamp, User userPerforming) {
         this.amount = amount;
         this.accountTo = accountTo;
         this.accountFrom = accountFrom;
@@ -37,7 +36,7 @@ public class Transaction {
 
     private LocalDate date;
 
-    private Time timestamp;
+    private LocalTime timestamp;
 
     @OneToOne
     private User userPerforming;
