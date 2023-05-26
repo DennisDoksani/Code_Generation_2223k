@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 
@@ -25,9 +26,6 @@ public class TransactionService {
     public List<Transaction> getTransactionsWithFilters(Pageable pageable, String ibanFrom, String ibanTo, Double amountMin, Double amountMax, LocalDate dateBefore, LocalDate dateAfter) {
         return transactionRepository.getTransactionsWithFilters(pageable, ibanFrom, ibanTo, amountMin, amountMax, dateBefore, dateAfter).getContent();
     }
-//    public List<Transaction> getTransactionsToAccount(String iban) {
-//        return transactionRepository.getTransactionByAccountTo(iban).getContent();
-//    }
     public Transaction addTransaction(TransactionDTO transactionDTO) { return transactionRepository.save(mapDtoToTransaction(transactionDTO)); }
 
     private Transaction mapDtoToTransaction(TransactionDTO dto) {
@@ -35,8 +33,8 @@ public class TransactionService {
         transaction.setAccountFrom(dto.accountFrom());
         transaction.setAccountTo(dto.accountTo());
         transaction.setAmount(dto.amount());
-        transaction.setDate(dto.date());
-        transaction.setTimestamp(dto.timestamp());
+        transaction.setDate(LocalDate.now());
+        transaction.setTimestamp(LocalTime.now());
         transaction.setUserPerforming(dto.userPerforming());
         return transaction;
     }

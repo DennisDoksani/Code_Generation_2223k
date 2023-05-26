@@ -74,7 +74,7 @@ public class Runner implements ApplicationRunner {
 
         makeDummyBankaccounts(ruubio);
 
-        TransactionDTO newTransaction = new TransactionDTO(10.00, seedSavings.getIban(), seedAccount.getIban(), LocalDate.now(), LocalTime.now(), ruubio);
+        TransactionDTO newTransaction = new TransactionDTO(10.00, "NL01INHO0000000003", "NL01INHO0000000002", ruubio.getId());
         transactionService.addTransaction(newTransaction);
     }
 
@@ -89,8 +89,8 @@ public class Runner implements ApplicationRunner {
     private void makeDummyBankaccounts(User user) {
         Account savings = new Account(AccountType.SAVINGS, user);
         Account current = new Account(AccountType.CURRENT, user);
-        current.setIban("NL01INHO0000000001");
-        savings.setIban("NL01INHO0000000002");
+        current.setIban("NL01INHO0000000002");
+        savings.setIban("NL01INHO0000000003");
         accountService.saveAccount(savings);
         accountService.saveAccount(current);
     }

@@ -19,14 +19,14 @@ public class Transaction {
     @Id
     private long transactionID;
 
-    public Transaction(Double amount, String accountTo, String accountFrom, LocalDate date, LocalTime timestamp, User userPerforming) {
-        this.amount = amount;
-        this.accountTo = accountTo;
-        this.accountFrom = accountFrom;
-        this.date = date;
-        this.timestamp = timestamp;
-        this.userPerforming = userPerforming;
-    }
+//    public Transaction(Double amount, String accountTo, String accountFrom, long userPerforming) {
+//        this.amount = amount;
+//        this.accountTo = accountTo;
+//        this.accountFrom = accountFrom;
+//        this.date = LocalDate.now();
+//        this.timestamp = LocalTime.now();
+//        this.userPerforming = userPerforming;
+//    }
 
     private Double amount;
 
@@ -38,8 +38,7 @@ public class Transaction {
 
     private LocalTime timestamp;
 
-    @OneToOne
-    private User userPerforming;
+    private long userPerforming;
 
     public void setAmount(double amount) {
         if(amount <= 0)
