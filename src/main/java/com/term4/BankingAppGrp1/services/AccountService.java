@@ -5,7 +5,9 @@ import com.term4.BankingAppGrp1.models.AccountType;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.AccountRepository;
 import com.term4.BankingAppGrp1.requestDTOs.CreatingAccountDTO;
+import com.term4.BankingAppGrp1.requestDTOs.UpdatingDTO;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,20 +31,40 @@ public class AccountService {
 
     // TODO: Delete the method later
     public void saveAccount(Account newAccount) {
-
         accountRepository.save(newAccount);
+    }
+    @Transactional // to make sure that the transaction is atomic
+    public Account updateAccount(String iban, UpdatingDTO account) {
+        Account accountToUpdate = accountRepository.findById(iban).orElseThrow(
+                () -> new EntityNotFoundException("The account with IBAN: " + iban + " Which you are " +
+                        "trying to update does not exist"));
+        accountToUpdate.setAccountType(AccountType.valueOf(account.accountType().toUpperCase())); // updating the account Type
+        accountToUpdate.setActive(account.isActive()); // updating the account status
+        accountToUpdate.setAbsoluteLimit(account.absoluteLimit()); // updating the absolute limit
+        User accountHolder = accountToUpdate.getCustomer(); // updating account holder
+        accountHolder.setFirstName(account.accountHolder().firstName());
+        accountHolder.setLastName(account.accountHolder().lastName());
+        accountHolder.setDayLimit(account.accountHolder().dayLimit());
+        accountHolder.setTransactionLimit(account.accountHolder().transactionLimit());
+        userService.saveUser(accountHolder); // saving the updated account holder
+        return accountRepository.save(accountToUpdate); // saving the updated account
     }
 
     public Account saveAccount(CreatingAccountDTO creatingAccountDTO) throws LimitExceededException {
         if ((AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase()).equals(AccountType.CURRENT)))
-            checkIfUserHasReachedAccountLimit(AccountType.CURRENT, creatingAccountDTO.accountHolderId(), DEFAULT_CURRENT_ACCOUNT_LIMIT);
+            checkIfUserHasReachedAccountLimit(AccountType.CURRENT, creatingAccountDTO.accountHolderId(),
+                    DEFAULT_CURRENT_ACCOUNT_LIMIT);
         else
-            checkIfUserHasReachedAccountLimit(AccountType.SAVINGS, creatingAccountDTO.accountHolderId(), DEFAULT_SAVINGS_ACCOUNT_LIMIT);
-       return accountRepository.save(parseCreatingAccountDTOToAccount(creatingAccountDTO));
+            checkIfUserHasReachedAccountLimit(AccountType.SAVINGS, creatingAccountDTO.accountHolderId(),
+                    DEFAULT_SAVINGS_ACCOUNT_LIMIT);
+        Account account = parseCreatingAccountDTOToAccount(creatingAccountDTO);
+        userService.saveUser(account.getCustomer()); // will get update with the new Limits for the user
+        return accountRepository.save(account);
     }
 
 
-    private void checkIfUserHasReachedAccountLimit(AccountType accountType, long userId, int limit) throws LimitExceededException {
+    private void checkIfUserHasReachedAccountLimit(AccountType accountType, long userId, int limit)
+            throws LimitExceededException {
         int accountCount = accountRepository.countAccountByCustomer_IdEqualsAndAccountTypeEquals(userId, accountType);
         LongFunction<Boolean> limitFunction = count -> count >= limit; // function
         if (Boolean.TRUE.equals(limitFunction.apply(accountCount))) {
@@ -55,7 +77,8 @@ public class AccountService {
         Page<Account> accounts;
         if (accountType != null)
             // getting all accounts except the own  bank account when account type is specified
-            accounts = accountRepository.findAccountByAccountTypeEqualsAndIbanNot(pageable, accountType, DEFAULT_INHOLLAND_BANK_IBAN);
+            accounts = accountRepository.findAccountByAccountTypeEqualsAndIbanNot(pageable, accountType,
+                    DEFAULT_INHOLLAND_BANK_IBAN);
         else
             // getting all accounts except the own  bank account when account type is not specified
             accounts = accountRepository.findByAndIbanNot(pageable, DEFAULT_INHOLLAND_BANK_IBAN);
@@ -72,7 +95,7 @@ public class AccountService {
         return accounts.getContent();
     }
 
-    public void changeAccountStatus(String iban, boolean isActive) {
+    public void changeAccountStatus(String iban, Boolean isActive) {
         Account updatingAccount = accountRepository.findById(iban).orElseThrow(() ->
                 new EntityNotFoundException("The updating account with IBAN: " + iban + " was not found"));
         updatingAccount.setActive(isActive);
@@ -85,5 +108,8 @@ public class AccountService {
         accountHolder.setTransactionLimit(creatingAccountDTO.transactionLimit());
         // converting the account type to uppercase to match the enum values
         return new Account(AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase()), accountHolder);
+    }
+    public  List<Account> getAccountsByEmailAddress(String email){
+        return accountRepository.findByCustomer_EmailEquals(email);
     }
 }
