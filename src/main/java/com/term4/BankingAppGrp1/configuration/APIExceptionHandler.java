@@ -37,12 +37,12 @@ public class APIExceptionHandler {
     public ResponseEntity<Object> handleException(IllegalArgumentException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO(e.getMessage()));
     }
-    // All the Exceptions that are related to Jakatra Binding Exception
+    // All the Exceptions that are related to Jakarta Binding Exception
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<Object> handleValidationException(
             MethodArgumentNotValidException e) {
         String errorMessage = null;
-        // gets the Message From Binding Exception which will be thrown by the Jakatra Validation
+        // gets the Message From Binding Exception which will be thrown by the Jakarta Validation
         if (!e.getBindingResult().getFieldErrors().isEmpty()) {
             FieldError fieldError = e.getBindingResult().getFieldErrors().get(0);
             errorMessage = fieldError.getDefaultMessage();

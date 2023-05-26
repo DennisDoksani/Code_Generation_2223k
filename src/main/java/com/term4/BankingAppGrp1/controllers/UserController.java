@@ -3,6 +3,8 @@ package com.term4.BankingAppGrp1.controllers;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.requestDTOs.UserUpdateDTO;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
@@ -38,7 +40,7 @@ public class UserController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> saveUser(@RequestBody RegistrationDTO user){
+    public ResponseEntity<User> saveUser(@Valid @RequestBody RegistrationDTO user){
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUser(user));
     }
 }

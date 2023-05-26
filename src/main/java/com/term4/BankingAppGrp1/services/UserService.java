@@ -33,7 +33,9 @@ public class UserService {
     }
 
     public User registerUser(RegistrationDTO registrationDTO) {
-        User newUser = new User(registrationDTO.bsn(),
+
+        if(registrationDTOIsValid(registrationDTO)){
+            User newUser = new User(registrationDTO.bsn(),
                                 registrationDTO.firstName(),
                                 registrationDTO.lastName(),
                                 LocalDate.parse(registrationDTO.dateOfBirth()),
@@ -42,6 +44,7 @@ public class UserService {
                                 bCryptPasswordEncoder.encode(registrationDTO.password()));
                                 
         return userRepository.save(newUser);
+        }
     }
 
     public String deleteUser(long id) {
@@ -77,10 +80,8 @@ public class UserService {
         updatingUser.setDateOfBirth(userUpdateDTO.dateOfBirth());
         updatingUser.setPhoneNumber(userUpdateDTO.phoneNumber());
         updatingUser.setEmail(userUpdateDTO.email());
-        updatingUser.setPassword(userUpdateDTO.password());
-        //setActive or setIsActive??
+        updatingUser.setPassword(bCryptPasswordEncoder.encode(userUpdateDTO.password()));
         updatingUser.setActive(userUpdateDTO.isActive());
-        //setActive or setIsActive??
         updatingUser.setDayLimit(userUpdateDTO.dayLimit());
         updatingUser.setTransactionLimit(userUpdateDTO.transactionLimit());
 
@@ -90,5 +91,9 @@ public class UserService {
     public User getUser(long id) {
         return userRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("User with id: " + id + " was not found"));
+    }
+
+    private boolean registrationDTOIsValid(RegistrationDTO registrationDTO){
+        return true;
     }
 }
