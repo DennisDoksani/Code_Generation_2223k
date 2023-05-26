@@ -47,13 +47,16 @@ public class Runner implements ApplicationRunner {
 
         User joshMf = new User(234445, "Joshua", "Mf", LocalDate.now(), "680000000000", "josh@mf.com", "josh", true, 0, 0);
         userService.saveUser(joshMf);
-        for (int i = 0; i < 800; i++) {
-            Account seedAccount = new Account(AccountType.CURRENT, joshMf);
-            accountService.saveAccount(seedAccount);
-        }
+//        for (int i = 0; i < 800; i++) {
+//            Account seedAccount = new Account(AccountType.CURRENT, joshMf);
+//            accountService.saveAccount(seedAccount);
+//        }
         Account seedAccount = new Account(AccountType.CURRENT, joshMf);
         Account seedSavings = new Account(AccountType.SAVINGS, joshMf);
+        Account seedHardcodedIban= new Account("NL72INHO0579629781",
+                900,LocalDate.now(),900,true,AccountType.CURRENT,joshMf);
         accountService.saveAccount(seedAccount);
+        accountService.saveAccount(seedHardcodedIban);
         accountService.saveAccount(seedSavings);
 
         Transaction newTransaction = new Transaction(10.00, seedSavings.getIban(), seedAccount.getIban(),

@@ -1,7 +1,9 @@
 package com.term4.BankingAppGrp1.requestDTOs;
 
-import com.term4.BankingAppGrp1.models.AccountType;
+import jakarta.validation.constraints.NotNull;
 
-public record CreatingAccountDTO(double balance, double transactionLimit, AccountType accountType,
-                                 Long accountHolderId) {
+public record CreatingAccountDTO(double dayLimit, double transactionLimit, @NotNull(message = "accountType cannot be left empty") String accountType,
+                                 @NotNull(message = "accountHolderId cannot be left empty")Long accountHolderId) {
+
+
 }

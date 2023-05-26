@@ -10,7 +10,6 @@ import java.time.LocalDate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
 @Service
 public class UserService {
 
@@ -24,6 +23,7 @@ public class UserService {
 
     public User saveUser(User user){
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+
         return userRepository.save(user);
     }
 
@@ -41,7 +41,7 @@ public class UserService {
 
     public String deleteUser(long id) {
 
-        if (userRepository.existsById(id)){
+        if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
             return "User deleted successfully";
         } 
@@ -49,9 +49,24 @@ public class UserService {
             return "User not found in the database";
         }
     }
-    public User getUser(long id)  throws EntityNotFoundException{ 
-        return userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User with id: " + id + " not found."));
+
+    public User getUser(long id) {
+        return userRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("User with id: " + id + " was not found"));
+    }
+
+    public String login(String email, String password) throws Exception {
+        // See if a user with the provided username exists or throw exception
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AuthenticationException("User not found"));
+
+        // Check if the password hash matches
+        if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
+            // Return a JWT to the client
+            return jwtTokenProvider.createToken(user.getEmail(), user.getRoles());
+        } else {
+            throw new AuthenticationException("Invalid username/password");
+        }
     }
 
 }
