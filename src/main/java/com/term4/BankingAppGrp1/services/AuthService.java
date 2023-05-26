@@ -9,7 +9,6 @@ import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
 import com.term4.BankingAppGrp1.util.JwtTokenProvider;
 
-
 @Service
 public class AuthService {
     

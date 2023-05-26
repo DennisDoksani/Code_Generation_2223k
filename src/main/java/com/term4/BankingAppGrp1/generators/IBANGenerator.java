@@ -12,12 +12,12 @@ public class IBANGenerator implements IdentifierGenerator {
 
     @Override
     public Serializable generate(SharedSessionContractImplementor sharedSessionContractImplementor, Object o) throws HibernateException {
-        if (o instanceof Account account) {
-            if (account.getIban() != null) {
-                return account.getIban();
-            }
+        if (o instanceof Account account && account.getIban() != null) {
+            return account.getIban();
         }
-        return generateIban();
+        else{
+            return generateIban();
+        }
     }
 
     private String generateIban() {
