@@ -2,6 +2,7 @@ package com.term4.BankingAppGrp1.configuration;
 
 import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
+import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.Transaction;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.services.AccountService;
@@ -17,18 +18,14 @@ import jakarta.transaction.Transactional;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.sql.Time;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_INHOLLAND_BANK_IBAN;
 
@@ -49,7 +46,7 @@ public class Runner implements ApplicationRunner {
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
 
-        User joshMf = new User(234445, "Joshua", "Mf", LocalDate.now(), "680000000000", "josh@mf.com", "josh", true, 0, 0);
+        User joshMf = new User(234445, "Joshua", "Mf", LocalDate.now(), "680000000000", "josh@mf.com", "josh", true, 0, 0, List.of(Role.ROLE_CUSTOMER));
         userService.saveUser(joshMf);
 //        for (int i = 0; i < 800; i++) {
 //            Account seedAccount = new Account(AccountType.CURRENT, joshMf);
@@ -57,7 +54,10 @@ public class Runner implements ApplicationRunner {
 //        }
         Account seedAccount = new Account(AccountType.CURRENT, joshMf);
         Account seedSavings = new Account(AccountType.SAVINGS, joshMf);
+        Account seedHardcodedIban= new Account("NL72INHO0579629781",
+                900,LocalDate.now(),900,true,AccountType.CURRENT,joshMf);
         accountService.saveAccount(seedAccount);
+        accountService.saveAccount(seedHardcodedIban);
         accountService.saveAccount(seedSavings);
 
         Transaction newTransaction = new Transaction(10.00, seedSavings.getIban(), seedAccount.getIban(),
@@ -324,13 +324,12 @@ public class Runner implements ApplicationRunner {
                 return null;
             }
         };
-
     }
 
     private void seedBankAccount() {
         User inhollandBank = new User(111111, "Inholland", "Bank", LocalDate.now(),
                 "680000000000", "inholland@bank.nl", "Inholland", true,
-                9999999999999999L, 9999999999999999L);
+                9999999999999999L, 9999999999999999L, List.of(Role.ROLE_EMPLOYEE));
         userService.saveUser(inhollandBank);
         Account seedAccount = new Account(DEFAULT_INHOLLAND_BANK_IBAN, 9999999999999.0, LocalDate.now(), 0, true, AccountType.CURRENT, inhollandBank);
         accountService.saveAccount(seedAccount);
