@@ -1,12 +1,22 @@
 package com.term4.BankingAppGrp1.services;
 
+import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
+import com.term4.BankingAppGrp1.requestDTOs.UserUpdateDTO;
+import com.term4.BankingAppGrp1.util.JwtTokenProvider;
 import com.term4.BankingAppGrp1.requestDTOs.RegistrationDTO;
 
 import jakarta.persistence.EntityNotFoundException;
+
+import javax.naming.AuthenticationException;
+import java.awt.print.Pageable;
+import java.util.List;
 import java.time.LocalDate;
 
+import org.springframework.data.domain.Page;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +57,37 @@ public class UserService {
         else {
             return "User not found in the database";
         }
+    }
+
+    //dont use at all the Role userRole
+    public List<User> getAllUsers(Pageable pageable, Role usersRole) {
+        Page<User> users;
+       // if (usersRole != null)
+         //   users = userRepository.findUserByRolesEqualsAndIdNot(pageable, usersRole, //DEFAULT_ID)
+      //  else
+         //   users = userRepository.findByIdNot(pageable, //DEFAULT_ID);
+      //  return users.getContent();
+    }
+    //dont use at all the Role userRole
+
+
+    public User updateUser(UserUpdateDTO userUpdateDTO){
+        User updatingUser = userRepository.findById(userUpdateDTO.bsn()).orElseThrow(() ->
+                new EntityNotFoundException("The updating user with BSN: " + userUpdateDTO.bsn() + " was not found"));
+
+        updatingUser.setFirstName(userUpdateDTO.firstName());
+        updatingUser.setLastName(userUpdateDTO.lastName());
+        updatingUser.setDateOfBirth(userUpdateDTO.dateOfBirth());
+        updatingUser.setPhoneNumber(userUpdateDTO.phoneNumber());
+        updatingUser.setEmail(userUpdateDTO.email());
+        updatingUser.setPassword(userUpdateDTO.password());
+        //setActive or setIsActive??
+        updatingUser.setActive(userUpdateDTO.isActive());
+        //setActive or setIsActive??
+        updatingUser.setDayLimit(userUpdateDTO.dayLimit());
+        updatingUser.setTransactionLimit(userUpdateDTO.transactionLimit());
+
+        return userRepository.save(updatingUser);
     }
 
     public User getUser(long id) {

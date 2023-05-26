@@ -1,6 +1,8 @@
 package com.term4.BankingAppGrp1.controllers;
 
 import com.term4.BankingAppGrp1.models.User;
+import com.term4.BankingAppGrp1.requestDTOs.UserUpdateDTO;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,15 @@ public class UserController {
     public ResponseEntity<User> getUser(@PathVariable long id) {
         return ResponseEntity.ok(userService.getUser(id));
     }
+
+    @PutMapping("/update")
+    public ResponseEntity<User> updateUser(@RequestBody UserUpdateDTO userUpdateDTO) {
+        try {
+            User updatedUser = userService.updateUser(userUpdateDTO);
+            return ResponseEntity.ok(updatedUser);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> saveUser(@RequestBody RegistrationDTO user){
