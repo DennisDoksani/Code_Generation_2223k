@@ -1,5 +1,7 @@
 package com.term4.BankingAppGrp1.services;
 
+import javax.naming.AuthenticationException;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,10 +20,8 @@ public class BankingUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        com.term4.BankingAppGrp1.models.User userEntity = userRepository.findByEmail(email);
-        if (userEntity == null) {
-            throw new UsernameNotFoundException(email);
-        }
+        com.term4.BankingAppGrp1.models.User userEntity = userRepository.findByEmail(email)
+                                                                        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         return new org.springframework.security.core.userdetails.User(userEntity.getEmail(), userEntity.getPassword(), userEntity.getRoles());
     }

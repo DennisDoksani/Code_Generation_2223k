@@ -1,41 +1,97 @@
 package com.term4.BankingAppGrp1.services;
 
+import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.term4.BankingAppGrp1.requestDTOs.UserUpdateDTO;
+import com.term4.BankingAppGrp1.util.JwtTokenProvider;
+import com.term4.BankingAppGrp1.requestDTOs.RegistrationDTO;
+
+import jakarta.persistence.EntityNotFoundException;
+
+import javax.naming.AuthenticationException;
+import java.awt.print.Pageable;
+import java.util.List;
+import java.time.LocalDate;
+
+import org.springframework.data.domain.Page;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 @Service
-public class UserService implements UserServiceInterface{
+public class UserService {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     public User saveUser(User user){
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    @Override
-    public String deleteUser(User id) {
-        //supposedly the exist and deleteById are methods provided by the Spring Data JPA framework right? Why this error then?
-        //Solved problem by adding id.getId(). Correct?
+    public User registerUser(RegistrationDTO registrationDTO) {
+        User newUser = new User(registrationDTO.bsn(),
+                                registrationDTO.firstName(),
+                                registrationDTO.lastName(),
+                                LocalDate.parse(registrationDTO.dateOfBirth()),
+                                registrationDTO.phoneNumber(),
+                                registrationDTO.email(),
+                                bCryptPasswordEncoder.encode(registrationDTO.password()));
+                                
+        return userRepository.save(newUser);
+    }
 
-        if (userRepository.existsById(id.getId())){
-            userRepository.deleteById(id.getId());
+    public String deleteUser(long id) {
+
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
             return "User deleted successfully";
-        } else {
+        } 
+        else {
             return "User not found in the database";
         }
     }
 
-    @Override
-    public Optional<User> getUser(User id) {
-        return userRepository.findById(id.getId());
+    //dont use at all the Role userRole
+    public List<User> getAllUsers(Pageable pageable, Role usersRole) {
+        Page<User> users;
+       // if (usersRole != null)
+         //   users = userRepository.findUserByRolesEqualsAndIdNot(pageable, usersRole, //DEFAULT_ID)
+      //  else
+         //   users = userRepository.findByIdNot(pageable, //DEFAULT_ID);
+      //  return users.getContent();
+    }
+    //dont use at all the Role userRole
+
+
+    public User updateUser(UserUpdateDTO userUpdateDTO){
+        User updatingUser = userRepository.findById(userUpdateDTO.bsn()).orElseThrow(() ->
+                new EntityNotFoundException("The updating user with BSN: " + userUpdateDTO.bsn() + " was not found"));
+
+        updatingUser.setFirstName(userUpdateDTO.firstName());
+        updatingUser.setLastName(userUpdateDTO.lastName());
+        updatingUser.setDateOfBirth(userUpdateDTO.dateOfBirth());
+        updatingUser.setPhoneNumber(userUpdateDTO.phoneNumber());
+        updatingUser.setEmail(userUpdateDTO.email());
+        updatingUser.setPassword(userUpdateDTO.password());
+        //setActive or setIsActive??
+        updatingUser.setActive(userUpdateDTO.isActive());
+        //setActive or setIsActive??
+        updatingUser.setDayLimit(userUpdateDTO.dayLimit());
+        updatingUser.setTransactionLimit(userUpdateDTO.transactionLimit());
+
+        return userRepository.save(updatingUser);
     }
 
+    public User getUser(long id) {
+        return userRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("User with id: " + id + " was not found"));
+    }
 }
