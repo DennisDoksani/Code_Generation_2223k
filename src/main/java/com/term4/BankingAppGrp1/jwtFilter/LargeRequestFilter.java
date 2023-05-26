@@ -15,7 +15,7 @@ import java.io.IOException;
 @Component
 public class LargeRequestFilter implements Filter {
     
-    @Value("${application.max.content.size}")
+    @Value("${app.max.content.size}")
     private int maxContentSize;
 
     @Override
@@ -26,9 +26,9 @@ public class LargeRequestFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         int size = servletRequest.getContentLength();
-        if (size > maxContentSize) {
-            throw new ServletException("Request too large");
-        }
+        // if (size > maxContentSize) {
+        //     throw new ServletException("Request too large");
+        // }
         filterChain.doFilter(servletRequest, servletResponse);
     }
 }

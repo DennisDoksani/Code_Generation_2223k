@@ -12,7 +12,7 @@ import com.term4.BankingAppGrp1.responseDTOs.TokenDTO;
 import com.term4.BankingAppGrp1.services.AuthService;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/auth")
 public class AuthController {
 
     private final AuthService authService;
@@ -21,7 +21,7 @@ public class AuthController {
         this.authService = authService;
     }
     
-    @PostMapping("/auth/login")
+    @PostMapping("/login")
     public TokenDTO login(@RequestBody LoginDTO dto) throws AuthenticationException{ 
             return new TokenDTO(authService.login(dto.email(), dto.password()));
     }

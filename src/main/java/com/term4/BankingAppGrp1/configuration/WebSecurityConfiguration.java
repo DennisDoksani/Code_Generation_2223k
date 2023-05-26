@@ -8,21 +8,24 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.term4.BankingAppGrp1.jwtFilter.JwtTokenFilter;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class WebSecurityConfiguration {
     
-    //private JwtTokenFilter jwtTokenFilter;
+    private JwtTokenFilter jwtTokenFilter;
 
-    //public WebSecurityConfiguration(JwtTokenFilter jwtTokenFilter) {
-    //    this.jwtTokenFilter = jwtTokenFilter;
-    //}
+    public WebSecurityConfiguration(JwtTokenFilter jwtTokenFilter) {
+        this.jwtTokenFilter = jwtTokenFilter;
+    }
     
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         // We need to do this to allow POST requests
         httpSecurity.csrf().disable();
+        
         httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         httpSecurity.headers().frameOptions().disable();
         return httpSecurity.build();
