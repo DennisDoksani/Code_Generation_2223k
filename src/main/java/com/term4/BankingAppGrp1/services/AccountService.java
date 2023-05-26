@@ -9,11 +9,13 @@ import com.term4.BankingAppGrp1.requestDTOs.UpdatingDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.naming.LimitExceededException;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.LongFunction;
 
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.*;
@@ -22,6 +24,8 @@ import static com.term4.BankingAppGrp1.models.ConstantsContainer.*;
 public class AccountService {
     private final AccountRepository accountRepository;
     private final UserService userService;
+    private final BiFunction<Integer, Integer, Pageable> getPageableByLimitAndOffset = (limit, offset) ->
+            PageRequest.of((offset / limit) , limit); 
 
 
     public AccountService(AccountRepository accountRepository, UserService userService) {
@@ -29,7 +33,7 @@ public class AccountService {
         this.userService = userService;
     }
 
-    // TODO: Delete the method later
+    // TODO: Delete this method later
     public void saveAccount(Account newAccount) {
         accountRepository.save(newAccount);
     }
@@ -73,15 +77,17 @@ public class AccountService {
     }
 
 
-    public List<Account> getAllAccounts(Pageable pageable, AccountType accountType) {
+    public List<Account> getAllAccounts(int limit,int offset, AccountType accountType) {
         Page<Account> accounts;
         if (accountType != null)
             // getting all accounts except the own  bank account when account type is specified
-            accounts = accountRepository.findAccountByAccountTypeEqualsAndIbanNot(pageable, accountType,
+            accounts = accountRepository.findAccountByAccountTypeEqualsAndIbanNot(
+                    getPageableByLimitAndOffset.apply(limit,offset), accountType,
                     DEFAULT_INHOLLAND_BANK_IBAN);
         else
             // getting all accounts except the own  bank account when account type is not specified
-            accounts = accountRepository.findByAndIbanNot(pageable, DEFAULT_INHOLLAND_BANK_IBAN);
+            accounts = accountRepository.findByAndIbanNot(getPageableByLimitAndOffset.apply(limit,offset)
+                    , DEFAULT_INHOLLAND_BANK_IBAN);
         return accounts.getContent();
     }
 
@@ -90,8 +96,9 @@ public class AccountService {
                 new EntityNotFoundException("Account with IBAN: " + iban + " was not found"));
     }
 
-    public List<Account> searchAccountByCustomerName(String customerName, Pageable pageable) {
-        Page<Account> accounts = accountRepository.findByCustomerNameContainingIgnoreCase(customerName, pageable);
+    public List<Account> searchAccountByCustomerName(String customerName, int limit, int offset) {
+        Page<Account> accounts = accountRepository.findByCustomerNameContainingIgnoreCase(customerName,
+                getPageableByLimitAndOffset.apply(limit, offset));
         return accounts.getContent();
     }
 
