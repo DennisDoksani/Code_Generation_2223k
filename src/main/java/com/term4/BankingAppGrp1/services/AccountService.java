@@ -23,7 +23,6 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final UserService userService;
 
-
     public AccountService(AccountRepository accountRepository, UserService userService) {
         this.accountRepository = accountRepository;
         this.userService = userService;

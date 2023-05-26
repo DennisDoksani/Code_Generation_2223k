@@ -8,11 +8,13 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.security.KeyStore;
-import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+
+import java.io.IOException;
+
 
 @Component
 public class JwtKeyProvider {
@@ -25,7 +27,6 @@ public class JwtKeyProvider {
 
     @Value("${jwt.key-alias}")
     private String keyAlias;
-
     
     private Key privateKey;
 

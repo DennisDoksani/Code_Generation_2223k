@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.term4.BankingAppGrp1.requestDTOs.RegistrationDTO;
+
 
 @Data
 @NoArgsConstructor
@@ -38,7 +40,8 @@ public class User{
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Role> roles;
 
-    public User(int bsn, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String email, String password, boolean isActive, double dayLimit, double transactionLimit){
+    public User(int bsn, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String email, String password, 
+                boolean isActive, double dayLimit, double transactionLimit, List<Role> roles){
         this.bsn = bsn;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -48,7 +51,37 @@ public class User{
         this.password = password;
         this.name = firstName + " " + lastName;
         this.isActive = isActive;
-        this.dayLimit = dayLimit;
-        this.transactionLimit = transactionLimit;
+        setDayLimit(dayLimit);
+        setTransactionLimit(transactionLimit);
+        this.roles = roles;
+    }
+
+    public User(int bsn, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String email, String password){
+        this.bsn = bsn;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.password = password;
+        this.name = firstName + " " + lastName;
+        this.isActive = true;
+        this.dayLimit = 0;
+        this.transactionLimit = 0;
+        this.roles = List.of(Role.ROLE_NEWUSER);
+    }
+
+    public void setDayLimit(double dayLimit) {
+        if (dayLimit > 0)
+            this.dayLimit = dayLimit;
+        else 
+            this.dayLimit = 0;
+    }
+
+    public void setTransactionLimit(double transactionLimit) {
+        if (transactionLimit > 0)
+            this.transactionLimit = transactionLimit;
+        else 
+            this.transactionLimit = 0;
     }
 }
