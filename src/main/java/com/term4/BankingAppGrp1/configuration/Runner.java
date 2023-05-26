@@ -5,25 +5,14 @@ import com.term4.BankingAppGrp1.services.*;
 import com.term4.BankingAppGrp1.responseDTOs.TransactionDTO;
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_INHOLLAND_BANK_IBAN;
 
-
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaDelete;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.CriteriaUpdate;
-import jakarta.persistence.metamodel.Metamodel;
 import jakarta.transaction.Transactional;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Component
 public class Runner implements ApplicationRunner {
@@ -41,8 +30,10 @@ public class Runner implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
-        User joshMf = new User(234445, "Joshua", "Mf", LocalDate.now(), "680000000000", "josh@mf.com", "josh", true, 0, 0, List.of(Role.ROLE_CUSTOMER));
-        User ruubio= new User(123456, "Ruubyo", "Gaming", LocalDate.of(2003, 10, 1), "0611111121", "Ruubyo@isgaming.com", "secretword", true, 500, 300);
+        User joshMf = new User(234445, "Joshua", "Mf", LocalDate.now(), "680000000000", "josh@mf.com", "josh", 
+        true, 0, 0, List.of(Role.ROLE_CUSTOMER));
+        User ruubio= new User(123456, "Ruubyo", "Gaming", LocalDate.of(2003, 10, 1), "0611111121", "Ruubyo@isgaming.com", "secretword", 
+        true, 500, 300, List.of(Role.ROLE_CUSTOMER));
          List.of(joshMf, ruubio)
                         .forEach(
                                 User -> userService.saveUser(User)
@@ -53,19 +44,14 @@ public class Runner implements ApplicationRunner {
 //            accountService.saveAccount(seedAccount);
 //        }
       
-        Account seedAccount = new Account(AccountType.CURRENT, joshMf);
-        Account seedSavings = new Account(AccountType.SAVINGS, joshMf);
-        Account seedHardcodedIban= new Account("NL72INHO0579629781",
-                900,LocalDate.now(),900,true,AccountType.CURRENT,joshMf);
-        accountService.saveAccount(seedAccount);
-        accountService.saveAccount(seedHardcodedIban);
-        accountService.saveAccount(seedSavings);
+
         
-        makeDummyBankaccounts(ruubio);
+        
         TransactionDTO newTransaction = new TransactionDTO(10.00, "NL01INHO0000000003", "NL01INHO0000000002", ruubio.getId());
 
         transactionService.addTransaction(newTransaction);
         seedBankAccount();
+        makeDummyBankaccounts(ruubio, joshMf);
     }
 
     private void seedBankAccount(){
@@ -78,12 +64,21 @@ public class Runner implements ApplicationRunner {
         accountService.saveAccount(seedAccount);
     }
   
-    private void makeDummyBankaccounts(User user) {
+    private void makeDummyBankaccounts(User user, User joshMf) {
         Account savings = new Account(AccountType.SAVINGS, user);
         Account current = new Account(AccountType.CURRENT, user);
         current.setIban("NL01INHO0000000002");
         savings.setIban("NL01INHO0000000003");
         accountService.saveAccount(savings);
         accountService.saveAccount(current);
+
+
+        Account seedAccount = new Account(AccountType.CURRENT, joshMf);
+        Account seedSavings = new Account(AccountType.SAVINGS, joshMf);
+        Account seedHardcodedIban= new Account("NL72INHO0579629781",
+                900,LocalDate.now(),900,true,AccountType.CURRENT,joshMf);
+        accountService.saveAccount(seedAccount);
+        accountService.saveAccount(seedHardcodedIban);
+        accountService.saveAccount(seedSavings);
     }
 }
