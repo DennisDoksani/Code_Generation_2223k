@@ -22,6 +22,7 @@ public class IBANGenerator implements IdentifierGenerator {
 
     private String generateIban() {
         // Generate random number for account number
+        //TODO: See if randomiser can be used for this
         Random random = new Random();
         long accountNumber = random.nextLong();
 

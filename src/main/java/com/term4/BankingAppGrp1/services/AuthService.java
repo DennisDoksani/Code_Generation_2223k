@@ -36,7 +36,4 @@ public class AuthService {
             throw new AuthenticationException("Invalid username/password");
         }
     }
-
-
-    
 }
