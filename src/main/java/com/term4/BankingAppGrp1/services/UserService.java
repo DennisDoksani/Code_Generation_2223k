@@ -41,14 +41,17 @@ public class UserService {
         }
     }
 
+    //dont use at all the Role userRole
     public List<User> getAllUsers(Pageable pageable, Role usersRole) {
         Page<User> users;
-        if (usersRole != null)
-            users = userRepository.findUserByRolesEqualsAndIdNot(pageable, usersRole, //DEFAULT_ID)
-        else
-            users = userRepository.findByIdNot(pageable, //DEFAULT_ID);
-        return users.getContent();
+       // if (usersRole != null)
+         //   users = userRepository.findUserByRolesEqualsAndIdNot(pageable, usersRole, //DEFAULT_ID)
+      //  else
+         //   users = userRepository.findByIdNot(pageable, //DEFAULT_ID);
+      //  return users.getContent();
     }
+    //dont use at all the Role userRole
+
 
     public User updateUser(UserUpdateDTO userUpdateDTO){
         User updatingUser = userRepository.findById(userUpdateDTO.bsn()).orElseThrow(() ->

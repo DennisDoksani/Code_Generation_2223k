@@ -26,12 +26,12 @@ public class UserController {
                     userService.login(dto.email(), dto.password())
             );
     }
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable long id) {
         return userService.deleteUser(id);
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable long id) {
         return ResponseEntity.ok(userService.getUser(id));
     }
