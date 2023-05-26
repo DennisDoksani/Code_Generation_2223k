@@ -2,6 +2,7 @@ package com.term4.BankingAppGrp1.configuration;
 
 import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
+import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.Transaction;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.services.AccountService;
@@ -45,7 +46,7 @@ public class Runner implements ApplicationRunner {
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
 
-        User joshMf = new User(234445, "Joshua", "Mf", LocalDate.now(), "680000000000", "josh@mf.com", "josh", true, 0, 0);
+        User joshMf = new User(234445, "Joshua", "Mf", LocalDate.now(), "680000000000", "josh@mf.com", "josh", true, 0, 0, List.of(Role.ROLE_CUSTOMER));
         userService.saveUser(joshMf);
 //        for (int i = 0; i < 800; i++) {
 //            Account seedAccount = new Account(AccountType.CURRENT, joshMf);
@@ -328,7 +329,7 @@ public class Runner implements ApplicationRunner {
     private void seedBankAccount() {
         User inhollandBank = new User(111111, "Inholland", "Bank", LocalDate.now(),
                 "680000000000", "inholland@bank.nl", "Inholland", true,
-                9999999999999999L, 9999999999999999L);
+                9999999999999999L, 9999999999999999L, List.of(Role.ROLE_EMPLOYEE));
         userService.saveUser(inhollandBank);
         Account seedAccount = new Account(DEFAULT_INHOLLAND_BANK_IBAN, 9999999999999.0, LocalDate.now(), 0, true, AccountType.CURRENT, inhollandBank);
         accountService.saveAccount(seedAccount);

@@ -40,7 +40,8 @@ public class User{
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Role> roles;
 
-    public User(int bsn, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String email, String password, boolean isActive, double dayLimit, double transactionLimit){
+    public User(int bsn, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String email, String password, 
+                boolean isActive, double dayLimit, double transactionLimit, List<Role> roles){
         this.bsn = bsn;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -52,6 +53,7 @@ public class User{
         this.isActive = isActive;
         setDayLimit(dayLimit);
         setTransactionLimit(transactionLimit);
+        this.roles = roles;
     }
 
     public User(int bsn, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String email, String password){
@@ -66,6 +68,7 @@ public class User{
         this.isActive = true;
         this.dayLimit = 0;
         this.transactionLimit = 0;
+        this.roles = List.of(Role.ROLE_NEWUSER);
     }
 
     public void setDayLimit(double dayLimit) {

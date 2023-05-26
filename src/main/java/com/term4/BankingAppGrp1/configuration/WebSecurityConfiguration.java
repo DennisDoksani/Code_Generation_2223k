@@ -33,16 +33,16 @@ public class WebSecurityConfiguration {
         httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         //Config authorisation for request paths
-        httpSecurity.authorizeHttpRequests()
-            .requestMatchers("/auth/**").permitAll()
-            .requestMatchers("/h2-console/**").permitAll()
-            .requestMatchers(HttpMethod.POST, "/users").permitAll()
-            .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("EMPLOYEE")
-            .requestMatchers(HttpMethod.GET, "/users/**").hasRole("EMPLOYEE")
-            .requestMatchers("/accounts/**").hasAnyRole("CUSTOMER", "EMPLOYEE")
-            .requestMatchers("/transactions/**").hasAnyRole("CUSTOMER", "EMPLOYEE")
-            .requestMatchers("/employees/**").hasRole("EMPLOYEE")
-            .anyRequest().authenticated();
+        // httpSecurity.authorizeHttpRequests()
+        //     .requestMatchers("/auth/**").permitAll()
+        //     .requestMatchers("/h2-console/**").permitAll()
+        //     .requestMatchers(HttpMethod.POST, "/users").permitAll()
+        //     .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("EMPLOYEE")
+        //     .requestMatchers(HttpMethod.GET, "/users/**").hasRole("EMPLOYEE")
+        //     .requestMatchers("/accounts/**").hasAnyRole("CUSTOMER", "EMPLOYEE")
+        //     .requestMatchers("/transactions/**").hasAnyRole("CUSTOMER", "EMPLOYEE")
+        //     .requestMatchers("/employees/**").hasRole("EMPLOYEE")
+        //     .anyRequest().authenticated();
         
         //Make sure own JWT filter is executed
         httpSecurity.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
