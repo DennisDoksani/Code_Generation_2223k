@@ -22,7 +22,7 @@ public class AuthController {
     }
     
     @PostMapping("/auth/login")
-    public Object login(@RequestBody LoginDTO dto) throws AuthenticationException{ 
+    public TokenDTO login(@RequestBody LoginDTO dto) throws AuthenticationException{ 
             return new TokenDTO(authService.login(dto.email(), dto.password()));
     }
 }
