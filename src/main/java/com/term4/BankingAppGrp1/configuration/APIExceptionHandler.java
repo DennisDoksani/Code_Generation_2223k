@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.naming.AuthenticationException;
 import javax.naming.LimitExceededException;
 
 @RestControllerAdvice
@@ -19,6 +20,11 @@ public class APIExceptionHandler {
     @ExceptionHandler(value = {EntityNotFoundException.class})
     public ResponseEntity<Object> handleException(EntityNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorMessageDTO(e.getMessage()));
+    }
+
+    @ExceptionHandler(value = {AuthenticationException.class})
+    public ResponseEntity<Object> handleException(AuthenticationException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessageDTO(e.getMessage()));
     }
 
     // sending conflict status code when limit is exceeded

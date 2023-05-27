@@ -7,8 +7,8 @@ import jakarta.persistence.OneToOne;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Time;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Data
@@ -19,14 +19,14 @@ public class Transaction {
     @Id
     private long transactionID;
 
-    public Transaction(Double amount, String accountTo, String accountFrom, Date date, Time timestamp, User userPerforming) {
-        this.amount = amount;
-        this.accountTo = accountTo;
-        this.accountFrom = accountFrom;
-        this.date = date;
-        this.timestamp = timestamp;
-        this.userPerforming = userPerforming;
-    }
+//    public Transaction(Double amount, String accountTo, String accountFrom, long userPerforming) {
+//        this.amount = amount;
+//        this.accountTo = accountTo;
+//        this.accountFrom = accountFrom;
+//        this.date = LocalDate.now();
+//        this.timestamp = LocalTime.now();
+//        this.userPerforming = userPerforming;
+//    }
 
     private Double amount;
 
@@ -34,10 +34,16 @@ public class Transaction {
 
     private String accountFrom;
 
-    private Date date;
+    private LocalDate date;
 
-    private Time timestamp;
+    private LocalTime timestamp;
 
-    @OneToOne
-    private User userPerforming;
+    private long userPerforming;
+
+    public void setAmount(double amount) {
+        if(amount <= 0)
+            throw new IllegalArgumentException("Amount can not be zero or under");
+
+        this.amount = amount;
+    }
 }

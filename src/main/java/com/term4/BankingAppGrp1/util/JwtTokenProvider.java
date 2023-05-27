@@ -15,8 +15,9 @@ import java.util.List;
 @Component
 public class JwtTokenProvider {
 
-    @Value("${application.token.validity}")
-    private long validityInMicroseconds;
+    @Value("${app.jwt.expiration-ms}")
+    private long jwtExpirationTime;
+
     private final BankingUserDetailsService bankingUserDetailsService;
     private final JwtKeyProvider jwtKeyProvider;
 
@@ -33,7 +34,7 @@ public class JwtTokenProvider {
         
         //Create iat and exp
         Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMicroseconds);
+        Date validity = new Date(now.getTime() + jwtExpirationTime);
 
         //Create JWT token
         return Jwts.builder()
