@@ -25,7 +25,7 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final UserService userService;
     private final BiFunction<Integer, Integer, Pageable> getPageableByLimitAndOffset = (limit, offset) ->
-            PageRequest.of((offset / limit) , limit); 
+            PageRequest.of((offset / limit) , limit);
 
 
     public AccountService(AccountRepository accountRepository, UserService userService) {
