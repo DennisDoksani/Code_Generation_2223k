@@ -1,7 +1,10 @@
 package com.term4.BankingAppGrp1.controllers;
 
+import com.term4.BankingAppGrp1.models.Account;
+import com.term4.BankingAppGrp1.models.AccountType;
 import com.term4.BankingAppGrp1.models.Transaction;
 import com.term4.BankingAppGrp1.responseDTOs.TransactionDTO;
+import com.term4.BankingAppGrp1.services.AccountService;
 import com.term4.BankingAppGrp1.services.TransactionService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
@@ -20,9 +23,11 @@ import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_OFFSET_
 @RequestMapping("/transactions")
 public class TransactionController {
     private TransactionService transactionService;
+    private AccountService accountService;
 
-    public TransactionController(TransactionService transactionService) {
+    public TransactionController(TransactionService transactionService, AccountService accountService) {
         this.transactionService = transactionService;
+        this.accountService = accountService;
     }
 
 //    @GetMapping
@@ -44,6 +49,7 @@ public class TransactionController {
 
     @PostMapping
     public ResponseEntity<Object> addTransaction(@RequestBody @Valid TransactionDTO transactionDTO) {
+
         return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.addTransaction(transactionDTO));
     }
 
@@ -51,4 +57,27 @@ public class TransactionController {
         return PageRequest.of(offset / limit, limit); // offset/limit = page number
     }
 
+    private Boolean validTransaction(TransactionDTO dto) {
+        Account accountTo = accountService.getAccountByIBAN(dto.accountTo());
+        Account accountFrom = accountService.getAccountByIBAN(dto.accountFrom());
+
+        //This statement checks if money is being transferred to or from a savings account that does not belong to the same user
+        if (((accountFrom.getAccountType() == AccountType.CURRENT && accountTo.getAccountType() == AccountType.SAVINGS) || (accountFrom.getAccountType() == AccountType.SAVINGS && accountTo.getAccountType() == AccountType.CURRENT)) && accountFrom.getCustomer().getBsn() != accountTo.getCustomer().getBsn() )
+            throw new IllegalArgumentException("You can not transfer money from or to a savings account that does not belong to the same user");
+
+        if(accountFrom.getBalance() - dto.amount() < accountFrom.getAbsoluteLimit())
+            throw new IllegalArgumentException("The amount you are trying to transfer will result in a balance lower than the absolute limit for this account");
+        else if(dto.amount() > accountFrom.getBalance()){
+            //Implement some kind of warning for the user
+        }
+
+        if(dto.amount() > accountFrom.getCustomer().getTransactionLimit())
+            throw new IllegalArgumentException("The amount you are trying to transfer exceeds the transaction limit");
+        // Checks first if the accountFrom has transactions made today and then if the amount will exceed the day limit
+        if(transactionService.getSumOfMoneyTransferred(accountFrom.getIban(), LocalDate.now()) > 0.0 && dto.amount() + transactionService.getSumOfMoneyTransferred(accountFrom.getIban(), LocalDate.now()) > accountFrom.getCustomer().getDayLimit())
+            throw new IllegalArgumentException("The amount you are trying to transfer will exceed the day limit for this account");
+
+
+        return true;
+    }
 }

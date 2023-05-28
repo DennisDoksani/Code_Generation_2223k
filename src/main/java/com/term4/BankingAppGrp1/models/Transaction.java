@@ -19,15 +19,6 @@ public class Transaction {
     @Id
     private long transactionID;
 
-//    public Transaction(Double amount, String accountTo, String accountFrom, long userPerforming) {
-//        this.amount = amount;
-//        this.accountTo = accountTo;
-//        this.accountFrom = accountFrom;
-//        this.date = LocalDate.now();
-//        this.timestamp = LocalTime.now();
-//        this.userPerforming = userPerforming;
-//    }
-
     private Double amount;
 
     private String accountTo;
@@ -39,6 +30,15 @@ public class Transaction {
     private LocalTime timestamp;
 
     private long userPerforming;
+
+    public Transaction(Double amount, String accountTo, String accountFrom, LocalDate localDate, LocalTime localTime, long userPerforming) {
+        this.amount = amount;
+        this.accountTo = accountTo;
+        this.accountFrom = accountFrom;
+        this.date = localDate;
+        this.timestamp = localTime;
+        this.userPerforming = userPerforming;
+    }
 
     public void setAmount(double amount) {
         if(amount <= 0)
