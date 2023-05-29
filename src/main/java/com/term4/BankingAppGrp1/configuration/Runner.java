@@ -18,7 +18,7 @@ import java.util.List;
 public class Runner implements ApplicationRunner {
     private final AccountService accountService;
     private final UserService userService;
-    private TransactionService transactionService;
+    private final TransactionService transactionService;
 
     public Runner(AccountService accountService, UserService userService, TransactionService transactionService) {
 
@@ -36,17 +36,13 @@ public class Runner implements ApplicationRunner {
         true, 500, 300, List.of(Role.ROLE_CUSTOMER));
          List.of(joshMf, ruubio)
                         .forEach(
-                                User -> userService.saveUser(User)
+                                userService::saveUser
                         );
+        for (int i = 0; i < 800; i++) {
+            Account seedAccount = new Account(AccountType.CURRENT, joshMf);
+            accountService.saveAccount(seedAccount);
+        }
 
-//        for (int i = 0; i < 800; i++) {
-//            Account seedAccount = new Account(AccountType.CURRENT, joshMf);
-//            accountService.saveAccount(seedAccount);
-//        }
-      
-
-        
-        
         TransactionDTO newTransaction = new TransactionDTO(10.00, "NL01INHO0000000003", "NL01INHO0000000002", ruubio.getId());
 
         transactionService.addTransaction(newTransaction);
@@ -69,16 +65,14 @@ public class Runner implements ApplicationRunner {
         Account current = new Account(AccountType.CURRENT, user);
         current.setIban("NL01INHO0000000002");
         savings.setIban("NL01INHO0000000003");
-        accountService.saveAccount(savings);
-        accountService.saveAccount(current);
-
-
         Account seedAccount = new Account(AccountType.CURRENT, joshMf);
         Account seedSavings = new Account(AccountType.SAVINGS, joshMf);
         Account seedHardcodedIban= new Account("NL72INHO0579629781",
                 900,LocalDate.now(),900,true,AccountType.CURRENT,joshMf);
         accountService.saveAccount(seedAccount);
         accountService.saveAccount(seedHardcodedIban);
+        accountService.saveAccount(savings);
+        accountService.saveAccount(current);
         accountService.saveAccount(seedSavings);
     }
 }
