@@ -2,6 +2,8 @@ package com.term4.BankingAppGrp1.services;
 
 import com.term4.BankingAppGrp1.models.Transaction;
 import com.term4.BankingAppGrp1.repositories.TransactionRepository;
+import com.term4.BankingAppGrp1.requestDTOs.DepositDTO;
+import com.term4.BankingAppGrp1.requestDTOs.WithdrawDTO;
 import com.term4.BankingAppGrp1.responseDTOs.TransactionDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+
+import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_INHOLLAND_BANK_IBAN;
 
 
 @Service
@@ -38,4 +42,13 @@ public class TransactionService {
         transaction.setUserPerforming(dto.userPerforming());
         return transaction;
     }
+
+    public Transaction atmDeposit(DepositDTO depositDTO, Long userId){
+        return addTransaction(new TransactionDTO(depositDTO.amount(), depositDTO.accountTo(), DEFAULT_INHOLLAND_BANK_IBAN, userId));
+    }
+
+    public Transaction atmWithdraw(WithdrawDTO withdrawDTO, Long userId){
+        return addTransaction(new TransactionDTO(withdrawDTO.amount(), withdrawDTO.accountFrom(), DEFAULT_INHOLLAND_BANK_IBAN, userId));
+    }
+
 }
