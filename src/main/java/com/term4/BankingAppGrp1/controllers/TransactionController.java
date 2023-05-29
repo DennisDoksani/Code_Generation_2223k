@@ -49,15 +49,17 @@ public class TransactionController {
 
     @PostMapping
     public ResponseEntity<Object> addTransaction(@RequestBody @Valid TransactionDTO transactionDTO) {
+        if(validTransaction(transactionDTO))
+            return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.addTransaction(transactionDTO));
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.addTransaction(transactionDTO));
+        return null;
     }
 
     private Pageable getPageable(int limit, int offset) {
         return PageRequest.of(offset / limit, limit); // offset/limit = page number
     }
 
-    private Boolean validTransaction(TransactionDTO dto) {
+    public Boolean validTransaction(TransactionDTO dto) {
         Account accountTo = accountService.getAccountByIBAN(dto.accountTo());
         Account accountFrom = accountService.getAccountByIBAN(dto.accountFrom());
 
