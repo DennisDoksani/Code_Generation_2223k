@@ -38,12 +38,11 @@ public class WebSecurityConfiguration {
             .requestMatchers(AntPathRequestMatcher.antMatcher("/auth/**")).permitAll()
             .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
             .requestMatchers(AntPathRequestMatcher.antMatcher("/users")).permitAll()
-            .requestMatchers(HttpMethod.DELETE, "/users").hasRole("EMPLOYEE")
-            .requestMatchers(HttpMethod.GET, "/users").hasRole("EMPLOYEE")
-            .requestMatchers("/accounts").hasAnyRole("EMPLOYEE")
-            .requestMatchers("/transactions/**").hasAnyRole("CUSTOMER", "EMPLOYEE")
-            .requestMatchers("/employees/**").hasRole("EMPLOYEE")
-            .anyRequest().authenticated();
+            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.DELETE, "/users")).hasRole("EMPLOYEE")
+            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/users")).hasAnyRole("CUSTOMER", "EMPLOYEE")
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/accounts")).hasAnyRole("EMPLOYEE")
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/transactions/**")).hasAnyRole("CUSTOMER", "EMPLOYEE")
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/employees/**")).hasRole("EMPLOYEE");
         
         //Make sure own JWT filter is executed
         httpSecurity.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
