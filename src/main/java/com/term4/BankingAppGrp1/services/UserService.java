@@ -34,9 +34,7 @@ public class UserService {
 
     public User registerUser(RegistrationDTO registrationDTO) {
 
-        if(!validateRegistrationDTO(registrationDTO)){
-            return null;
-        }
+        validateRegistration(registrationDTO);
 
         User newUser = new User(registrationDTO.bsn(),
                             registrationDTO.firstName(),
@@ -47,8 +45,6 @@ public class UserService {
                             bCryptPasswordEncoder.encode(registrationDTO.password()));
                             
     return userRepository.save(newUser);
-        
-        
     }
 
     public String deleteUser(long id) {
@@ -97,17 +93,18 @@ public class UserService {
                 new EntityNotFoundException("User with id: " + id + " was not found"));
     }
 
-    private boolean validateRegistrationDTO(RegistrationDTO registrationDTO){
-        return validateBsn(registrationDTO.bsn());
+    private void validateRegistration(RegistrationDTO registrationDTO){
+        validateBsn(registrationDTO.bsn());
+        
     }
 
-    private boolean validateBsn(Integer bsn){
+    private void validateBsn(Integer bsn){
         //Convert Integer to String to check length
         String bsnString = bsn.toString();
         
         //BSN length has to be 8 or 9
         if(bsnString.length() != 9 || bsnString.length() != 8){
-            return false;
+            throw new IllegalArgumentException("Invalid BSN");
         }
         //If length is 8, then we have to prepend a 0 to make length 9.
         else if (bsnString.length() == 8){
@@ -127,6 +124,7 @@ public class UserService {
         }
         sum += (-1 * bsnArray[8]);
 
-        return (sum % 11 == 0);
+        if(sum % 11 != 0)
+            throw new IllegalArgumentException("Invalid BSN");
     }
 }

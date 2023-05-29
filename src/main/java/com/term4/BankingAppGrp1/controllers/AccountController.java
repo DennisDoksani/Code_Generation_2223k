@@ -50,8 +50,8 @@ public class AccountController {
     @GetMapping
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<Object> getAllAccounts(@RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
-                                                 @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset
-            , @NotBlank @RequestParam(required = false) String accountType)
+                                                 @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset,
+                                                @NotBlank @RequestParam(required = false) String accountType)
     //Spring boot is asking for a default value for limit and offset to be string
     {
         List<Account> accounts = accountService.getAllAccounts(getPageableByLimitAndOffset.apply(limit, offset),

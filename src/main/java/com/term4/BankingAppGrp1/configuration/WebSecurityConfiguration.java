@@ -4,6 +4,7 @@ import com.term4.BankingAppGrp1.jwtFilter.JwtTokenFilter;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.hibernate.mapping.Any;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -35,15 +36,12 @@ public class WebSecurityConfiguration {
 
         //Config authorisation for request paths
         httpSecurity.authorizeHttpRequests()
-            .requestMatchers(AntPathRequestMatcher.antMatcher("/auth")).permitAll()
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/auth/**")).permitAll()
             .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console")).permitAll()
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
             .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/users")).permitAll()
-            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.DELETE, "/users")).authenticated()
-            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/users")).authenticated()
-            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.PUT, "/users")).authenticated()
-            .requestMatchers(AntPathRequestMatcher.antMatcher("/accounts")).authenticated()
-            .requestMatchers(AntPathRequestMatcher.antMatcher("/transactions")).authenticated();
-        
+            .anyRequest().authenticated();
+            
         //Make sure own JWT filter is executed
         httpSecurity.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         
