@@ -33,15 +33,18 @@ public class UserService {
     }
 
     public User registerUser(RegistrationDTO registrationDTO) {
+
+        validateRegistration(registrationDTO);
+
         User newUser = new User(registrationDTO.bsn(),
-                                registrationDTO.firstName(),
-                                registrationDTO.lastName(),
-                                LocalDate.parse(registrationDTO.dateOfBirth()),
-                                registrationDTO.phoneNumber(),
-                                registrationDTO.email(),
-                                bCryptPasswordEncoder.encode(registrationDTO.password()));
-                                
-        return userRepository.save(newUser);
+                            registrationDTO.firstName(),
+                            registrationDTO.lastName(),
+                            LocalDate.parse(registrationDTO.dateOfBirth()),
+                            registrationDTO.phoneNumber(),
+                            registrationDTO.email(),
+                            bCryptPasswordEncoder.encode(registrationDTO.password()));
+                            
+    return userRepository.save(newUser);
     }
 
     public String deleteUser(long id) {
@@ -71,10 +74,8 @@ public class UserService {
         updatingUser.setDateOfBirth(userUpdateDTO.dateOfBirth());
         updatingUser.setPhoneNumber(userUpdateDTO.phoneNumber());
         updatingUser.setEmail(userUpdateDTO.email());
-        updatingUser.setPassword(userUpdateDTO.password());
-        //setActive or setIsActive??
+        updatingUser.setPassword(bCryptPasswordEncoder.encode(userUpdateDTO.password()));
         updatingUser.setActive(userUpdateDTO.isActive());
-        //setActive or setIsActive??
         updatingUser.setDayLimit(userUpdateDTO.dayLimit());
         updatingUser.setTransactionLimit(userUpdateDTO.transactionLimit());
 
@@ -84,5 +85,40 @@ public class UserService {
     public User getUser(long id) {
         return userRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("User with id: " + id + " was not found"));
+    }
+
+    private void validateRegistration(RegistrationDTO registrationDTO){
+        validateBsn(registrationDTO.bsn());
+        
+    }
+
+    private void validateBsn(Integer bsn){
+        //Convert Integer to String to check length
+        String bsnString = bsn.toString();
+        
+        //BSN length has to be 8 or 9
+        if(bsnString.length() != 9 || bsnString.length() != 8){
+            throw new IllegalArgumentException("Invalid BSN");
+        }
+        //If length is 8, then we have to prepend a 0 to make length 9.
+        else if (bsnString.length() == 8){
+            bsnString = "0" + bsnString;
+        }
+        //Convert BSN String to int array
+        int[] bsnArray = new int[9];
+        for(int i = 0; i < 9; i++){
+            bsnArray[i] = Character.getNumericValue(bsnString.charAt(i));
+        }
+
+        //Check valid BSN using the following formula:
+        //((9 × A) + (8 × B) + (7 × C) + (6 × D) + (5 × E) + (4 × F) + (3 × G) + (2 × H) + (-1 × I)) % 11 == 0
+        int sum = 0;
+        for(int i = 0; i < 8; i++){
+            sum += (9 - i) * bsnArray[i];
+        }
+        sum += (-1 * bsnArray[8]);
+
+        if(sum % 11 != 0)
+            throw new IllegalArgumentException("Invalid BSN");
     }
 }
