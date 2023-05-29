@@ -94,7 +94,17 @@ public class UserService {
     }
 
     private void validateRegistration(RegistrationDTO registrationDTO){
+        //Check if email is unique
+        if(userRepository.findByEmail(registrationDTO.email()).isPresent())
+            throw new IllegalArgumentException("Email already in use.");
+        if(userRepository.findByBsn(registrationDTO.bsn()).isPresent())
+            throw new IllegalArgumentException("BSN already in use.");
+        
+        
+        //Validate BSN and Date of Birth
         validateBsn(registrationDTO.bsn());
+        validateDateOfBirth(registrationDTO.dateOfBirth());
+        
         
     }
 
@@ -103,28 +113,31 @@ public class UserService {
         String bsnString = bsn.toString();
         
         //BSN length has to be 8 or 9
-        if(bsnString.length() != 9 || bsnString.length() != 8){
+        if(bsnString.length() != 9 && bsnString.length() != 8){
             throw new IllegalArgumentException("Invalid BSN");
         }
         //If length is 8, then we have to prepend a 0 to make length 9.
         else if (bsnString.length() == 8){
             bsnString = "0" + bsnString;
         }
-        //Convert BSN String to int array
-        int[] bsnArray = new int[9];
-        for(int i = 0; i < 9; i++){
-            bsnArray[i] = Character.getNumericValue(bsnString.charAt(i));
-        }
-
-        //Check valid BSN using the following formula:
-        //((9 × A) + (8 × B) + (7 × C) + (6 × D) + (5 × E) + (4 × F) + (3 × G) + (2 × H) + (-1 × I)) % 11 == 0
+        
+        //Check valid BSN using the 11-test:
+        //((9 × 1st digit) + (8 × 2nd digit) + (7 × 3rd digit) ... (2 × 8th digit) + (-1 × 9th digit)) % 11 == 0
         int sum = 0;
-        for(int i = 0; i < 8; i++){
-            sum += (9 - i) * bsnArray[i];
+        for(int i = 0; i < 9; i++){
+            int digit = Character.getNumericValue(bsnString.charAt(i));
+            if(i == 8){
+                sum += (-1 * Character.getNumericValue(bsnString.charAt(i)));
+            }
+            else
+                sum += ((9 - i) * digit);
         }
-        sum += (-1 * bsnArray[8]);
 
         if(sum % 11 != 0)
             throw new IllegalArgumentException("Invalid BSN");
+    }
+
+    private void validateDateOfBirth(String dateOfBirth){
+
     }
 }
