@@ -34,7 +34,7 @@ public class UserService {
 
     public User registerUser(RegistrationDTO registrationDTO) {
 
-        if(!registrationDTOIsValid(registrationDTO)){
+        if(!validateRegistrationDTO(registrationDTO)){
             return null;
         }
 
@@ -97,7 +97,36 @@ public class UserService {
                 new EntityNotFoundException("User with id: " + id + " was not found"));
     }
 
-    private boolean registrationDTOIsValid(RegistrationDTO registrationDTO){
-        return true;
+    private boolean validateRegistrationDTO(RegistrationDTO registrationDTO){
+        return validateBsn(registrationDTO.bsn());
+    }
+
+    private boolean validateBsn(Integer bsn){
+        //Convert Integer to String to check length
+        String bsnString = bsn.toString();
+        
+        //BSN length has to be 8 or 9
+        if(bsnString.length() != 9 || bsnString.length() != 8){
+            return false;
+        }
+        //If length is 8, then we have to prepend a 0 to make length 9.
+        else if (bsnString.length() == 8){
+            bsnString = "0" + bsnString;
+        }
+        //Convert BSN String to int array
+        int[] bsnArray = new int[9];
+        for(int i = 0; i < 9; i++){
+            bsnArray[i] = Character.getNumericValue(bsnString.charAt(i));
+        }
+
+        //Check valid BSN using the following formula:
+        //((9 × A) + (8 × B) + (7 × C) + (6 × D) + (5 × E) + (4 × F) + (3 × G) + (2 × H) + (-1 × I)) % 11 == 0
+        int sum = 0;
+        for(int i = 0; i < 8; i++){
+            sum += (9 - i) * bsnArray[i];
+        }
+        sum += (-1 * bsnArray[8]);
+
+        return (sum % 11 == 0);
     }
 }

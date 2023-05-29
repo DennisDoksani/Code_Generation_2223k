@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -29,20 +30,20 @@ public class WebSecurityConfiguration {
         httpSecurity.csrf().disable();
         //Disable security headers
         httpSecurity.headers().frameOptions().disable();
-        //Disable session creation
+        //Disable session creations
         httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         //Config authorisation for request paths
-        // httpSecurity.authorizeHttpRequests()
-        //     .requestMatchers("/auth/**").permitAll()
-        //     .requestMatchers("/h2-console/**").permitAll()
-        //     .requestMatchers(HttpMethod.POST, "/users").permitAll()
-        //     .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("EMPLOYEE")
-        //     .requestMatchers(HttpMethod.GET, "/users/**").hasRole("EMPLOYEE")
-        //     .requestMatchers("/accounts/**").hasAnyRole("CUSTOMER", "EMPLOYEE")
-        //     .requestMatchers("/transactions/**").hasAnyRole("CUSTOMER", "EMPLOYEE")
-        //     .requestMatchers("/employees/**").hasRole("EMPLOYEE")
-        //     .anyRequest().authenticated();
+        httpSecurity.authorizeHttpRequests()
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/auth/**")).permitAll()
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/users")).permitAll()
+            .requestMatchers(HttpMethod.DELETE, "/users").hasRole("EMPLOYEE")
+            .requestMatchers(HttpMethod.GET, "/users").hasRole("EMPLOYEE")
+            .requestMatchers("/accounts").hasAnyRole("EMPLOYEE")
+            .requestMatchers("/transactions/**").hasAnyRole("CUSTOMER", "EMPLOYEE")
+            .requestMatchers("/employees/**").hasRole("EMPLOYEE")
+            .anyRequest().authenticated();
         
         //Make sure own JWT filter is executed
         httpSecurity.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
