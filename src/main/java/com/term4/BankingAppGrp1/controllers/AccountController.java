@@ -28,73 +28,83 @@ import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_OFFSET_
 @RequestMapping("/accounts")
 public class AccountController {
     private final AccountService accountService;
+
     private final Function<User, AccountHolderDTO> parseUserObjectToDTO = u ->
             new AccountHolderDTO(u.getId(),
                     u.getDayLimit(), u.getTransactionLimit()
                     , u.getFirstName(), u.getLastName());
+
     private final Function<Account, AccountDTO> parseAccountObjectToDTO = a ->
             new AccountDTO(a.getIban(), a.getBalance(), a.getAbsoluteLimit(), a.getCreationDate(), a.isActive(),
                     a.getAccountType(), parseUserObjectToDTO.apply(a.getCustomer()));
+
     private final BiFunction<Integer, Integer, Pageable> getPageableByLimitAndOffset = (limit, offset) ->
             PageRequest.of(offset, limit);
-
 
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
 
-    // to get All accounts
+    //Get all accounts
     //TODO: Sort by Account Type
     @GetMapping
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<Object> getAllAccounts(@RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
                                                  @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset
             , @NotBlank @RequestParam(required = false) String accountType)
-    // Spring boot is asking for a default value for limit and offset to be string
+    //Spring boot is asking for a default value for limit and offset to be string
     {
         List<Account> accounts = accountService.getAllAccounts(getPageableByLimitAndOffset.apply(limit, offset),
                 accountType == null ? null : AccountType.valueOf(accountType.toUpperCase()));
         return ResponseEntity.ok(accounts.stream().map(parseAccountObjectToDTO).toList());
     }
 
-    // to get Account by IBAN
+    //Get Account by IBAN
     @GetMapping("/{iban}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
     public ResponseEntity<Object> getAccountByIBAN(@NotBlank @PathVariable String iban) {
         return ResponseEntity.ok(parseAccountObjectToDTO.apply(accountService.getAccountByIBAN(iban)));
     }
 
-    // this endpoint is to search for accounts by customer name and can be accessed by employee and admin
+    //Search for accounts by customer name
     @GetMapping("/searchByCustomerName")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
     public ResponseEntity<Object> searchAccountByCustomerName(@NotBlank @RequestParam String customerName,
                                                               @RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
                                                               @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset) {
         return ResponseEntity.ok(accountService.searchAccountByCustomerName(customerName, getPageableByLimitAndOffset.apply(limit, offset)));
     }
 
-    // Requires Employee Role to change account status
-    // ToDO : Role Based Security for this endpoint
+    //Change accounts status
     @PostMapping("/accountStatus/{iban}")
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<Object> changeAccountStatus(@NotBlank @PathVariable String iban,
                                                       @Valid @NotBlank @RequestBody AccountStatusDTO accountStatusDTO) {
         accountService.changeAccountStatus(iban, accountStatusDTO.getIsActive());
         return ResponseEntity.noContent().build();
     }
 
-    // Requires Employee Role
+    //Post new account
     @PostMapping
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<Object> saveAccount(@Valid @RequestBody CreatingAccountDTO accountDTO) throws LimitExceededException {
         return ResponseEntity.status(HttpStatus.CREATED).body(parseAccountObjectToDTO.apply(
                 accountService.saveAccount(accountDTO)));
         //TODO: Look out for Saving account and Absolute Limit
     }
-    // Requires Employee Role
+
+    //Update account
     @PutMapping("/{iban}")
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<Object> updateAccount(@NotBlank @PathVariable String iban,
                                                 @Valid @RequestBody UpdatingDTO accountDTO) {
         return ResponseEntity.ok(parseAccountObjectToDTO.apply(
                 accountService.updateAccount(iban, accountDTO))); // parsing account object to DTO
     }
+
+    //Get account by email
     @GetMapping("/user/{email}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
     public ResponseEntity<Object> getAccountsByEmail(@NotBlank @PathVariable String email) {
         return ResponseEntity.ok(accountService.getAccountsByEmailAddress(email).stream().map(parseAccountObjectToDTO).toList());
     }
