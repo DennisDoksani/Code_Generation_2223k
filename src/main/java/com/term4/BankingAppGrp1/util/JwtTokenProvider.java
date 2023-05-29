@@ -26,11 +26,12 @@ public class JwtTokenProvider {
         this.jwtKeyProvider = jwtKeyProvider;
     }
 
-    public String createToken(String email, List<Role> roles) throws JwtException{
+    public String createToken(String email, long id, List<Role> roles) throws JwtException{
         
         //Create claims
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("auth", roles);
+        claims.put("id", id);
         
         //Create iat and exp
         Date now = new Date();

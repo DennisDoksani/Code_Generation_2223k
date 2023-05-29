@@ -29,10 +29,11 @@ public class AuthService {
 
         // Check if the password hash matches
         if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
-            // Return a JWT to the client
-            return jwtTokenProvider.createToken(user.getEmail(), user.getRoles());
+            // Create token if credentials are correct
+            return jwtTokenProvider.createToken( user.getEmail(), user.getId(), user.getRoles());
         } 
         else {
+            //Otherwise throw exception
             throw new AuthenticationException("Invalid username/password");
         }
     }
