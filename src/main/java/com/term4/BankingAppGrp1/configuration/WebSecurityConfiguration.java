@@ -35,14 +35,14 @@ public class WebSecurityConfiguration {
 
         //Config authorisation for request paths
         httpSecurity.authorizeHttpRequests()
-            .requestMatchers(AntPathRequestMatcher.antMatcher("/auth/**")).permitAll()
-            .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
-            .requestMatchers(AntPathRequestMatcher.antMatcher("/users")).permitAll()
-            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.DELETE, "/users")).hasRole("EMPLOYEE")
-            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/users")).hasAnyRole("CUSTOMER", "EMPLOYEE")
-            .requestMatchers(AntPathRequestMatcher.antMatcher("/accounts")).hasAnyRole("EMPLOYEE")
-            .requestMatchers(AntPathRequestMatcher.antMatcher("/transactions/**")).hasAnyRole("CUSTOMER", "EMPLOYEE")
-            .requestMatchers(AntPathRequestMatcher.antMatcher("/employees/**")).hasRole("EMPLOYEE");
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/auth")).permitAll()
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console")).permitAll()
+            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/users")).permitAll()
+            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.DELETE, "/users")).authenticated()
+            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/users")).authenticated()
+            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.PUT, "/users")).authenticated()
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/accounts")).authenticated()
+            .requestMatchers(AntPathRequestMatcher.antMatcher("/transactions")).authenticated();
         
         //Make sure own JWT filter is executed
         httpSecurity.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

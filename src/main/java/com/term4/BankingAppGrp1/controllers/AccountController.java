@@ -13,8 +13,8 @@ import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.LimitExceededException;
@@ -44,9 +44,9 @@ public class AccountController {
     }
 
     // to get All accounts
-    // Employee Role is Required
-    //TODO: Add Security & Sort by Account Type
+    //TODO: Sort by Account Type
     @GetMapping
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<Object> getAllAccounts(@RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
                                                  @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset
             , @NotBlank @RequestParam(required = false) String accountType)
@@ -63,7 +63,7 @@ public class AccountController {
         return ResponseEntity.ok(parseAccountObjectToDTO.apply(accountService.getAccountByIBAN(iban)));
     }
 
-    // this  endpoint is to search for accounts by customer name and can be accessed by employee and admin
+    // this endpoint is to search for accounts by customer name and can be accessed by employee and admin
     @GetMapping("/searchByCustomerName")
     public ResponseEntity<Object> searchAccountByCustomerName(@NotBlank @RequestParam String customerName,
                                                               @RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
