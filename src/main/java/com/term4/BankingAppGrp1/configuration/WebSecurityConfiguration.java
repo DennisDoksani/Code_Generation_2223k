@@ -4,7 +4,6 @@ import com.term4.BankingAppGrp1.jwtFilter.JwtTokenFilter;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.hibernate.mapping.Any;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -37,7 +36,6 @@ public class WebSecurityConfiguration {
         //Config authorisation for request paths
         httpSecurity.authorizeHttpRequests()
             .requestMatchers(AntPathRequestMatcher.antMatcher("/auth/**")).permitAll()
-            .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console")).permitAll()
             .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
             .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/users")).permitAll()
             .anyRequest().authenticated();
