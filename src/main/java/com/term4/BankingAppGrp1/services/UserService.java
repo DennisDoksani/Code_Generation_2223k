@@ -138,6 +138,16 @@ public class UserService {
     }
 
     private void validateDateOfBirth(String dateOfBirth){
-
+        try {
+            //Parse date
+            LocalDate date = LocalDate.parse(dateOfBirth);
+            
+            //Check if date is further than 18 years ago
+            if(date.isAfter(LocalDate.now().minusYears(18)))
+                throw new IllegalArgumentException("User must be at least 18 years old");
+                
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 }
