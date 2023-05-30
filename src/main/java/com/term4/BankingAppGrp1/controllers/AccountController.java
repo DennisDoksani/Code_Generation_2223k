@@ -11,7 +11,6 @@ import com.term4.BankingAppGrp1.services.AccountService;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -97,6 +96,7 @@ public class AccountController {
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<Object> updateAccount(@Valid @NotBlank @PathVariable String iban,
                                                 @Valid @RequestBody UpdatingDTO accountDTO) {
+
         return ResponseEntity.ok(parseAccountObjectToDTO.apply(
                 accountService.updateAccount(iban, accountDTO))); // parsing account object to DTO
     }

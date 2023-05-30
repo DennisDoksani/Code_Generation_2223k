@@ -31,7 +31,7 @@ public class Runner implements ApplicationRunner {
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
         User joshMf = new User(234445, "Joshua", "Mf", LocalDate.now(), "680000000000", "josh@mf.com", "josh", 
-        true, 0, 0, List.of(Role.ROLE_CUSTOMER));
+        true, 0, 0, List.of(Role.ROLE_EMPLOYEE));
         User ruubio= new User(123456, "Ruubyo", "Gaming", LocalDate.of(2003, 10, 1), "0611111121", "Ruubyo@isgaming.com", "secretword", 
         true, 500, 300, List.of(Role.ROLE_CUSTOMER));
          List.of(joshMf, ruubio)
