@@ -38,10 +38,10 @@ public class Runner implements ApplicationRunner {
                         .forEach(
                                 userService::saveUser
                         );
-        for (int i = 0; i < 800; i++) {
-            Account seedAccount = new Account(AccountType.CURRENT, joshMf);
-            accountService.saveAccount(seedAccount);
-        }
+//        for (int i = 0; i < 800; i++) {
+//            Account seedAccount = new Account(AccountType.CURRENT, joshMf);
+//            accountService.saveAccount(seedAccount);
+//        }
 
         TransactionDTO newTransaction = new TransactionDTO(10.00, "NL01INHO0000000003", "NL01INHO0000000002", ruubio.getId());
 
