@@ -3,11 +3,9 @@ package com.term4.BankingAppGrp1.configuration;
 import com.term4.BankingAppGrp1.responseDTOs.ErrorMessageDTO;
 import jakarta.persistence.EntityNotFoundException;
 
-import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;

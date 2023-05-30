@@ -12,9 +12,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.term4.BankingAppGrp1.requestDTOs.RegistrationDTO;
-
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

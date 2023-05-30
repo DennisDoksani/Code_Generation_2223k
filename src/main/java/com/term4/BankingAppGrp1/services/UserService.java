@@ -1,6 +1,5 @@
 package com.term4.BankingAppGrp1.services;
 
-import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
 import com.term4.BankingAppGrp1.requestDTOs.UserUpdateDTO;
@@ -8,11 +7,8 @@ import com.term4.BankingAppGrp1.requestDTOs.RegistrationDTO;
 
 import jakarta.persistence.EntityNotFoundException;
 
-import java.awt.print.Pageable;
-import java.util.List;
 import java.time.LocalDate;
 
-import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -58,19 +54,6 @@ public class UserService {
         }
     }
 
-    //dont use at all the Role userRole
-    public List<User> getAllUsers(Pageable pageable, Role usersRole) {
-        Page<User> users;
-       // if (usersRole != null)
-         //   users = userRepository.findUserByRolesEqualsAndIdNot(pageable, usersRole, //DEFAULT_ID)
-      //  else
-         //   users = userRepository.findByIdNot(pageable, //DEFAULT_ID);
-      //  return users.getContent();
-        return null;
-    }
-    //dont use at all the Role userRole
-
-
     public User updateUser(UserUpdateDTO userUpdateDTO){
         User updatingUser = userRepository.findById(userUpdateDTO.bsn()).orElseThrow(() ->
                 new EntityNotFoundException("The updating user with BSN: " + userUpdateDTO.bsn() + " was not found"));
@@ -99,7 +82,6 @@ public class UserService {
             throw new IllegalArgumentException("Email already in use.");
         if(userRepository.findByBsn(registrationDTO.bsn()).isPresent())
             throw new IllegalArgumentException("BSN already in use.");
-        
         
         //Validate BSN and Date of Birth
         validateBsn(registrationDTO.bsn());
@@ -145,7 +127,7 @@ public class UserService {
             //Check if date is further than 18 years ago
             if(date.isAfter(LocalDate.now().minusYears(18)))
                 throw new IllegalArgumentException("User must be at least 18 years old");
-                
+
         } catch (Exception e) {
             throw new IllegalArgumentException(e.getMessage());
         }

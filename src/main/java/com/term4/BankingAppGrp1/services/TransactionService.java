@@ -20,7 +20,7 @@ public class TransactionService {
     }
 
     public List<Transaction> getAllTransactions() {
-        return (List<Transaction>) transactionRepository.findAll();
+        return transactionRepository.findAll();
     }
 
     public List<Transaction> getTransactionsWithFilters(Pageable pageable, String ibanFrom, String ibanTo, Double amountMin, Double amountMax, LocalDate dateBefore, LocalDate dateAfter) {
