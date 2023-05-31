@@ -39,6 +39,7 @@ public class APIExceptionHandler {
     public ResponseEntity<Object> handleException(IllegalArgumentException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO(e.getMessage()));
     }
+
     // All the Exceptions that are related to Jakarta Binding Exception
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<Object> handleValidationException(
@@ -65,4 +66,6 @@ public class APIExceptionHandler {
     public ResponseEntity<Object> handleException(HttpRequestMethodNotSupportedException e) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(new ErrorMessageDTO("Method Not Allowed"));
     }
+
+
 }

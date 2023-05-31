@@ -30,7 +30,7 @@ public class Runner implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
-        User joshMf = new User(234445, "Joshua", "Mf", LocalDate.now(), "680000000000", "josh@mf.com", "josh", 
+        User joshMf = new User(234445, "Joshua", "Mf", LocalDate.now(), "0612312312", "josh@mf.com", "josh", 
         true, 0, 0, List.of(Role.ROLE_CUSTOMER, Role.ROLE_EMPLOYEE));
         userService.saveUser(joshMf);
 
@@ -38,7 +38,7 @@ public class Runner implements ApplicationRunner {
         true, 500, 300, List.of(Role.ROLE_CUSTOMER));
         userService.saveUser(ruubio);
 
-        for (int i = 0; i < 800; i++) {
+        for (int i = 0; i < 10; i++) {
             Account seedAccount = new Account(AccountType.CURRENT, joshMf);
             accountService.saveAccount(seedAccount);
         }
