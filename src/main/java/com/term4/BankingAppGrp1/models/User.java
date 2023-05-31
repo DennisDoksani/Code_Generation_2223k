@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.FetchType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
@@ -15,6 +16,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity(name = "users")
 @Inheritance
 
@@ -26,7 +28,6 @@ public class User{
     private int bsn;
     private String firstName;
     private String lastName;
-    private String name;
     private LocalDate dateOfBirth;
     private String phoneNumber;
     private String email;
@@ -37,36 +38,7 @@ public class User{
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Role> roles;
 
-    public User(int bsn, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String email, String password, 
-                boolean isActive, double dayLimit, double transactionLimit, List<Role> roles){
-        this.bsn = bsn;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.dateOfBirth = dateOfBirth;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.password = password;
-        this.name = firstName + " " + lastName;
-        this.isActive = isActive;
-        setDayLimit(dayLimit);
-        setTransactionLimit(transactionLimit);
-        this.roles = roles;
-    }
 
-    public User(int bsn, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String email, String password){
-        this.bsn = bsn;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.dateOfBirth = dateOfBirth;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.password = password;
-        this.name = firstName + " " + lastName;
-        this.isActive = true;
-        this.dayLimit = 0;
-        this.transactionLimit = 0;
-        this.roles = List.of(Role.ROLE_NEWUSER);
-    }
 
     public void setDayLimit(double dayLimit) {
         if (dayLimit > 0)
@@ -80,5 +52,8 @@ public class User{
             this.transactionLimit = transactionLimit;
         else 
             this.transactionLimit = 0;
+    }
+    public String getFullName(){
+        return firstName + " " + lastName;
     }
 }

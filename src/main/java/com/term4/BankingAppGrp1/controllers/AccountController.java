@@ -45,7 +45,7 @@ public class AccountController {
                     a.getAccountType(), parseUserObjectToDTO.apply(a.getCustomer()));
 
     private final Function<Account, SearchingAccountDTO> parseAccountObjectToSearchingDTO = a ->
-            new SearchingAccountDTO(a.getCustomer().getName(), a.getIban());
+            new SearchingAccountDTO(a.getCustomer().getFullName(), a.getIban());
 
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
@@ -103,7 +103,7 @@ public class AccountController {
     public ResponseEntity<Object> saveAccount(@Valid @RequestBody CreatingAccountDTO accountDTO) throws LimitExceededException {
         return ResponseEntity.status(HttpStatus.CREATED).body(parseAccountObjectToDTO.apply(
                 accountService.saveAccount(accountDTO)));
-        //TODO: Look out for Saving account and Absolute Limit
+
     }
 
     //Update account
