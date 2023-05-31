@@ -21,10 +21,10 @@ import java.util.List;
 @Inheritance
 
 public class User{
-
     @Id
     @GeneratedValue
     private long id;
+
     private int bsn;
     private String firstName;
     private String lastName;
@@ -33,12 +33,13 @@ public class User{
     private String email;
     private String password;
     private boolean isActive;
+    @Builder.Default
     private double dayLimit = 0;
+    @Builder.Default
     private double transactionLimit = 0;
+    
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Role> roles;
-
-
 
     public void setDayLimit(double dayLimit) {
         if (dayLimit > 0)
