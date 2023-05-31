@@ -1,7 +1,5 @@
 package com.term4.BankingAppGrp1.services;
 
-import javax.naming.AuthenticationException;
-
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,5 +23,4 @@ public class BankingUserDetailsService implements UserDetailsService {
 
         return new org.springframework.security.core.userdetails.User(userEntity.getEmail(), userEntity.getPassword(), userEntity.getRoles());
     }
-    
 }

@@ -11,9 +11,11 @@ import com.term4.BankingAppGrp1.responseDTOs.AccountHolderDTO;
 import com.term4.BankingAppGrp1.responseDTOs.ErrorMessageDTO;
 import com.term4.BankingAppGrp1.responseDTOs.SearchingAccountDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

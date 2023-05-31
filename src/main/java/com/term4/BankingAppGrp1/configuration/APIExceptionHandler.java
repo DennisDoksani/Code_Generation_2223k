@@ -2,6 +2,7 @@ package com.term4.BankingAppGrp1.configuration;
 
 import com.term4.BankingAppGrp1.responseDTOs.ErrorMessageDTO;
 import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;

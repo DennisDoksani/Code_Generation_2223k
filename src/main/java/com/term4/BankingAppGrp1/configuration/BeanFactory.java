@@ -1,10 +1,7 @@
 package com.term4.BankingAppGrp1.configuration;
 
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaDelete;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.CriteriaUpdate;
+import jakarta.persistence.criteria.*;
 import jakarta.persistence.metamodel.Metamodel;
 
 import org.springframework.context.annotation.Bean;
@@ -32,7 +29,7 @@ public class BeanFactory {
         return new EntityManager() {
             @Override
             public void persist(Object o) {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
@@ -42,7 +39,7 @@ public class BeanFactory {
 
             @Override
             public void remove(Object o) {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
@@ -72,12 +69,12 @@ public class BeanFactory {
 
             @Override
             public void flush() {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public void setFlushMode(FlushModeType flushModeType) {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
@@ -87,42 +84,42 @@ public class BeanFactory {
 
             @Override
             public void lock(Object o, LockModeType lockModeType) {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public void lock(Object o, LockModeType lockModeType, Map<String, Object> map) {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public void refresh(Object o) {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public void refresh(Object o, Map<String, Object> map) {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public void refresh(Object o, LockModeType lockModeType) {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public void refresh(Object o, LockModeType lockModeType, Map<String, Object> map) {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public void clear() {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public void detach(Object o) {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
@@ -137,7 +134,7 @@ public class BeanFactory {
 
             @Override
             public void setProperty(String s, Object o) {
-
+                throw new UnsupportedOperationException("This operation is not supported.");
             }
 
             @Override
@@ -217,7 +214,7 @@ public class BeanFactory {
 
             @Override
             public void joinTransaction() {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
@@ -237,7 +234,7 @@ public class BeanFactory {
 
             @Override
             public void close() {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
@@ -252,37 +249,37 @@ public class BeanFactory {
 
             @Override
             public EntityManagerFactory getEntityManagerFactory() {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public CriteriaBuilder getCriteriaBuilder() {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public Metamodel getMetamodel() {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public <T> EntityGraph<T> createEntityGraph(Class<T> aClass) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public EntityGraph<?> createEntityGraph(String s) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public EntityGraph<?> getEntityGraph(String s) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public <T> List<EntityGraph<? super T>> getEntityGraphs(Class<T> aClass) {
-                return null;
+                throw new UnsupportedOperationException();
             }
         };
 
