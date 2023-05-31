@@ -2,6 +2,8 @@ package com.term4.BankingAppGrp1.configuration;
 
 import com.term4.BankingAppGrp1.jwtFilter.JwtTokenFilter;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +22,10 @@ public class WebSecurityConfiguration {
     
     private JwtTokenFilter jwtTokenFilter;
 
+    @Value("${debug.mode.disable.jwt}")
+    private boolean jwtDisabled;
+
+
     public WebSecurityConfiguration(JwtTokenFilter jwtTokenFilter) {
         this.jwtTokenFilter = jwtTokenFilter;
     }
@@ -33,13 +39,15 @@ public class WebSecurityConfiguration {
         //Disable session creations
         httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        //Config authorisation for request paths
-        httpSecurity.authorizeHttpRequests()
+        if(!jwtDisabled){
+            //Config authorisation for request paths
+            httpSecurity.authorizeHttpRequests()
             .requestMatchers(AntPathRequestMatcher.antMatcher("/auth/**")).permitAll()
-            .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console")).permitAll()
             .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
             .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/users")).permitAll()
             .anyRequest().authenticated();
+        }
+        
             
         //Make sure own JWT filter is executed
         httpSecurity.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

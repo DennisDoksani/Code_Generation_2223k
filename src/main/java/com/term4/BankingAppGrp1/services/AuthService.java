@@ -23,16 +23,17 @@ public class AuthService {
     }
 
     public String login(String email, String password) throws AuthenticationException {
-        // See if a user with the provided username exists or throw exception
+        // See if a user with the provided username exists or throw exception (deliberately vague)
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new AuthenticationException("User not found"));
+                .orElseThrow(() -> new AuthenticationException("Invalid username/password"));
 
         // Check if the password hash matches
         if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
-            // Return a JWT to the client
-            return jwtTokenProvider.createToken(user.getEmail(), user.getRoles());
+            // Create token if credentials are correct
+            return jwtTokenProvider.createToken( user.getEmail(), user.getId(), user.getRoles());
         } 
         else {
+            //Otherwise throw exception
             throw new AuthenticationException("Invalid username/password");
         }
     }
