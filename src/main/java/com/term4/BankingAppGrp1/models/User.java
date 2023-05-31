@@ -32,7 +32,8 @@ public class User{
     private String phoneNumber;
     private String email;
     private String password;
-    private boolean isActive;
+    @Builder.Default
+    private boolean isActive = true;
     @Builder.Default
     private double dayLimit = 0;
     @Builder.Default
