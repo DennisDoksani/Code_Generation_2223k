@@ -10,5 +10,5 @@ import java.time.LocalDate;
 
 @Repository
 public interface CustomTransactionRepository {
-    Page<Transaction> getTransactionsWithFilters(Pageable pageable, String ibanFrom, String ibanTo, Double amountMin, Double amountMax, LocalDate dateBefore, LocalDate dateAfter);
+    Page<Transaction> getTransactionsWithFilters( Pageable pageable, String ibanFrom, String ibanTo, Double amountMin, Double amountMax, LocalDate dateBefore, LocalDate dateAfter);
 }

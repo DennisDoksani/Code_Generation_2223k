@@ -19,13 +19,14 @@ import java.util.function.BiFunction;
 import java.util.function.LongFunction;
 
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.*;
+import static com.term4.BankingAppGrp1.repositories.AccountSpecifications.*;
 
 @Service
 public class AccountService {
     private final AccountRepository accountRepository;
     private final UserService userService;
     private final BiFunction<Integer, Integer, Pageable> getPageableByLimitAndOffset = (limit, offset) ->
-            PageRequest.of((offset / limit) , limit);
+            PageRequest.of((offset / limit), limit);
 
     public AccountService(AccountRepository accountRepository, UserService userService) {
         this.accountRepository = accountRepository;
@@ -36,6 +37,7 @@ public class AccountService {
     public void saveAccount(Account newAccount) {
         accountRepository.save(newAccount);
     }
+
     @Transactional // to make sure that the transaction is atomic
     public Account updateAccount(String iban, UpdatingDTO account) {
         Account accountToUpdate = accountRepository.findById(iban).orElseThrow(
@@ -76,16 +78,16 @@ public class AccountService {
     }
 
 
-    public List<Account> getAllAccounts(int limit,int offset, AccountType accountType) {
+    public List<Account> getAllAccounts(int limit, int offset, AccountType accountType) {
         Page<Account> accounts;
         if (accountType != null)
             // getting all accounts except the own  bank account when account type is specified
             accounts = accountRepository.findAccountByAccountTypeEqualsAndIbanNot(
-                    getPageableByLimitAndOffset.apply(limit,offset), accountType,
+                    getPageableByLimitAndOffset.apply(limit, offset), accountType,
                     DEFAULT_INHOLLAND_BANK_IBAN);
         else
             // getting all accounts except the own  bank account when account type is not specified
-            accounts = accountRepository.findByAndIbanNot(getPageableByLimitAndOffset.apply(limit,offset)
+            accounts = accountRepository.findByAndIbanNot(getPageableByLimitAndOffset.apply(limit, offset)
                     , DEFAULT_INHOLLAND_BANK_IBAN);
         return accounts.getContent();
     }
@@ -96,8 +98,16 @@ public class AccountService {
     }
 
     public List<Account> searchAccountByCustomerName(String customerName, int limit, int offset) {
-        Page<Account> accounts = accountRepository.findByCustomerNameContainingIgnoreCase(customerName,
-                getPageableByLimitAndOffset.apply(limit, offset));
+        Page<Account> accounts = accountRepository.findAll(
+                hasCustomerName(customerName)
+                        .and(isCurrentAccounts())
+                        .and(isActiveAccounts())
+                        .and(isNotBanksOwnAccount()),
+                // adding criteria to the query to filter the result to be accessed by apis
+                getPageableByLimitAndOffset.apply(limit, offset)
+        );
+
+        // getting all the accounts  with default criteria
         return accounts.getContent();
     }
 
@@ -115,7 +125,8 @@ public class AccountService {
         // converting the account type to uppercase to match the enum values
         return new Account(AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase()), accountHolder);
     }
-    public  List<Account> getAccountsByEmailAddress(String email){
+
+    public List<Account> getAccountsByEmailAddress(String email) {
         return accountRepository.findByCustomer_EmailEquals(email);
     }
 }
