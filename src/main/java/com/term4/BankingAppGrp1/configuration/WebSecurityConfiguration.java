@@ -38,6 +38,8 @@ public class WebSecurityConfiguration {
         httpSecurity.headers().frameOptions().disable();
         //Disable session creations
         httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        //Enable cross-origin requests
+        httpSecurity.cors();
 
         if(!jwtDisabled){
             //Config authorisation for request paths
