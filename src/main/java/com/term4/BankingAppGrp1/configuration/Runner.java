@@ -39,13 +39,10 @@ public class Runner implements ApplicationRunner {
         //Seed users
         User employeeCustomer = seedEmployeeCustomer();
         User customer = seedCustomer();
-        User employee = seedEmployeeWithoutAccounts();
+        seedEmployeeWithoutAccounts();
 
-        //Seed some (400) bank accounts
-        for (int i = 0; i < 100; i++) {
-            accountService.saveAccount(new Account(AccountType.CURRENT, customer));
-            accountService.saveAccount(new Account(AccountType.CURRENT, employeeCustomer));
-        }
+        //Seed accounts
+        seedAccounts(customer, employeeCustomer);
         
         //Seed a transaction
         makeDummyBankaccounts(customer, employeeCustomer);
