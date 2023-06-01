@@ -5,6 +5,8 @@ import com.term4.BankingAppGrp1.responseDTOs.ErrorMessageDTO;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -67,6 +69,15 @@ public class APIExceptionHandler {
     @ExceptionHandler(value = {HttpRequestMethodNotSupportedException.class})
     public ResponseEntity<Object> handleException(HttpRequestMethodNotSupportedException e) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(new ErrorMessageDTO("Method Not Allowed"));
+    }
+    @ExceptionHandler(value={ConstraintViolationException.class})
+    public ResponseEntity<Object> handleException(ConstraintViolationException e){
+        String error = "";
+        for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
+             error = violation.getMessage();
+        } // this will return the first error message
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ErrorMessageDTO(error));
     }
 
     @ExceptionHandler(value = {EntityExistsException.class})

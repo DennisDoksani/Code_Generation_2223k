@@ -11,15 +11,13 @@ import com.term4.BankingAppGrp1.responseDTOs.AccountHolderDTO;
 import com.term4.BankingAppGrp1.responseDTOs.ErrorMessageDTO;
 import com.term4.BankingAppGrp1.responseDTOs.SearchingAccountDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.LimitExceededException;
@@ -31,6 +29,7 @@ import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_OFFSET_
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@Validated
 @RequestMapping("/accounts")
 public class AccountController {
     private final AccountService accountService;
@@ -52,12 +51,11 @@ public class AccountController {
     }
 
     //Get all accounts
-    //TODO: Sort by Account Type
     @GetMapping
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<Object> getAllAccounts(@RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
                                                  @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset,
-                                                 @NotBlank @RequestParam(required = false) String accountType)
+                                                 @RequestParam(required = false) String accountType)
     //Spring boot is asking for a default value for limit and offset to be string
     {
         List<Account> accounts = accountService.getAllAccounts(limit, offset,
@@ -68,7 +66,7 @@ public class AccountController {
     //Get Account by IBAN
     @GetMapping("/{iban}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
-    public ResponseEntity<Object> getAccountByIBAN(@NotBlank @PathVariable String iban) {
+    public ResponseEntity<Object> getAccountByIBAN(@PathVariable String iban) {
         return ResponseEntity.ok(parseAccountObjectToDTO.apply(accountService.getAccountByIBAN(iban)));
     }
 
@@ -76,7 +74,7 @@ public class AccountController {
     @GetMapping("/searchByCustomerName")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
     public ResponseEntity<Object> searchAccountByCustomerName(
-            @NotEmpty(message = "cannot be left empty") @RequestParam String customerName,
+            @NotBlank(message = "Customer name cannot be empty inorder to search") @RequestParam String customerName,
             @RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
             @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset) {
         List<Account> accounts = accountService.searchAccountByCustomerName(customerName, limit, offset);
@@ -91,8 +89,9 @@ public class AccountController {
     //Change accounts status
     @PostMapping(value = "/accountStatus/{iban}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<Object> changeAccountStatus(@NotBlank @PathVariable String iban,
-                                                      @Valid @NotBlank @RequestBody AccountStatusDTO accountStatusDTO) {
+    public ResponseEntity<Object> changeAccountStatus(@NotBlank(message = "Iban must be required inorder to update the status of account")
+                                                          @PathVariable String iban,
+                                                      @Valid  @RequestBody AccountStatusDTO accountStatusDTO) {
         accountService.changeAccountStatus(iban, accountStatusDTO.isActive());
         return ResponseEntity.noContent().build();
     }
@@ -109,7 +108,8 @@ public class AccountController {
     //Update account
     @PutMapping(value = "/{iban}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<Object> updateAccount(@NotBlank @PathVariable String iban,
+    public ResponseEntity<Object> updateAccount(@NotBlank(message = "The updating account iban must be provided")
+                                                    @PathVariable String iban,
                                                 @Valid @RequestBody UpdatingDTO accountDTO) {
 
         return ResponseEntity.ok(parseAccountObjectToDTO.apply(
@@ -119,7 +119,8 @@ public class AccountController {
     //Get account by email
     @GetMapping("/user/{email}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
-    public ResponseEntity<Object> getAccountsByEmail(@NotBlank @PathVariable String email) {
+    public ResponseEntity<Object> getAccountsOfUserByEmail(@NotBlank(message ="The email address of the user must be provided" )
+                                                         @PathVariable String email) {
         return ResponseEntity.ok(accountService.getAccountsByEmailAddress(email).stream().map(parseAccountObjectToDTO).toList());
     }
 }
