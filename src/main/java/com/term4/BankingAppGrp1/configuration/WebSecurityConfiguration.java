@@ -34,6 +34,9 @@ public class WebSecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         //Allow post requests
         httpSecurity.csrf().disable();
+         // enabling CORS to allow requests from all origins
+        httpSecurity.cors();
+
         //Disable security headers
         httpSecurity.headers().frameOptions().disable();
         //Disable session creations

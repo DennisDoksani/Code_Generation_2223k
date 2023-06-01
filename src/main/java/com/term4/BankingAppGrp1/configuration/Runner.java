@@ -60,7 +60,7 @@ public class Runner implements ApplicationRunner {
                 .build();
         userService.saveUser(ruubio);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 500; i++) {
             Account seedAccount = new Account(AccountType.CURRENT, joshMf);
             accountService.saveAccount(seedAccount);
         }
