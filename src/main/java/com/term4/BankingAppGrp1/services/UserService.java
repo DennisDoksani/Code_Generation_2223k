@@ -4,6 +4,8 @@ import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
 import com.term4.BankingAppGrp1.requestDTOs.RegistrationDTO;
 import com.term4.BankingAppGrp1.requestDTOs.UserUpdateDTO;
+
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -84,10 +86,10 @@ public class UserService {
     private void validateRegistration(RegistrationDTO registrationDTO) {
         //Check if email is unique
         if (userRepository.findByEmail(registrationDTO.email()).isPresent())
-            throw new IllegalArgumentException("Email already in use.");
+            throw new EntityExistsException("This e-mail is already in use.");
         //Check if BSN is unique
         if (userRepository.findByBsn(registrationDTO.bsn()).isPresent())
-            throw new IllegalArgumentException("BSN already in use.");
+            throw new EntityExistsException("This BSN already in use.");
 
         //Validate BSN, Date of Birth, Phone number
         validateBsn(registrationDTO.bsn());

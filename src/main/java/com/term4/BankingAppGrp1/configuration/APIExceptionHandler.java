@@ -1,6 +1,8 @@
 package com.term4.BankingAppGrp1.configuration;
 
 import com.term4.BankingAppGrp1.responseDTOs.ErrorMessageDTO;
+
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.http.HttpStatus;
@@ -35,10 +37,10 @@ public class APIExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO(e.getMessage()));
     }
 
-    @ExceptionHandler(value = {IllegalArgumentException.class})
-    public ResponseEntity<Object> handleException(IllegalArgumentException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO(e.getMessage()));
-    }
+    // @ExceptionHandler(value = {IllegalArgumentException.class})
+    // public ResponseEntity<Object> handleException(IllegalArgumentException e) {
+    //     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO(e.getMessage()));
+    // }
 
     // All the Exceptions that are related to Jakarta Binding Exception
     @ExceptionHandler({MethodArgumentNotValidException.class})
@@ -65,6 +67,11 @@ public class APIExceptionHandler {
     @ExceptionHandler(value = {HttpRequestMethodNotSupportedException.class})
     public ResponseEntity<Object> handleException(HttpRequestMethodNotSupportedException e) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(new ErrorMessageDTO("Method Not Allowed"));
+    }
+
+    @ExceptionHandler(value = {EntityExistsException.class})
+    public ResponseEntity<Object> handleException(EntityExistsException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO(e.getMessage()));
     }
 
 
