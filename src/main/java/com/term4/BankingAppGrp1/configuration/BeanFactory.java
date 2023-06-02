@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.PhoneNumberUtil; 
 
 import java.util.List;
 import java.util.Map;
@@ -27,9 +27,9 @@ public class BeanFactory {
     }
 
     @Bean
-    public PhoneNumberUtil phoneNumberUtil() {
-        return PhoneNumberUtil.getInstance();
-    }
+    public PhoneNumberUtil phoneNumberUtil() { 
+        return PhoneNumberUtil.getInstance(); 
+    } 
 
     @Bean
     public EntityManager em() {
@@ -291,4 +291,4 @@ public class BeanFactory {
         };
 
     }
-}
+} 

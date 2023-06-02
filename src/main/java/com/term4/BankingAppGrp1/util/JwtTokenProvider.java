@@ -13,7 +13,7 @@ import com.term4.BankingAppGrp1.services.BankingUserDetailsService;
 import com.term4.BankingAppGrp1.services.UserService;
 
 import java.util.Date;
-import java.util.List;
+import java.util.List; 
 
 @Component
 public class JwtTokenProvider {

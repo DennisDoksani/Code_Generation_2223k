@@ -83,7 +83,7 @@ public class APIExceptionHandler {
     @ExceptionHandler(value = {EntityExistsException.class})
     public ResponseEntity<Object> handleException(EntityExistsException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO(e.getMessage()));
-    }
+    } 
 
 
 }

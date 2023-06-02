@@ -6,7 +6,7 @@ import com.term4.BankingAppGrp1.models.User;
 import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
-import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_INHOLLAND_BANK_IBAN;
+import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_INHOLLAND_BANK_IBAN; 
 
 public class AccountSpecifications {
     // this specification will return all accounts that have the given customer name

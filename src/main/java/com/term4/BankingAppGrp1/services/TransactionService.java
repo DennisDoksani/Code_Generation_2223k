@@ -4,7 +4,7 @@ import com.term4.BankingAppGrp1.models.Transaction;
 import com.term4.BankingAppGrp1.repositories.TransactionRepository;
 import com.term4.BankingAppGrp1.responseDTOs.TransactionDTO;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Pageable; 
 
 import java.time.LocalDate;
 import java.time.LocalTime;

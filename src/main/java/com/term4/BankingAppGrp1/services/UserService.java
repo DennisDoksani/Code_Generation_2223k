@@ -3,7 +3,7 @@ package com.term4.BankingAppGrp1.services;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
 import com.term4.BankingAppGrp1.requestDTOs.RegistrationDTO;
-import com.term4.BankingAppGrp1.requestDTOs.UserUpdateDTO;
+import com.term4.BankingAppGrp1.requestDTOs.UserUpdateDTO; 
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
