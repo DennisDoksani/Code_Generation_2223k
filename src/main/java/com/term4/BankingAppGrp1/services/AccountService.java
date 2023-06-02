@@ -44,7 +44,6 @@ public class AccountService {
         Account accountToUpdate = accountRepository.findById(iban).orElseThrow(
                 () -> new EntityNotFoundException("The account with IBAN: " + iban + " Which you are " +
                         "trying to update does not exist"));
-        accountToUpdate.setAccountType(AccountType.valueOf(account.accountType().toUpperCase())); // updating the account Type
         accountToUpdate.setActive(account.isActive()); // updating the account status
         accountToUpdate.setAbsoluteLimit(account.absoluteLimit()); // updating the absolute limit
         User accountHolder = accountToUpdate.getCustomer(); // updating account holder
