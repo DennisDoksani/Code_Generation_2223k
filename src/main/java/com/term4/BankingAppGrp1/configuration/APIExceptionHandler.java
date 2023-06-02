@@ -1,6 +1,8 @@
 package com.term4.BankingAppGrp1.configuration;
 
 import com.term4.BankingAppGrp1.responseDTOs.ErrorMessageDTO;
+
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 
 import jakarta.validation.ConstraintViolation;
@@ -68,6 +70,7 @@ public class APIExceptionHandler {
     public ResponseEntity<Object> handleException(HttpRequestMethodNotSupportedException e) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(new ErrorMessageDTO("Method Not Allowed"));
     }
+
     @ExceptionHandler(value={ConstraintViolationException.class})
     public ResponseEntity<Object> handleException(ConstraintViolationException e){
         String error = "";
@@ -78,5 +81,8 @@ public class APIExceptionHandler {
                 new ErrorMessageDTO(error));
     }
 
-
+    @ExceptionHandler(value = {EntityExistsException.class})
+    public ResponseEntity<Object> handleException(EntityExistsException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO(e.getMessage()));
+    }
 }
