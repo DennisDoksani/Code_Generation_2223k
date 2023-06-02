@@ -20,7 +20,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableMethodSecurity
 public class WebSecurityConfiguration {
     
-    private JwtTokenFilter jwtTokenFilter;
+    private final JwtTokenFilter jwtTokenFilter;
 
     @Value("${debug.mode.disable.jwt}")
     private boolean jwtDisabled;
@@ -34,10 +34,15 @@ public class WebSecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         //Allow post requests
         httpSecurity.csrf().disable();
+         // enabling CORS to allow requests from all origins
+        httpSecurity.cors();
+
         //Disable security headers
         httpSecurity.headers().frameOptions().disable();
         //Disable session creations
         httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        //Enable cross-origin requests
+        httpSecurity.cors();
 
         if(!jwtDisabled){
             //Config authorisation for request paths
