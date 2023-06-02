@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.term4.BankingAppGrp1.repositories.UserRepository;
+import com.term4.BankingAppGrp1.repositories.UserRepository; 
 
 @Service
 public class BankingUserDetailsService implements UserDetailsService {

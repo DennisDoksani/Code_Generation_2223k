@@ -34,59 +34,36 @@ public class Runner implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
-        User joshMf = User.builder()
-                .bsn(234445)
-                .firstName("Joshua")
-                .lastName("Mf")
-                .dateOfBirth(LocalDate.now())
-                .phoneNumber("0611111111")
-                .email("josh@mf.com")
-                .password("josh")
-                .isActive(true)
-                .roles(List.of(Role.ROLE_EMPLOYEE, Role.ROLE_CUSTOMER))
-                .build();
-        userService.saveUser(joshMf);
+        
+        //Seed users and accounts 
+        User employeeCustomer = seedEmployeeCustomer(); 
+        User customer = seedCustomer(); 
+        seedAccounts(customer, employeeCustomer); 
+        seedEmployeeWithoutAccounts(); 
+        
+        //Seed a transaction 
+        makeDummyBankaccounts(customer, employeeCustomer); 
+        TransactionDTO newTransaction = new TransactionDTO(10.00, "NL01INHO0000000003", "NL01INHO0000000002", customer.getId()); 
+        transactionService.addTransaction(newTransaction); 
 
-        User ruubio = User.builder()
-                .bsn(123456)
-                .firstName("Ruubyo")
-                .lastName("Gaming")
-                .dateOfBirth(LocalDate.of(2003, 10, 1))
-                .phoneNumber("0611111121")
-                .email("Ruubyo@isgaming.com")
-                .password("secretword")
-                .isActive(true)
-                .roles(List.of(Role.ROLE_EMPLOYEE, Role.ROLE_CUSTOMER))
-                .build();
-        userService.saveUser(ruubio);
-
-        for (int i = 0; i < 500; i++) {
-            Account seedAccount = new Account(AccountType.CURRENT, joshMf);
-            accountService.saveAccount(seedAccount);
-        }
-
-        TransactionDTO newTransaction = new TransactionDTO(10.00, "NL01INHO0000000003", "NL01INHO0000000002", ruubio.getId());
-
-        transactionService.addTransaction(newTransaction);
-        seedBankAccount();
-        makeDummyBankaccounts(ruubio, joshMf);
+        //Seed the bank's account 
+        seedBankAccount(); 
     }
 
-    private void seedBankAccount() {
-        User inhollandBank = User.builder()
-                .bsn(111111)
-                .firstName("Inholland")
-                .lastName("Bank")
-                .dateOfBirth(LocalDate.now())
-                .phoneNumber("680000000000")
-                .email("inholland@bank.nl")
-                .password("Inholland")
-                .isActive(true)
-                .transactionLimit(9999999999999999L)
-                .dayLimit(9999999999999999L)
-                .roles(List.of(Role.ROLE_EMPLOYEE))
-                .build();
-
+    private void seedBankAccount() { 
+        User inhollandBank = User.builder() 
+            .bsn(111111) 
+            .firstName("Inholland") 
+            .lastName("Bank") 
+            .dateOfBirth(LocalDate.now()) 
+            .phoneNumber("680000000000") 
+            .email("inholland@bank.nl") 
+            .password("Inholland") 
+            .isActive(true) 
+            .transactionLimit(9999999999999999L) 
+            .dayLimit(9999999999999999L) 
+            .roles(List.of(Role.ROLE_EMPLOYEE)) 
+            .build(); 
 
         userService.saveUser(inhollandBank);
         Account seedAccount = new Account(DEFAULT_INHOLLAND_BANK_IBAN, 9999999999999.0, LocalDate.now(), 0, true, AccountType.CURRENT, inhollandBank);
@@ -108,4 +85,65 @@ public class Runner implements ApplicationRunner {
         accountService.saveAccount(current);
         accountService.saveAccount(seedSavings);
     }
-}
+
+    private void seedAccounts(User customer, User employeeCustomer){ 
+        //Seed some (200) bank current accounts 
+        for (int i = 0; i < 100; i++) { 
+            accountService.saveAccount(new Account(AccountType.CURRENT, customer)); 
+            accountService.saveAccount(new Account(AccountType.CURRENT, employeeCustomer)); 
+        }
+        //Seed savings accounts 
+        accountService.saveAccount(new Account(AccountType.SAVINGS, customer)); 
+        accountService.saveAccount(new Account(AccountType.SAVINGS, employeeCustomer)); 
+
+
+    }
+
+    private User seedEmployeeCustomer(){ 
+        User seedEmployeeCustomer = User.builder() 
+            .bsn(123123123) 
+            .firstName("EmployeeCustomer") 
+            .lastName("Seed") 
+            .dateOfBirth(LocalDate.of(1990, 1, 1)) 
+            .phoneNumber("0611111111") 
+            .email("employeecustomer@seed.com") 
+            .password("password") 
+            .isActive(true) 
+            .roles(List.of(Role.ROLE_EMPLOYEE, Role.ROLE_CUSTOMER)) 
+            .build(); 
+        userService.saveUser(seedEmployeeCustomer); 
+        return seedEmployeeCustomer; 
+    }
+
+    private User seedCustomer(){ 
+        User seedCustomer = User.builder() 
+            .bsn(123456789) 
+            .firstName("Customer") 
+            .lastName("Seed") 
+            .dateOfBirth(LocalDate.of(2000, 10, 10)) 
+            .phoneNumber("0611111121") 
+            .email("customer@seed.com") 
+            .password("password") 
+            .isActive(true) 
+            .roles(List.of(Role.ROLE_CUSTOMER)) 
+            .build(); 
+        userService.saveUser(seedCustomer); 
+        return seedCustomer; 
+    }
+
+    private User seedEmployeeWithoutAccounts(){ 
+        User seedEmployee = User.builder() 
+            .bsn(123412341) 
+            .firstName("Employee") 
+            .lastName("Seed") 
+            .dateOfBirth(LocalDate.of(1990, 1, 1)) 
+            .phoneNumber("0611111111") 
+            .email("employee@seed.com") 
+            .password("password") 
+            .isActive(true) 
+            .roles(List.of(Role.ROLE_EMPLOYEE)) 
+            .build(); 
+        userService.saveUser(seedEmployee); 
+        return seedEmployee; 
+    } 
+} 

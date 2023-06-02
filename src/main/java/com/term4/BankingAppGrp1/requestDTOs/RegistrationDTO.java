@@ -11,4 +11,4 @@ public record RegistrationDTO(
     @NotBlank(message="First name is required.") String firstName,  
     @NotBlank(message="Last name is required.") String lastName,  
     @NotBlank(message="Phone number is required.") String phoneNumber,  
-    @NotBlank(message="Date of Birth is required.") String dateOfBirth){}
+    @NotBlank(message="Date of Birth is required.") String dateOfBirth){} 

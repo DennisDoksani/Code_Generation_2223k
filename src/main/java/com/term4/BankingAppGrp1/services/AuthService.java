@@ -7,7 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
-import com.term4.BankingAppGrp1.util.JwtTokenProvider;
+import com.term4.BankingAppGrp1.responseDTOs.LoginResponseDTO;
+import com.term4.BankingAppGrp1.util.JwtTokenProvider; 
 
 @Service
 public class AuthService {
