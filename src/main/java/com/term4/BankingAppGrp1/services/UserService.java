@@ -4,9 +4,7 @@ import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
 import com.term4.BankingAppGrp1.requestDTOs.RegistrationDTO;
 import com.term4.BankingAppGrp1.requestDTOs.UserUpdateDTO;
-
 import jakarta.persistence.EntityNotFoundException;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 

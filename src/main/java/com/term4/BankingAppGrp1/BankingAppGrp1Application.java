@@ -8,6 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class BankingAppGrp1Application implements ConstantsContainer {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BankingAppGrp1Application.class, args); 
+		SpringApplication.run(BankingAppGrp1Application.class, args);
 	}
 }

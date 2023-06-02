@@ -2,7 +2,7 @@ package com.term4.BankingAppGrp1.services;
 
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.requestDTOs.UserUpdateDTO;
-import org.springframework.stereotype.Service; 
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
