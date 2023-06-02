@@ -8,8 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -24,11 +22,6 @@ public class BeanFactory {
     @Bean
     public Random randomizer() {
         return new Random();
-    }
-
-    @Bean
-    public PhoneNumberUtil phoneNumberUtil() {
-        return PhoneNumberUtil.getInstance();
     }
 
     @Bean

@@ -4,16 +4,9 @@ import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
 import com.term4.BankingAppGrp1.requestDTOs.RegistrationDTO;
 import com.term4.BankingAppGrp1.requestDTOs.UserUpdateDTO;
-
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.NumberParseException;
-import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 import java.time.LocalDate;
 
@@ -22,12 +15,10 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final PhoneNumberUtil phoneNumberUtil;
 
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, PhoneNumberUtil phoneNumberUtil) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.phoneNumberUtil = phoneNumberUtil;
     }
 
     public User saveUser(User user) {
@@ -86,15 +77,15 @@ public class UserService {
     private void validateRegistration(RegistrationDTO registrationDTO) {
         //Check if email is unique
         if (userRepository.findByEmail(registrationDTO.email()).isPresent())
-            throw new EntityExistsException("This e-mail is already in use.");
-        //Check if BSN is unique
+            throw new IllegalArgumentException("Email already in use.");
         if (userRepository.findByBsn(registrationDTO.bsn()).isPresent())
-            throw new EntityExistsException("This BSN already in use.");
+            throw new IllegalArgumentException("BSN already in use.");
 
-        //Validate BSN, Date of Birth, Phone number
+        //Validate BSN and Date of Birth
         validateBsn(registrationDTO.bsn());
         validateDateOfBirth(registrationDTO.dateOfBirth());
-        validatePhoneNumber(registrationDTO.phoneNumber());
+
+
     }
 
     private void validateBsn(Integer bsn) {
@@ -137,25 +128,5 @@ public class UserService {
         } catch (Exception e) {
             throw new IllegalArgumentException(e.getMessage());
         }
-    }
-
-    //Validate phone number (uses Google's open-source library)
-    private void validatePhoneNumber(String phoneNumber){
-        
-        PhoneNumber number = null;
-  
-        try {
-            //The parse method tries to parse the string into a phone number of NL type, unless a different country code is provided.
-            number = phoneNumberUtil.parse(phoneNumber, "NL");
-            
-        }
-        catch (NumberParseException e) {
-            //If there's an exception while parsing the number, that means the number invalid
-            throw new IllegalArgumentException("Invalid phone number");
-        }
-
-        //If the isValidNumber method returns false, that means the number is invalid
-        if(!phoneNumberUtil.isValidNumber(number))
-            throw new IllegalArgumentException("Invalid phone number");
     }
 }
