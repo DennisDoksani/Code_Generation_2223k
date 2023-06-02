@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.naming.LimitExceededException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.LongFunction;
@@ -117,5 +118,9 @@ public class AccountService {
     }
     public  List<Account> getAccountsByEmailAddress(String email){
         return accountRepository.findByCustomer_EmailEquals(email);
+    }
+
+    public List<Account> getAccountsByUserId(Long id){
+        return accountRepository.findByCustomer_IdEquals(id);
     }
 }

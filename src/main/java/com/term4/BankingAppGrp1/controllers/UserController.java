@@ -1,9 +1,11 @@
 package com.term4.BankingAppGrp1.controllers;
 
+import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.requestDTOs.UserUpdateDTO;
 import com.term4.BankingAppGrp1.responseDTOs.AccountHolderDTO;
 import com.term4.BankingAppGrp1.responseDTOs.UserDTO;
+import com.term4.BankingAppGrp1.services.AccountService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
@@ -24,19 +26,27 @@ import java.util.function.Function;
 public class UserController {
 
     private final UserService userService;
+    private final AccountService accountService;
 
     private final Function<User, UserDTO> parseUserObjectToDTO = u ->
             new UserDTO(u.getId(), u.getBsn(), u.getFirstName(), u.getLastName(),
                      u.getDateOfBirth(), u.getEmail(), u.getPhoneNumber(), u.getRoles());
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, AccountService accountService) {
         this.userService = userService;
+        this.accountService = accountService;
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<String> deleteUser(@PathVariable long id){
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(userService.deleteUser(id));
+        List<Account> userAccounts = accountService.getAccountsByUserId(id);
+        if (userAccounts.isEmpty()){
+            userService.deleteUser(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User deleted successfully!");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User has active bank accounts and cannot be deleted.");
+        }
     }
 
     @GetMapping("/{id}")

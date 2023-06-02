@@ -1,8 +1,10 @@
 package com.term4.BankingAppGrp1.services;
 
+import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
+import com.term4.BankingAppGrp1.repositories.AccountRepository;
 import com.term4.BankingAppGrp1.requestDTOs.UserUpdateDTO;
 import com.term4.BankingAppGrp1.requestDTOs.RegistrationDTO;
 
@@ -13,17 +15,21 @@ import java.util.List;
 import java.time.LocalDate;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserService(UserRepository userRepository, AccountRepository accountRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
+        this.accountRepository = accountRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
@@ -48,13 +54,16 @@ public class UserService {
     }
 
     public String deleteUser(long id) {
-
-        if (userRepository.existsById(id)) {
-            userRepository.deleteById(id);
-            return "User deleted successfully";
-        } 
-        else {
-            return "User not found in the database";
+        if (userRepository.existsById(id)){
+            List<Account> userAccounts = accountRepository.findByCustomer_IdEquals(id);
+            if (userAccounts.isEmpty()){
+                userRepository.deleteById(id);
+                return "User deleted successfully!";
+            } else {
+                throw new IllegalArgumentException("User has associated bank accounts and cannot be deleted");
+            }
+        } else {
+            throw new EntityNotFoundException("User with id " + id + " does not exist.");
         }
     }
 

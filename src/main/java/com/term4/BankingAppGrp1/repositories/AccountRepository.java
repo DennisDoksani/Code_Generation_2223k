@@ -19,4 +19,5 @@ public interface AccountRepository extends CrudRepository<Account,String> ,Pagin
     int countAccountByCustomer_IdEqualsAndAccountTypeEquals(long customerId, AccountType accountType);
 
     List<Account> findByCustomer_EmailEquals(String email);
+    List<Account> findByCustomer_IdEquals(Long id);
 }
