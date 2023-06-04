@@ -128,5 +128,6 @@ public class AccountService {
 
     public List<Account> getAccountsByEmailAddress(String email) {
         return accountRepository.findByCustomer_EmailEquals(email);
+        //TODO:  check Active status of the accounts
     }
 }
