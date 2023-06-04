@@ -39,5 +39,17 @@ public class AccountSpecifications {
                 criteriaBuilder.notEqual(root.get("iban"), DEFAULT_INHOLLAND_BANK_IBAN);
     }
 
+    public static Specification<Account> hasCustomerEmail(String email) {
+        return (root, query, criteriaBuilder) -> {
+            Join<Account, User> accountHolderJoin = root.join("customer");
+            String lowerCaseEmail = email.toLowerCase();
+            return criteriaBuilder.equal(
+                    criteriaBuilder.lower(
+                            accountHolderJoin.get("email")), lowerCaseEmail
+
+            );
+        };
+    }
+
 }
 

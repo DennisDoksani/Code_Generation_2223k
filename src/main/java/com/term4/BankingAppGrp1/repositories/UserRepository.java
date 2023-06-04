@@ -17,5 +17,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
     Optional<User> findByBsn(Integer bsn);
     Page<User> findUserByRolesEqualsAndIdNot(Pageable pageable, Role usersRole, long id);
     Page<User> findByIdNot(Pageable pageable, long id);
+    Optional<User> findByEmailEqualsIgnoreCase(String email);
     
 }
