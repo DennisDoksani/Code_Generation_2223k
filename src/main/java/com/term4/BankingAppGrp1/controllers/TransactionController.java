@@ -6,12 +6,15 @@ import com.term4.BankingAppGrp1.models.Transaction;
 import com.term4.BankingAppGrp1.responseDTOs.TransactionDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
 import com.term4.BankingAppGrp1.services.TransactionService;
+
 import jakarta.validation.Valid;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -48,6 +51,7 @@ public class TransactionController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
     public ResponseEntity<Object> addTransaction(@RequestBody @Valid TransactionDTO transactionDTO) {
         if(validTransaction(transactionDTO))
             return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.addTransaction(transactionDTO));
