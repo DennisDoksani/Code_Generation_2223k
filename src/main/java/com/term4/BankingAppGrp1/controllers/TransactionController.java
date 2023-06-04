@@ -53,8 +53,12 @@ public class TransactionController {
     @PostMapping
     @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
     public ResponseEntity<Object> addTransaction(@RequestBody @Valid TransactionDTO transactionDTO) {
-        if(validTransaction(transactionDTO))
+        if(validTransaction(transactionDTO)){
+            accountService.updateAccount(transactionDTO.)
+
             return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.addTransaction(transactionDTO));
+        }
+
 
         return null;
     }

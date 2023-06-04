@@ -63,7 +63,7 @@ public class TransactionControllerTest {
 
     @BeforeEach
     void Init() {
-        testUser = new User(11111, "Ruben", "Walkeuter", LocalDate.of(2003, 10, 1), "TestNumber", "test@test.com", "password", true, 100, 200, new ArrayList<>());
+        testUser = new User(1, 11111, "Ruben", "Walkeuter", LocalDate.of(2003, 10, 1), "TestNumber", "test@test.com", "password", true, 100, 200, new ArrayList<>());
 
         testAccount1 = new Account("NL01INHO0000000003", 100, LocalDate.now(), 0, true, AccountType.SAVINGS, testUser);
         testAccount2 = new Account("NL01INHO0000000002", 100, LocalDate.now(), 0, true, AccountType.CURRENT, testUser);
