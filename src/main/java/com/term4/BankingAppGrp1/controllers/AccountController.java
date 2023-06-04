@@ -2,6 +2,7 @@ package com.term4.BankingAppGrp1.controllers;
 
 import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
+import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.requestDTOs.AccountStatusDTO;
 import com.term4.BankingAppGrp1.requestDTOs.CreatingAccountDTO;
@@ -12,17 +13,23 @@ import com.term4.BankingAppGrp1.responseDTOs.ErrorMessageDTO;
 import com.term4.BankingAppGrp1.responseDTOs.SearchingAccountDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.LimitExceededException;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_LIMIT_STRING;
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_OFFSET_STRING;
@@ -45,6 +52,9 @@ public class AccountController {
 
     private final Function<Account, SearchingAccountDTO> parseAccountObjectToSearchingDTO = a ->
             new SearchingAccountDTO(a.getCustomer().getFullName(), a.getIban());
+    private final Predicate<GrantedAuthority> isEmployee =
+            a -> a.getAuthority().equals(Role.ROLE_EMPLOYEE.name());
+
 
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
@@ -90,8 +100,8 @@ public class AccountController {
     @PostMapping(value = "/accountStatus/{iban}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<Object> changeAccountStatus(@NotBlank(message = "Iban must be required inorder to update the status of account")
-                                                          @PathVariable String iban,
-                                                      @Valid  @RequestBody AccountStatusDTO accountStatusDTO) {
+                                                      @PathVariable String iban,
+                                                      @Valid @RequestBody AccountStatusDTO accountStatusDTO) {
         accountService.changeAccountStatus(iban, accountStatusDTO.isActive());
         return ResponseEntity.noContent().build();
     }
@@ -108,19 +118,32 @@ public class AccountController {
     //Update account
     @PutMapping(value = "/{iban}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<Object> updateAccount(@NotBlank(message = "The updating account iban must be provided")
-                                                    @PathVariable String iban,
+    public ResponseEntity<Object> updateAccount(@NotEmpty(message = "The updating account iban must be provided")
+                                                @PathVariable String iban,
                                                 @Valid @RequestBody UpdatingDTO accountDTO) {
 
         return ResponseEntity.ok(parseAccountObjectToDTO.apply(
                 accountService.updateAccount(iban, accountDTO))); // parsing account object to DTO
     }
 
-    //Get account by email
+    // this endpoint will access by both employee and customer
+    // if the user is employee, he can access all accounts of any users
+    // if the user is customer, he can access only his accounts by verifying with JWOT token
     @GetMapping("/user/{email}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
-    public ResponseEntity<Object> getAccountsOfUserByEmail(@NotBlank(message ="The email address of the user must be provided" )
-                                                         @PathVariable String email) {
-        return ResponseEntity.ok(accountService.getAccountsByEmailAddress(email).stream().map(parseAccountObjectToDTO).toList());
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
+    public ResponseEntity<Object> getAccountsOfUserByEmail(@Email(message = "The email provided is not a valid email address")
+                                                           @PathVariable String email,
+                                                           @AuthenticationPrincipal UserDetails jwtUser) {
+
+        if (jwtUser.getAuthorities().stream().noneMatch(isEmployee)
+                && !jwtUser.getUsername().equalsIgnoreCase(email)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ErrorMessageDTO("You are not allowed to access others Accounts !"));
+        }
+        return ResponseEntity.ok(accountService.getAccountsByEmailAddress(email)
+                .stream()
+                .map(parseAccountObjectToDTO)
+                .toList());
+
     }
 }
