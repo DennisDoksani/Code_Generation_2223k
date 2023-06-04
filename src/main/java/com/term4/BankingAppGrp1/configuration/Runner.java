@@ -35,6 +35,22 @@ public class Runner implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
+
+        User joshMf = new User(234445, "Joshua", "Mf", LocalDate.now(), "680000000000", "josh@mf.com", "josh", 
+        true, 0, 0, List.of(Role.ROLE_CUSTOMER));
+        User ruubio= new User(123456, "Ruubyo", "Gaming", LocalDate.of(2003, 10, 1), "0611111121", "Ruubyo@isgaming.com", "secretword", 
+        true, 300, 300, List.of(Role.ROLE_CUSTOMER));
+         List.of(joshMf, ruubio)
+                        .forEach(
+                                User -> userService.saveUser(User)
+                        );
+
+//        for (int i = 0; i < 800; i++) {
+//            Account seedAccount = new Account(AccountType.CURRENT, joshMf);
+//            accountService.saveAccount(seedAccount);
+//        }
+      
+
         
         //Seed users and accounts 
         User employeeCustomer = seedEmployeeCustomer(); 
@@ -72,10 +88,13 @@ public class Runner implements ApplicationRunner {
     }
 
     private void makeDummyBankaccounts(User user, User joshMf) {
-        Account savings = new Account(AccountType.SAVINGS, user);
-        Account current = new Account(AccountType.CURRENT, user);
-        current.setIban("NL01INHO0000000002");
-        savings.setIban("NL01INHO0000000003");
+
+        Account savings = new Account("NL01INHO0000000003", 9999.0, LocalDate.now(), 0, true, AccountType.SAVINGS, user);
+        Account current = new Account("NL01INHO0000000002", 290.0, LocalDate.now(), 0, true, AccountType.CURRENT, user);
+        accountService.saveAccount(savings);
+        accountService.saveAccount(current);
+
+
         Account seedAccount = new Account(AccountType.CURRENT, joshMf);
         Account seedSavings = new Account(AccountType.SAVINGS, joshMf);
         Account seedHardcodedIban = new Account("NL72INHO0579629781",

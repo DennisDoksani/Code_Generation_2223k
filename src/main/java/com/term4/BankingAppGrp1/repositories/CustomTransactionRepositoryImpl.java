@@ -1,6 +1,7 @@
 package com.term4.BankingAppGrp1.repositories;
 
 
+import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.Transaction;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class CustomTransactionRepositoryImpl implements CustomTransactionRepository{
@@ -65,4 +67,5 @@ public class CustomTransactionRepositoryImpl implements CustomTransactionReposit
 
         return new PageImpl<Transaction>(resultList, pageable, totalRows);
     }
+
 }
