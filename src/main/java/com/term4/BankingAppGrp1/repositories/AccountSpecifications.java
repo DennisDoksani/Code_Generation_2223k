@@ -20,7 +20,6 @@ public class AccountSpecifications {
                     accountHolderJoin.get("lastName")
             )), "%" + lowerCaseFullName + "%");
         };
-
     }
 
     // this Specification will return all the Current accounts
@@ -34,9 +33,22 @@ public class AccountSpecifications {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.isTrue(root.get("isActive"));
     }
+
     public static Specification<Account> isNotBanksOwnAccount() {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.notEqual(root.get("iban"), DEFAULT_INHOLLAND_BANK_IBAN);
+    }
+
+    public static Specification<Account> hasCustomerEmail(String email) {
+        return (root, query, criteriaBuilder) -> {
+            Join<Account, User> accountHolderJoin = root.join("customer");
+            String lowerCaseEmail = email.toLowerCase();
+            return criteriaBuilder.equal(
+                    criteriaBuilder.lower(
+                            accountHolderJoin.get("email")), lowerCaseEmail
+
+            );
+        };
     }
 
 }

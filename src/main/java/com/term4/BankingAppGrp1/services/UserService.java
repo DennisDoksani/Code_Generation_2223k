@@ -158,4 +158,9 @@ public class UserService {
         if(!phoneNumberUtil.isValidNumber(number))
             throw new IllegalArgumentException("Invalid phone number");
     }
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() ->
+                new EntityNotFoundException("User with email: " + email + " was not found"));
+    }
+
 }

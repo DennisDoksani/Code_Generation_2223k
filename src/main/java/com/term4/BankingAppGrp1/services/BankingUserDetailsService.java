@@ -18,8 +18,9 @@ public class BankingUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        com.term4.BankingAppGrp1.models.User userEntity = userRepository.findByEmail(email)
-                                                                        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        com.term4.BankingAppGrp1.models.User userEntity =
+                userRepository.findByEmail(email)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         return new org.springframework.security.core.userdetails.User(userEntity.getEmail(), userEntity.getPassword(), userEntity.getRoles());
     }

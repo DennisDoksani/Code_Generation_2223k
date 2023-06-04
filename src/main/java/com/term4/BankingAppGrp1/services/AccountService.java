@@ -5,7 +5,7 @@ import com.term4.BankingAppGrp1.models.AccountType;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.AccountRepository;
 import com.term4.BankingAppGrp1.requestDTOs.CreatingAccountDTO;
-import com.term4.BankingAppGrp1.requestDTOs.UpdatingDTO;
+import com.term4.BankingAppGrp1.requestDTOs.UpdatingAccountDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -32,18 +32,19 @@ public class AccountService {
         this.accountRepository = accountRepository;
         this.userService = userService;
     }
-
-    // TODO: Delete this method later
+    
     public void saveAccount(Account newAccount) {
 
         accountRepository.save(newAccount);
     }
 
     @Transactional // to make sure that the transaction is atomic
-    public Account updateAccount(String iban, UpdatingDTO account) {
-        Account accountToUpdate = accountRepository.findById(iban).orElseThrow(
-                () -> new EntityNotFoundException("The account with IBAN: " + iban + " Which you are " +
-                        "trying to update does not exist"));
+    public Account updateAccount(String iban, UpdatingAccountDTO account) {
+        Account accountToUpdate = accountRepository.findById(iban)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("The account with IBAN: " + iban + " Which you are " +
+                                "trying to update does not exist"));
+
         accountToUpdate.setActive(account.isActive()); // updating the account status
         accountToUpdate.setAbsoluteLimit(account.absoluteLimit()); // updating the absolute limit
         User accountHolder = accountToUpdate.getCustomer(); // updating account holder
@@ -126,7 +127,14 @@ public class AccountService {
         return new Account(AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase()), accountHolder);
     }
 
+    // this method will be used to get all the accounts of a customer
+    // only the active accounts will be returned
+    // the email case is insensitive
     public List<Account> getAccountsByEmailAddress(String email) {
-        return accountRepository.findByCustomer_EmailEquals(email);
+        return accountRepository.findAll(
+                hasCustomerEmail(email)
+                        .and(isActiveAccounts())
+        );
+
     }
 }
