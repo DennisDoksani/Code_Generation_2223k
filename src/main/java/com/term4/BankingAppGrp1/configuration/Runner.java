@@ -12,6 +12,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -45,13 +46,13 @@ public class Runner implements ApplicationRunner {
 //        }
       
 
+        List<Account> accounts = makeDummyBankaccounts(ruubio, joshMf);
         
-        
-        TransactionDTO newTransaction = new TransactionDTO(10.00, "NL01INHO0000000003", "NL01INHO0000000002", ruubio.getId());
+        TransactionDTO newTransaction = new TransactionDTO(10.00, accounts.get(0), accounts.get(1), ruubio);
 
         transactionService.addTransaction(newTransaction);
         seedBankAccount();
-        makeDummyBankaccounts(ruubio, joshMf);
+
     }
 
     private void seedBankAccount(){
@@ -64,7 +65,8 @@ public class Runner implements ApplicationRunner {
         accountService.saveAccount(seedAccount);
     }
   
-    private void makeDummyBankaccounts(User user, User joshMf) {
+    private List<Account> makeDummyBankaccounts(User user, User joshMf) {
+
         Account savings = new Account("NL01INHO0000000003", 9999.0, LocalDate.now(), 0, true, AccountType.SAVINGS, user);
         Account current = new Account("NL01INHO0000000002", 290.0, LocalDate.now(), 0, true, AccountType.CURRENT, user);
         accountService.saveAccount(savings);
@@ -78,5 +80,7 @@ public class Runner implements ApplicationRunner {
         accountService.saveAccount(seedAccount);
         accountService.saveAccount(seedHardcodedIban);
         accountService.saveAccount(seedSavings);
+
+        return List.of(savings, current);
     }
 }

@@ -60,8 +60,8 @@ public class TransactionController {
     }
 
     public Boolean validTransaction(TransactionDTO dto) {
-        Account accountTo = accountService.getAccountByIBAN(dto.accountTo());
-        Account accountFrom = accountService.getAccountByIBAN(dto.accountFrom());
+        Account accountTo = dto.accountTo();
+        Account accountFrom = dto.accountFrom();
 
         //This statement checks if money is being transferred to or from a savings account that does not belong to the same user
         if (((accountFrom.getAccountType() == AccountType.CURRENT && accountTo.getAccountType() == AccountType.SAVINGS) || (accountFrom.getAccountType() == AccountType.SAVINGS && accountTo.getAccountType() == AccountType.CURRENT)) && accountFrom.getCustomer().getBsn() != accountTo.getCustomer().getBsn() )

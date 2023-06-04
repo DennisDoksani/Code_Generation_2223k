@@ -17,6 +17,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>,
 
     Page<Transaction> getTransactionsWithFilters(Pageable pageable, String ibanFrom, String ibanTo, Double amountMin, Double amountMax, LocalDate dateBefore, LocalDate dateAfter);
 
-    @Query("SELECT sum(t.amount) FROM Transaction t WHERE t.accountFrom = :iban AND t.date = :date")
+    @Query("SELECT sum(t.amount) FROM Transaction t WHERE t.accountFrom.iban = :iban AND t.date = :date")
     Optional<Double> getSumOfMoneyTransferred(String iban, LocalDate date);
 }
