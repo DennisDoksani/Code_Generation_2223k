@@ -7,7 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
-import com.term4.BankingAppGrp1.util.JwtTokenProvider;
+import com.term4.BankingAppGrp1.responseDTOs.LoginResponseDTO;
+import com.term4.BankingAppGrp1.util.JwtTokenProvider; 
 
 @Service
 public class AuthService {
@@ -22,15 +23,16 @@ public class AuthService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public String login(String email, String password) throws AuthenticationException {
+    public LoginResponseDTO login(String email, String password) throws AuthenticationException {
         // See if a user with the provided username exists or throw exception (deliberately vague)
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AuthenticationException("Invalid username/password"));
 
         // Check if the password hash matches
         if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
-            // Create token if credentials are correct
-            return jwtTokenProvider.createToken( user.getEmail(), user.getId(), user.getRoles());
+            // Create token if credentials are correct and return LoginResponseDTO
+            String jwt = jwtTokenProvider.createToken(user.getId(), user.getRoles());
+            return new LoginResponseDTO(jwt, user.getId(), user.getEmail(), user.getFullName());
         } 
         else {
             //Otherwise throw exception
