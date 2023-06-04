@@ -6,7 +6,7 @@ import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.requestDTOs.AccountStatusDTO;
 import com.term4.BankingAppGrp1.requestDTOs.CreatingAccountDTO;
-import com.term4.BankingAppGrp1.requestDTOs.UpdatingDTO;
+import com.term4.BankingAppGrp1.requestDTOs.UpdatingAccountDTO;
 import com.term4.BankingAppGrp1.responseDTOs.AccountDTO;
 import com.term4.BankingAppGrp1.responseDTOs.AccountHolderDTO;
 import com.term4.BankingAppGrp1.responseDTOs.ErrorMessageDTO;
@@ -120,7 +120,7 @@ public class AccountController {
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<Object> updateAccount(@NotEmpty(message = "The updating account iban must be provided")
                                                 @PathVariable String iban,
-                                                @Valid @RequestBody UpdatingDTO accountDTO) {
+                                                @Valid @RequestBody UpdatingAccountDTO accountDTO) {
 
         return ResponseEntity.ok(parseAccountObjectToDTO.apply(
                 accountService.updateAccount(iban, accountDTO))); // parsing account object to DTO
@@ -138,7 +138,7 @@ public class AccountController {
         if (jwtUser.getAuthorities().stream().noneMatch(isEmployee)
                 && !jwtUser.getUsername().equalsIgnoreCase(email)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new ErrorMessageDTO("You are not allowed to access others Accounts !"));
+                    .body(new ErrorMessageDTO("You are not allowed to access others Accounts Details!"));
         }
         return ResponseEntity.ok(accountService.getAccountsByEmailAddress(email)
                 .stream()

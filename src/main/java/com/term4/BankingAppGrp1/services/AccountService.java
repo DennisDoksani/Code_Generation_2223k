@@ -5,7 +5,7 @@ import com.term4.BankingAppGrp1.models.AccountType;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.AccountRepository;
 import com.term4.BankingAppGrp1.requestDTOs.CreatingAccountDTO;
-import com.term4.BankingAppGrp1.requestDTOs.UpdatingDTO;
+import com.term4.BankingAppGrp1.requestDTOs.UpdatingAccountDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -40,7 +40,7 @@ public class AccountService {
     }
 
     @Transactional // to make sure that the transaction is atomic
-    public Account updateAccount(String iban, UpdatingDTO account) {
+    public Account updateAccount(String iban, UpdatingAccountDTO account) {
         Account accountToUpdate = accountRepository.findById(iban).orElseThrow(
                 () -> new EntityNotFoundException("The account with IBAN: " + iban + " Which you are " +
                         "trying to update does not exist"));
