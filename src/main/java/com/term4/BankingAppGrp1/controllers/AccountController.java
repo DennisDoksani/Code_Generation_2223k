@@ -1,4 +1,5 @@
 package com.term4.BankingAppGrp1.controllers;
+
 import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
 import com.term4.BankingAppGrp1.models.User;
@@ -7,97 +8,119 @@ import com.term4.BankingAppGrp1.requestDTOs.CreatingAccountDTO;
 import com.term4.BankingAppGrp1.requestDTOs.UpdatingDTO;
 import com.term4.BankingAppGrp1.responseDTOs.AccountDTO;
 import com.term4.BankingAppGrp1.responseDTOs.AccountHolderDTO;
+import com.term4.BankingAppGrp1.responseDTOs.ErrorMessageDTO;
+import com.term4.BankingAppGrp1.responseDTOs.SearchingAccountDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.LimitExceededException;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
+
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_LIMIT_STRING;
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_OFFSET_STRING;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
+@Validated
 @RequestMapping("/accounts")
 public class AccountController {
     private final AccountService accountService;
+
     private final Function<User, AccountHolderDTO> parseUserObjectToDTO = u ->
             new AccountHolderDTO(u.getId(),
                     u.getDayLimit(), u.getTransactionLimit()
                     , u.getFirstName(), u.getLastName());
+
     private final Function<Account, AccountDTO> parseAccountObjectToDTO = a ->
             new AccountDTO(a.getIban(), a.getBalance(), a.getAbsoluteLimit(), a.getCreationDate(), a.isActive(),
                     a.getAccountType(), parseUserObjectToDTO.apply(a.getCustomer()));
-    private final BiFunction<Integer, Integer, Pageable> getPageableByLimitAndOffset = (limit, offset) ->
-            PageRequest.of(offset, limit);
 
+    private final Function<Account, SearchingAccountDTO> parseAccountObjectToSearchingDTO = a ->
+            new SearchingAccountDTO(a.getCustomer().getFullName(), a.getIban());
 
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
 
-    // to get All accounts
-    // Employee Role is Required
-    //TODO: Add Security & Sort by Account Type
+    //Get all accounts
     @GetMapping
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<Object> getAllAccounts(@RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
-                                                 @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset
-            , @NotBlank @RequestParam(required = false) String accountType)
-    // Spring boot is asking for a default value for limit and offset to be string
+                                                 @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset,
+                                                 @RequestParam(required = false) String accountType)
+    //Spring boot is asking for a default value for limit and offset to be string
     {
-        List<Account> accounts = accountService.getAllAccounts(getPageableByLimitAndOffset.apply(limit, offset),
+        List<Account> accounts = accountService.getAllAccounts(limit, offset,
                 accountType == null ? null : AccountType.valueOf(accountType.toUpperCase()));
         return ResponseEntity.ok(accounts.stream().map(parseAccountObjectToDTO).toList());
     }
 
-    // to get Account by IBAN
+    //Get Account by IBAN
     @GetMapping("/{iban}")
-    public ResponseEntity<Object> getAccountByIBAN(@NotBlank @PathVariable String iban) {
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
+    public ResponseEntity<Object> getAccountByIBAN(@PathVariable String iban) {
         return ResponseEntity.ok(parseAccountObjectToDTO.apply(accountService.getAccountByIBAN(iban)));
     }
 
-    // this  endpoint is to search for accounts by customer name and can be accessed by employee and admin
+    //Search for accounts by customer name
     @GetMapping("/searchByCustomerName")
-    public ResponseEntity<Object> searchAccountByCustomerName(@NotBlank @RequestParam String customerName,
-                                                              @RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
-                                                              @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset) {
-        return ResponseEntity.ok(accountService.searchAccountByCustomerName(customerName, getPageableByLimitAndOffset.apply(limit, offset)));
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
+    public ResponseEntity<Object> searchAccountByCustomerName(
+            @NotBlank(message = "Customer name cannot be empty inorder to search") @RequestParam String customerName,
+            @RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
+            @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset) {
+        List<Account> accounts = accountService.searchAccountByCustomerName(customerName, limit, offset);
+        if (accounts.isEmpty()) { // when no accounts are found by the input name
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ErrorMessageDTO("No accounts found by this name " + customerName + "!")
+            );
+        }
+        return ResponseEntity.ok(accounts.stream().map(parseAccountObjectToSearchingDTO).toList());
     }
 
-    // Requires Employee Role to change account status
-    // ToDO : Role Based Security for this endpoint
-    @PostMapping("/accountStatus/{iban}")
-    public ResponseEntity<Object> changeAccountStatus(@NotBlank @PathVariable String iban,
-                                                      @Valid @NotBlank @RequestBody AccountStatusDTO accountStatusDTO) {
-        accountService.changeAccountStatus(iban, accountStatusDTO.getIsActive());
+    //Change accounts status
+    @PostMapping(value = "/accountStatus/{iban}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<Object> changeAccountStatus(@NotBlank(message = "Iban must be required inorder to update the status of account")
+                                                          @PathVariable String iban,
+                                                      @Valid  @RequestBody AccountStatusDTO accountStatusDTO) {
+        accountService.changeAccountStatus(iban, accountStatusDTO.isActive());
         return ResponseEntity.noContent().build();
     }
 
-    // Requires Employee Role
-    @PostMapping
+    //Post new account
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<Object> saveAccount(@Valid @RequestBody CreatingAccountDTO accountDTO) throws LimitExceededException {
         return ResponseEntity.status(HttpStatus.CREATED).body(parseAccountObjectToDTO.apply(
                 accountService.saveAccount(accountDTO)));
-        //TODO: Look out for Saving account and Absolute Limit
+
     }
-    // Requires Employee Role
-    @PutMapping("/{iban}")
-    public ResponseEntity<Object> updateAccount(@NotBlank @PathVariable String iban,
+
+    //Update account
+    @PutMapping(value = "/{iban}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<Object> updateAccount(@NotBlank(message = "The updating account iban must be provided")
+                                                    @PathVariable String iban,
                                                 @Valid @RequestBody UpdatingDTO accountDTO) {
+
         return ResponseEntity.ok(parseAccountObjectToDTO.apply(
                 accountService.updateAccount(iban, accountDTO))); // parsing account object to DTO
     }
+
+    //Get account by email
     @GetMapping("/user/{email}")
-    public ResponseEntity<Object> getAccountsByEmail(@NotBlank @PathVariable String email) {
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
+    public ResponseEntity<Object> getAccountsOfUserByEmail(@NotBlank(message ="The email address of the user must be provided" )
+                                                         @PathVariable String email) {
         return ResponseEntity.ok(accountService.getAccountsByEmailAddress(email).stream().map(parseAccountObjectToDTO).toList());
     }
-
-
 }
