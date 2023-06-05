@@ -15,5 +15,4 @@ public class AccountWithoutAccountHolderDTO {
     private double absoluteLimit;
     private LocalDate creationDate;
     private AccountType accountType;
-
 }

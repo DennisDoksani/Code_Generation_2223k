@@ -64,9 +64,9 @@ public class AccountController {
             );
 
     private final BiFunction<List<Account>, User, UserAccountsDTO>
-            parseListOfAccountAndUserObjectToUserAccountsDTO =  (a, u) ->
-                    new UserAccountsDTO(parseUserObjectToDTO.apply(u),
-                            a.stream().map(parseAccountObjectToWithoutAccountHolderDTO).toList());
+            parseListOfAccountAndUserObjectToUserAccountsDTO = (a, u) ->
+            new UserAccountsDTO(parseUserObjectToDTO.apply(u),
+                    a.stream().map(parseAccountObjectToWithoutAccountHolderDTO).toList());
 
     private final Predicate<GrantedAuthority> isEmployee =
             a -> a.getAuthority().equals(Role.ROLE_EMPLOYEE.name());
@@ -94,7 +94,10 @@ public class AccountController {
     @GetMapping("/{iban}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
     public ResponseEntity<Object> getAccountByIBAN(@PathVariable String iban) {
-        return ResponseEntity.ok(parseAccountObjectToDTO.apply(accountService.getAccountByIBAN(iban)));
+        return ResponseEntity.ok(
+                parseAccountObjectToDTO.apply(
+                        accountService.getAccountByIBAN(iban))
+        );
     }
 
     //Search for accounts by customer name
@@ -160,7 +163,7 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(new ErrorMessageDTO("You are not allowed to access others Accounts Details! "));
         }
-
+        // TODO : add sum of balance of all accounts
         return ResponseEntity.ok(
                 parseListOfAccountAndUserObjectToUserAccountsDTO.apply(
                         accountService.getAccountsByEmailAddress(email),
@@ -168,4 +171,5 @@ public class AccountController {
                 )
         );
     }
+
 }
