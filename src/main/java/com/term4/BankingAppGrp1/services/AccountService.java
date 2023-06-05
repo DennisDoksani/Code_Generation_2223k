@@ -32,7 +32,7 @@ public class AccountService {
         this.accountRepository = accountRepository;
         this.userService = userService;
     }
-    
+
     public void saveAccount(Account newAccount) {
 
         accountRepository.save(newAccount);
@@ -135,6 +135,6 @@ public class AccountService {
                 hasCustomerEmail(email)
                         .and(isActiveAccounts())
         );
-
     }
+
 }
