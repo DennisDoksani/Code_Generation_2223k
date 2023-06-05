@@ -3,6 +3,7 @@ package com.term4.BankingAppGrp1.models;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,17 +21,19 @@ public class Transaction {
 
     private Double amount;
 
-    private String accountTo;
-
-    private String accountFrom;
+    @OneToOne
+    private Account accountTo;
+    @OneToOne
+    private Account accountFrom;
 
     private LocalDate date;
 
     private LocalTime timestamp;
 
-    private long userPerforming;
+    @OneToOne
+    private User userPerforming;
 
-    public Transaction(Double amount, String accountTo, String accountFrom, LocalDate localDate, LocalTime localTime, long userPerforming) {
+    public Transaction(Double amount, Account accountTo, Account accountFrom, LocalDate localDate, LocalTime localTime, User userPerforming) {
         this.amount = amount;
         this.accountTo = accountTo;
         this.accountFrom = accountFrom;

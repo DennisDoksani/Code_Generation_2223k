@@ -36,10 +36,10 @@ public class Runner implements ApplicationRunner {
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
 
-        User joshMf = new User(234445, "Joshua", "Mf", LocalDate.now(), "680000000000", "josh@mf.com", "josh", 
+        User joshMf = new User(1, 234445, "Joshua", "Mf", LocalDate.now(), "680000000000", "josh@mf.com", "josh",
         true, 0, 0, List.of(Role.ROLE_CUSTOMER));
-        User ruubio= new User(123456, "Ruubyo", "Gaming", LocalDate.of(2003, 10, 1), "0611111121", "Ruubyo@isgaming.com", "secretword", 
-        true, 300, 300, List.of(Role.ROLE_CUSTOMER));
+        User ruubio= new User(2, 123456, "Ruubyo", "Gaming", LocalDate.of(2003, 10, 1), "0611111121", "Ruubyo@isgaming.com", "secretword",
+        true, 300, 300, List.of(Role.ROLE_EMPLOYEE));
          List.of(joshMf, ruubio)
                         .forEach(
                                 User -> userService.saveUser(User)
@@ -49,9 +49,8 @@ public class Runner implements ApplicationRunner {
 //            Account seedAccount = new Account(AccountType.CURRENT, joshMf);
 //            accountService.saveAccount(seedAccount);
 //        }
-      
 
-        
+
         //Seed users and accounts 
         User employeeCustomer = seedEmployeeCustomer(); 
         User customer = seedCustomer(); 
@@ -59,8 +58,9 @@ public class Runner implements ApplicationRunner {
         seedEmployeeWithoutAccounts(); 
         
         //Seed a transaction 
-        makeDummyBankaccounts(customer, employeeCustomer); 
-        TransactionDTO newTransaction = new TransactionDTO(10.00, "NL01INHO0000000003", "NL01INHO0000000002", customer.getId()); 
+        List<Account> accounts = makeDummyBankaccounts(ruubio, joshMf);
+        
+        TransactionDTO newTransaction = new TransactionDTO(10.00, accounts.get(0), accounts.get(1), ruubio);
         transactionService.addTransaction(newTransaction); 
 
         //Seed the bank's account 
@@ -86,8 +86,8 @@ public class Runner implements ApplicationRunner {
         Account seedAccount = new Account(DEFAULT_INHOLLAND_BANK_IBAN, 9999999999999.0, LocalDate.now(), 0, true, AccountType.CURRENT, inhollandBank);
         accountService.saveAccount(seedAccount);
     }
-
-    private void makeDummyBankaccounts(User user, User joshMf) {
+  
+    private List<Account> makeDummyBankaccounts(User user, User joshMf) {
 
         Account savings = new Account("NL01INHO0000000003", 9999.0, LocalDate.now(), 0, true, AccountType.SAVINGS, user);
         Account current = new Account("NL01INHO0000000002", 290.0, LocalDate.now(), 0, true, AccountType.CURRENT, user);
@@ -104,6 +104,8 @@ public class Runner implements ApplicationRunner {
         accountService.saveAccount(savings);
         accountService.saveAccount(current);
         accountService.saveAccount(seedSavings);
+
+        return List.of(savings, current);
     }
 
     private void seedAccounts(User customer, User employeeCustomer){ 

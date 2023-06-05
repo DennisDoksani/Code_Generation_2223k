@@ -51,6 +51,7 @@ public class TransactionControllerTest {
     private Transaction testTransaction1;
     private Account testAccount1;
     private Account testAccount2;
+    private User testUser;
 
     @MockBean
     private TransactionService transactionService;
@@ -62,14 +63,13 @@ public class TransactionControllerTest {
 
     @BeforeEach
     void Init() {
-        testTransaction1 = new Transaction(10.0, "NL01INHO0000000003", "NL01INHO0000000002",
-                LocalDate.now(), LocalTime.now(), 1);
+        testUser = new User(1, 11111, "Ruben", "Walkeuter", LocalDate.of(2003, 10, 1), "TestNumber", "test@test.com", "password", true, 100, 200, new ArrayList<>());
 
-        testAccount1 = new Account("NL01INHO0000000003", 100, LocalDate.now(), 0, true, AccountType.SAVINGS,
-                new User(11111, "Ruben", "Walkeuter", LocalDate.of(2003, 10, 1), "TestNumber", "test@test.com", "password", true, 100, 200, new ArrayList<>()));
-        testAccount2 = new Account("NL01INHO0000000002", 100, LocalDate.now(), 0, true, AccountType.CURRENT,
-                new User(11111, "Ruben", "Walkeuter", LocalDate.of(2003, 10, 1), "TestNumber", "test@test.com", "password", true, 100, 200, new ArrayList<>()));
+        testAccount1 = new Account("NL01INHO0000000003", 100, LocalDate.now(), 0, true, AccountType.SAVINGS, testUser);
+        testAccount2 = new Account("NL01INHO0000000002", 100, LocalDate.now(), 0, true, AccountType.CURRENT, testUser);
 
+        testTransaction1 = new Transaction(10.0, testAccount1, testAccount2,
+                LocalDate.now(), LocalTime.now(), testUser);
     }
 
     @Test
@@ -91,7 +91,7 @@ public class TransactionControllerTest {
         when(transactionService.getSumOfMoneyTransferred("NL01INHO0000000002", LocalDate.now()))
                 .thenReturn(100.0);
 
-        TransactionDTO dto = new TransactionDTO(100.0, "NL01INHO0000000003", "NL01INHO0000000002", 1);
+        TransactionDTO dto = new TransactionDTO(100.0, testAccount1, testAccount2, testUser);
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
