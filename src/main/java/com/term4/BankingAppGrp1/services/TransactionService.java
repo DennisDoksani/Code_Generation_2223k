@@ -34,6 +34,17 @@ public class TransactionService {
         return transactionRepository.getSumOfMoneyTransferred(iban, date)
                 .orElse(0.0); //Ask if this orElse is redundant
     }
+
+    public void changeBalance(double amount, String accountFrom, String accountTo) {
+        decreaseBalanceByAmount(amount, accountFrom);
+        increaseBalanceByAmount(amount, accountTo);
+    }
+    public void decreaseBalanceByAmount(double amount, String accountFrom) {
+        transactionRepository.decreaseBalanceByAmount(amount, accountFrom);
+    }
+    public void increaseBalanceByAmount(double amount, String accountFrom) {
+        transactionRepository.increaseBalanceByAmount(amount, accountFrom);
+    }
     private Transaction mapDtoToTransaction(TransactionDTO dto) {
         Transaction transaction = new Transaction();
         transaction.setAccountFrom(dto.accountFrom());

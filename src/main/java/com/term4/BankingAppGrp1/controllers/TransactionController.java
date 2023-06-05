@@ -38,7 +38,7 @@ public class TransactionController {
 //        return ResponseEntity.ok().body(transactionService.getAllTransactions());
 //    }
 
-    @GetMapping()
+    @GetMapping()   //Make dto for the accounts
     public ResponseEntity<Object> getTransactionsWithFilters(@RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
                                                              @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset,
                                                              @RequestParam(required = false) String ibanFrom,
@@ -53,9 +53,8 @@ public class TransactionController {
     @PostMapping
     @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
     public ResponseEntity<Object> addTransaction(@RequestBody @Valid TransactionDTO transactionDTO) {
-        if(validTransaction(transactionDTO)){
-            accountService.updateAccount(transactionDTO.)
-
+        if(validTransaction(transactionDTO)) {
+            transactionService.changeBalance(transactionDTO.amount(), transactionDTO.accountFrom().getIban(), transactionDTO.accountTo().getIban());
             return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.addTransaction(transactionDTO));
         }
 
