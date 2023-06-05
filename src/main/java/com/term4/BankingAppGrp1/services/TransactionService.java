@@ -1,5 +1,6 @@
 package com.term4.BankingAppGrp1.services;
 
+import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.Transaction;
 import com.term4.BankingAppGrp1.repositories.TransactionRepository;
 import com.term4.BankingAppGrp1.responseDTOs.TransactionDTO;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -28,6 +30,21 @@ public class TransactionService {
     }
     public Transaction addTransaction(TransactionDTO transactionDTO) { return transactionRepository.save(mapDtoToTransaction(transactionDTO)); }
 
+    public Double getSumOfMoneyTransferred(String iban, LocalDate date) {
+        return transactionRepository.getSumOfMoneyTransferred(iban, date)
+                .orElse(0.0); //Ask if this orElse is redundant
+    }
+
+    public void changeBalance(double amount, String accountFrom, String accountTo) {
+        decreaseBalanceByAmount(amount, accountFrom);
+        increaseBalanceByAmount(amount, accountTo);
+    }
+    public void decreaseBalanceByAmount(double amount, String accountFrom) {
+        transactionRepository.decreaseBalanceByAmount(amount, accountFrom);
+    }
+    public void increaseBalanceByAmount(double amount, String accountFrom) {
+        transactionRepository.increaseBalanceByAmount(amount, accountFrom);
+    }
     private Transaction mapDtoToTransaction(TransactionDTO dto) {
         Transaction transaction = new Transaction();
         transaction.setAccountFrom(dto.accountFrom());
