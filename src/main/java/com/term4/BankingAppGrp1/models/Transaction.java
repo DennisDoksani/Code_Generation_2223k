@@ -1,9 +1,6 @@
 package com.term4.BankingAppGrp1.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -21,9 +18,9 @@ public class Transaction {
 
     private Double amount;
 
-    @OneToOne
+    @ManyToOne
     private Account accountTo;
-    @OneToOne
+    @ManyToOne
     private Account accountFrom;
 
     private LocalDate date;
