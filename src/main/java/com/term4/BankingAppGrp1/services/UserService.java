@@ -1,6 +1,7 @@
 package com.term4.BankingAppGrp1.services;
 
 import com.term4.BankingAppGrp1.models.User;
+import com.term4.BankingAppGrp1.repositories.AccountRepository;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
 import com.term4.BankingAppGrp1.requestDTOs.RegistrationDTO;
 import com.term4.BankingAppGrp1.requestDTOs.UserUpdateDTO; 
@@ -22,11 +23,13 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final AccountRepository accountRepository;
     private final PhoneNumberUtil phoneNumberUtil;
 
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, PhoneNumberUtil phoneNumberUtil) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, AccountRepository accountRepository, PhoneNumberUtil phoneNumberUtil) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.accountRepository = accountRepository;
         this.phoneNumberUtil = phoneNumberUtil;
     }
 
@@ -139,7 +142,6 @@ public class UserService {
         }
     }
 
-    //Validate phone number (uses Google's open-source library)
     private void validatePhoneNumber(String phoneNumber){
         
         PhoneNumber number = null;
@@ -158,9 +160,9 @@ public class UserService {
         if(!phoneNumberUtil.isValidNumber(number))
             throw new IllegalArgumentException("Invalid phone number");
     }
+
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() ->
                 new EntityNotFoundException("User with email: " + email + " was not found"));
     }
-
 }

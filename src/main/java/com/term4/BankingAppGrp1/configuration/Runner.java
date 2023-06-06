@@ -36,14 +36,14 @@ public class Runner implements ApplicationRunner {
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
 
-        User joshMf = new User(1, 234445, "Joshua", "Mf", LocalDate.now(), "680000000000", "josh@mf.com", "josh",
+        User joshMf = new User(1, 234445, "Joshua", "Mf", LocalDate.now(), "0612121212", "josh@mf.com", "josh",
         true, 0, 0, List.of(Role.ROLE_CUSTOMER));
-        User ruubio= new User(2, 123456, "Ruubyo", "Gaming", LocalDate.of(2003, 10, 1), "0611111121", "Ruubyo@isgaming.com", "secretword",
+        User ruubio= new User(2, 123456, "Ruubyo", "Gaming", LocalDate.of(2003, 10, 1), "0611111111", "Ruubyo@isgaming.com", "secretword",
         true, 300, 300, List.of(Role.ROLE_EMPLOYEE));
          List.of(joshMf, ruubio)
-                        .forEach(
-                                User -> userService.saveUser(User)
-                        );
+            .forEach(
+                    User -> userService.saveUser(User)
+            );
 
 //        for (int i = 0; i < 800; i++) {
 //            Account seedAccount = new Account(AccountType.CURRENT, joshMf);
