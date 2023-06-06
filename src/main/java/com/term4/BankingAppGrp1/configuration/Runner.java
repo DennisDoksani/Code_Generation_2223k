@@ -9,7 +9,6 @@ import com.term4.BankingAppGrp1.services.AccountService;
 import com.term4.BankingAppGrp1.services.TransactionService;
 import com.term4.BankingAppGrp1.services.UserService;
 import jakarta.transaction.Transactional;
-
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -17,8 +16,11 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_INHOLLAND_BANK_IBAN;
+
 @Component
 public class Runner implements ApplicationRunner {
+
     private final AccountService accountService;
     private final UserService userService;
     private final TransactionService transactionService;
@@ -107,13 +109,15 @@ public class Runner implements ApplicationRunner {
 
         Account seedAccount = new Account(AccountType.CURRENT, joshMf);
         Account seedSavings = new Account(AccountType.SAVINGS, joshMf);
-        Account seedHardcodedIban= new Account("NL72INHO0579629781",
-                900,LocalDate.now(),900,true,AccountType.CURRENT,joshMf);
+        Account seedHardcodedIban = new Account("NL72INHO0579629781",
+                900, LocalDate.now(), 0, true, AccountType.CURRENT, joshMf);
         accountService.saveAccount(seedAccount);
         accountService.saveAccount(seedHardcodedIban);
         accountService.saveAccount(savings);
         accountService.saveAccount(current);
         accountService.saveAccount(seedSavings);
+
+        return List.of(savings, current);
     }
 
     private void seedAccounts(User customer, User employeeCustomer) {
