@@ -66,7 +66,7 @@ public class Runner implements ApplicationRunner {
         List<Account> accounts = makeDummyBankaccounts(ruubio, userService.getUser(1L));
 
         TransactionDTO newTransaction = new TransactionDTO(10.00, accounts.get(0).getIban(), accounts.get(1).getIban());
-        transactionService.addTransaction(newTransaction);
+        transactionService.addTransaction(newTransaction, ruubio);
 
     }
 

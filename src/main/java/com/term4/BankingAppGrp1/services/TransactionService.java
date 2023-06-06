@@ -8,6 +8,8 @@ import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.AccountRepository;
 import com.term4.BankingAppGrp1.repositories.TransactionRepository;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
+import com.term4.BankingAppGrp1.requestDTOs.ATMDepositDTO;
+import com.term4.BankingAppGrp1.requestDTOs.ATMWithdrawDTO;
 import com.term4.BankingAppGrp1.requestDTOs.TransactionDTO;
 import com.term4.BankingAppGrp1.responseDTOs.TransactionResponseDTO;
 import com.term4.BankingAppGrp1.util.JwtTokenProvider;

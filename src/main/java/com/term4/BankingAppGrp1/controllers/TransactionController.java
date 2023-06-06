@@ -4,6 +4,8 @@ import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
 import com.term4.BankingAppGrp1.models.Transaction;
 import com.term4.BankingAppGrp1.models.User;
+import com.term4.BankingAppGrp1.requestDTOs.ATMDepositDTO;
+import com.term4.BankingAppGrp1.requestDTOs.ATMWithdrawDTO;
 import com.term4.BankingAppGrp1.requestDTOs.TransactionDTO;
 import com.term4.BankingAppGrp1.responseDTOs.TransactionResponseDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
