@@ -5,6 +5,7 @@ import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.requestDTOs.ATMDepositDTO;
 import com.term4.BankingAppGrp1.requestDTOs.ATMWithdrawDTO;
 import com.term4.BankingAppGrp1.requestDTOs.TransactionDTO;
+import com.term4.BankingAppGrp1.responseDTOs.ErrorMessageDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
 import com.term4.BankingAppGrp1.services.TransactionService;
 import com.term4.BankingAppGrp1.services.UserService;
@@ -74,9 +75,14 @@ public class TransactionController {
     }
 
     @PostMapping("/atm/deposit")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<Object> depositByAtm(@RequestBody @Valid ATMDepositDTO depositDTO
-    , @AuthenticationPrincipal UserDetails jwtUser) {
+            , @AuthenticationPrincipal UserDetails jwtUser) {
+        // checking if the logged user is trying to deposit to his own account or not
+        if (!accountService.isAccountOwnedByCustomer(depositDTO.accountTo(), jwtUser.getUsername()))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ErrorMessageDTO("You are not allowed to deposit to this account"));
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(transactionService.atmDeposit(depositDTO, jwtUser.getUsername()));
     }
@@ -86,6 +92,10 @@ public class TransactionController {
     public ResponseEntity<Object> withdrawByAtm(@RequestBody @Valid ATMWithdrawDTO withdrawDTO,
                                                 @AuthenticationPrincipal UserDetails jwtUser
     ) {
+        // checking if the logged user is trying to withdraw from his own account or not
+        if (!accountService.isAccountOwnedByCustomer(withdrawDTO.accountFrom(), jwtUser.getUsername()))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ErrorMessageDTO("You are not allowed to withdraw from this account"));
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(transactionService.atmWithdraw(withdrawDTO, jwtUser.getUsername()));

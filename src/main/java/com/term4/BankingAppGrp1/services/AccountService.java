@@ -143,6 +143,9 @@ public class AccountService {
         return totalTransactionAmount == null ? 0 : totalTransactionAmount; // returning primitive double so null
         // check is needed
     }
-    
+    public boolean isAccountOwnedByCustomer(String iban, String email) {
+        return accountRepository.existsAccountByIbanEqualsAndCustomerEmailEquals(iban, email);
+    }
+
 
 }
