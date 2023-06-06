@@ -2,7 +2,6 @@ package com.term4.BankingAppGrp1.requestDTOs;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 public record RegistrationDTO(
     @NotBlank(message="BSN is required.") String bsn, 

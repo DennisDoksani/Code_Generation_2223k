@@ -4,6 +4,7 @@ import com.term4.BankingAppGrp1.configuration.ApiTestConfiguration;
 import com.term4.BankingAppGrp1.controllers.TransactionController;
 import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
+import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.Transaction;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.requestDTOs.TransactionDTO;
@@ -60,7 +61,19 @@ public class TransactionControllerTest {
 
     @BeforeEach
     void Init() {
-        testUser = new User(1, 11111, "Ruben", "Walkeuter", LocalDate.of(2003, 10, 1), "TestNumber", "test@test.com", "password", true, 100, 200, new ArrayList<>());
+        testUser = User.builder()
+        .bsn("582022290")
+        .firstName("Ruubyo")
+        .lastName("Gaming")
+        .dateOfBirth(LocalDate.of(2003, 10, 1))
+        .phoneNumber("0611111121")
+        .email("Ruubyo@isgaming.com")
+        .password("secretword")
+        .isActive(true)
+        .dayLimit(300)
+        .transactionLimit(300)
+        .roles(List.of(Role.ROLE_EMPLOYEE))
+        .build();
 
         testAccount1 = new Account("NL01INHO0000000003", 100, LocalDate.now(), 0, true, AccountType.SAVINGS, testUser);
         testAccount2 = new Account("NL01INHO0000000002", 100, LocalDate.now(), 0, true, AccountType.CURRENT, testUser);
