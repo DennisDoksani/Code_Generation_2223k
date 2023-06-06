@@ -1,9 +1,6 @@
 package com.term4.BankingAppGrp1.controllers;
 
-import com.term4.BankingAppGrp1.models.Account;
-import com.term4.BankingAppGrp1.models.AccountType;
-import com.term4.BankingAppGrp1.models.Role;
-import com.term4.BankingAppGrp1.models.User;
+import com.term4.BankingAppGrp1.models.*;
 import com.term4.BankingAppGrp1.requestDTOs.AccountStatusDTO;
 import com.term4.BankingAppGrp1.requestDTOs.CreatingAccountDTO;
 import com.term4.BankingAppGrp1.requestDTOs.UpdatingAccountDTO;
@@ -96,7 +93,7 @@ public class AccountController {
     //Get Account by IBAN
     @GetMapping("/{iban}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
-    public ResponseEntity<Object> getAccountByIBAN(@Pattern (regexp = "(?i)NL\\d{2}INHO\\d{10}",message ="Not a Valid Iban" )
+    public ResponseEntity<Object> getAccountByIBAN(@InhollandIBANPattern
                                                        @PathVariable String iban) {
         return ResponseEntity.ok(
                 parseAccountObjectToDTO.apply(
