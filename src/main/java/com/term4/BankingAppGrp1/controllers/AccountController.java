@@ -87,7 +87,9 @@ public class AccountController {
     {
         List<Account> accounts = accountService.getAllAccounts(limit, offset,
                 accountType == null ? null : AccountType.valueOf(accountType.toUpperCase()));
-        return ResponseEntity.ok(accounts.stream().map(parseAccountObjectToDTO).toList());
+        return ResponseEntity.ok(
+                accounts.parallelStream().map(parseAccountObjectToDTO).toList() // using Parallel Stream to improve performance
+        );
     }
 
     //Get Account by IBAN
@@ -114,7 +116,10 @@ public class AccountController {
                     new ErrorMessageDTO("No accounts found by this name " + customerName + "!")
             );
         }
-        return ResponseEntity.ok(accounts.stream().map(parseAccountObjectToSearchingDTO).toList());
+        return ResponseEntity.ok(
+                accounts.parallelStream().map(parseAccountObjectToSearchingDTO).toList()
+                // using Parallel Stream to improve performance
+        );
     }
 
     //Change accounts status by IBAN
@@ -149,8 +154,8 @@ public class AccountController {
     }
 
     // this endpoint will access by both employee and customer
-    // if the user is employee, he can access all accounts of any users
-    // if the user is customer, he can access only his accounts by verifying with JWOT token
+    // if the user is employee, user can access all accounts of any users
+    // if the user is customer, user can access only his accounts by verifying with JWOT token
     // This endpoint will only return the active accounts only
     @GetMapping("/user/{email}")
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
@@ -158,7 +163,7 @@ public class AccountController {
                                                            @PathVariable String email,
                                                            @AuthenticationPrincipal UserDetails jwtUser) {
 
-        if (jwtUser.getAuthorities().stream().noneMatch(isEmployee)
+        if (jwtUser.getAuthorities().stream().noneMatch(isEmployee) // not so big list and less computation so Stream is fine
                 && !jwtUser.getUsername().equalsIgnoreCase(email)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(new ErrorMessageDTO("You are not allowed to access others Accounts Details! "));

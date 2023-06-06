@@ -57,8 +57,6 @@ public class TransactionController {
             transactionService.changeBalance(transactionDTO.amount(), transactionDTO.accountFrom().getIban(), transactionDTO.accountTo().getIban());
             return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.addTransaction(transactionDTO));
         }
-
-
         return null;
     }
 
