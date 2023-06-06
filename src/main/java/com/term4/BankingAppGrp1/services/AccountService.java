@@ -39,7 +39,7 @@ public class AccountService {
     }
 
     @Transactional // to make sure that the transaction is atomic
-    public Account updateAccount(String iban, UpdatingAccountDTO account) {
+    public Account updateAccountDetails(String iban, UpdatingAccountDTO account) {
         Account accountToUpdate = accountRepository.findById(iban)
                 .orElseThrow(
                         () -> new EntityNotFoundException("The account with IBAN: " + iban + " Which you are " +
@@ -136,5 +136,16 @@ public class AccountService {
                         .and(isActiveAccounts())
         );
     }
+
+    public double getTotalTransactedAmountOfTodayByUserId(long userId) {
+        // this method have a Double as return type so that it can return null and the null check can be done
+        Double totalTransactionAmount = accountRepository.getTotalTransactionsDoneTodayByUser(userId);
+        return totalTransactionAmount == null ? 0 : totalTransactionAmount; // returning primitive double so null
+        // check is needed
+    }
+    public boolean isAccountOwnedByCustomer(String iban, String email) {
+        return accountRepository.existsAccountByIbanEqualsAndCustomerEmailEquals(iban, email);
+    }
+
 
 }

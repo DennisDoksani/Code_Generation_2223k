@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 
@@ -19,5 +20,11 @@ public interface AccountRepository extends JpaRepository<Account, String>, JpaSp
 
 
     int countAccountByCustomer_IdEqualsAndAccountTypeEquals(long customerId, AccountType accountType);
+
+    @Query("SELECT sum(t.amount) FROM Transaction t WHERE t.accountFrom.customer.id =" +
+            " :customerId AND t.date = CURRENT_DATE")
+    Double getTotalTransactionsDoneTodayByUser(long customerId);
+    boolean existsAccountByIbanEqualsAndCustomerEmailEquals(String iban, String email);
+
 
 }
