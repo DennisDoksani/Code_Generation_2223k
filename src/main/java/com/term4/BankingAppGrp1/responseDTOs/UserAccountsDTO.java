@@ -4,8 +4,6 @@ import java.util.List;
 
 public record UserAccountsDTO(
         AccountHolderDTO accountHolder,
-
-
         List<AccountWithoutAccountHolderDTO> accounts,
         Double totalBalance
 
