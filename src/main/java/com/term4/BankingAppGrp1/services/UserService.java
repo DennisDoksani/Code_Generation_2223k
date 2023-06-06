@@ -110,13 +110,14 @@ public class UserService {
         validatePhoneNumber(registrationDTO.phoneNumber());
     }
 
-    private void validateBsn(Integer bsn) {
-        //Convert Integer to String to check length
-        String bsnString = bsn.toString();
+    private void validateBsn(String bsnString) {
+        //Check if numeric
+        if (!bsnString.matches("[0-9]+"))
+            throw new IllegalArgumentException("BSN must be numeric");
 
         //BSN length has to be 8 or 9
         if (bsnString.length() != 9 && bsnString.length() != 8) {
-            throw new IllegalArgumentException("Invalid BSN");
+            throw new IllegalArgumentException("Invalid BSN length");
         }
         //If length is 8, then we have to prepend a 0 to make length 9.
         else if (bsnString.length() == 8) {

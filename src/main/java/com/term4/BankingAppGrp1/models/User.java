@@ -25,7 +25,7 @@ public class User{
     @Id
     @GeneratedValue
     private long id;
-    private int bsn;
+    private String bsn;
     private String firstName;
     private String lastName;
     private LocalDate dateOfBirth;

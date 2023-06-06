@@ -48,7 +48,7 @@ public class Runner implements ApplicationRunner {
 
     private void seedRuubyoUserWithTransactions() {
        User ruubio= User.builder()
-                .bsn(123456)
+                .bsn("582022290")
                 .firstName("Ruubyo")
                 .lastName("Gaming")
                 .dateOfBirth(LocalDate.of(2003, 10, 1))
@@ -73,7 +73,7 @@ public class Runner implements ApplicationRunner {
 
     private void seedBankAccount() {
         User inhollandBank = User.builder()
-                .bsn(111111)
+                .bsn("227015277")
                 .firstName("Inholland")
                 .lastName("Bank")
                 .dateOfBirth(LocalDate.now())
@@ -135,7 +135,7 @@ public class Runner implements ApplicationRunner {
 
     private User seedEmployeeCustomer() {
         User seedEmployeeCustomer = User.builder()
-                .bsn(123123123)
+                .bsn("277545146")
                 .firstName("EmployeeCustomer")
                 .lastName("Seed")
                 .dateOfBirth(LocalDate.of(1990, 1, 1))
@@ -151,7 +151,7 @@ public class Runner implements ApplicationRunner {
 
     private User seedCustomer() {
         User seedCustomer = User.builder()
-                .bsn(123456789)
+                .bsn("509547989")
                 .firstName("Customer")
                 .lastName("Seed")
                 .dateOfBirth(LocalDate.of(2000, 10, 10))
@@ -167,7 +167,7 @@ public class Runner implements ApplicationRunner {
 
     private void seedEmployeeWithoutAccounts() {
         User seedEmployee = User.builder()
-                .bsn(123412341)
+                .bsn("091287662")
                 .firstName("Employee")
                 .lastName("Seed")
                 .dateOfBirth(LocalDate.of(1990, 1, 1))
