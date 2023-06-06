@@ -1,15 +1,17 @@
 package com.term4.BankingAppGrp1.controllers;
+
 import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
+import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.requestDTOs.AccountStatusDTO;
 import com.term4.BankingAppGrp1.requestDTOs.CreatingAccountDTO;
-import com.term4.BankingAppGrp1.requestDTOs.UpdatingDTO;
-import com.term4.BankingAppGrp1.responseDTOs.AccountDTO;
-import com.term4.BankingAppGrp1.responseDTOs.AccountHolderDTO;
+import com.term4.BankingAppGrp1.requestDTOs.UpdatingAccountDTO;
+import com.term4.BankingAppGrp1.responseDTOs.*;
 import com.term4.BankingAppGrp1.services.AccountService;
-
+import com.term4.BankingAppGrp1.services.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
@@ -17,40 +19,71 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.LimitExceededException;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
+
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_LIMIT_STRING;
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_OFFSET_STRING;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@Validated
 @RequestMapping("/accounts")
 public class AccountController {
     private final AccountService accountService;
+    private final UserService userService;
 
     private final Function<User, AccountHolderDTO> parseUserObjectToDTO = u ->
             new AccountHolderDTO(u.getId(),
                     u.getDayLimit(), u.getTransactionLimit()
-                    , u.getFirstName(), u.getLastName());
+                    , u.getFirstName(), u.getLastName()
+            );
 
     private final Function<Account, AccountDTO> parseAccountObjectToDTO = a ->
-            new AccountDTO(a.getIban(), a.getBalance(), a.getAbsoluteLimit(), a.getCreationDate(), a.isActive(),
-                    a.getAccountType(), parseUserObjectToDTO.apply(a.getCustomer()));
+            new AccountDTO(
+                    a.getIban(), a.getBalance(), a.getAbsoluteLimit(), a.getCreationDate(), a.isActive(),
+                    a.getAccountType(), parseUserObjectToDTO.apply(a.getCustomer())
+            );
 
-    public AccountController(AccountService accountService) {
+    private final Function<Account, SearchingAccountDTO> parseAccountObjectToSearchingDTO = a ->
+            new SearchingAccountDTO(a.getCustomer().getFullName(), a.getIban());
+
+    private final Function<Account, AccountWithoutAccountHolderDTO>
+            parseAccountObjectToWithoutAccountHolderDTO = a ->
+            new AccountWithoutAccountHolderDTO(
+                    a.getIban(), a.getBalance(), a.getAbsoluteLimit(), a.getCreationDate(),
+                    a.getAccountType()
+            );
+
+    private final BiFunction<List<Account>, User, UserAccountsDTO>
+            parseListOfAccountAndUserObjectToUserAccountsDTO = (a, u) ->
+            new UserAccountsDTO(parseUserObjectToDTO.apply(u),
+                    a.stream().map(parseAccountObjectToWithoutAccountHolderDTO).toList());
+
+    private final Predicate<GrantedAuthority> isEmployee =
+            a -> a.getAuthority().equals(Role.ROLE_EMPLOYEE.name());
+
+
+    public AccountController(AccountService accountService, UserService userService) {
         this.accountService = accountService;
+        this.userService = userService;
     }
 
     //Get all accounts
-    //TODO: Sort by Account Type
     @GetMapping
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<Object> getAllAccounts(@RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
                                                  @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset,
-                                                @NotBlank @RequestParam(required = false) String accountType)
+                                                 @RequestParam(required = false) String accountType)
     //Spring boot is asking for a default value for limit and offset to be string
     {
         List<Account> accounts = accountService.getAllAccounts(limit, offset,
@@ -91,11 +124,12 @@ public class AccountController {
         );
     }
 
-    //Change accounts status
+    //Change accounts status by IBAN
     @PostMapping(value = "/accountStatus/{iban}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<Object> changeAccountStatus(@NotBlank @PathVariable String iban,
-                                                      @Valid @NotBlank @RequestBody AccountStatusDTO accountStatusDTO) {
+    public ResponseEntity<Object> changeAccountStatus(@NotBlank(message = "Iban must be required inorder to update the status of account")
+                                                      @PathVariable String iban,
+                                                      @Valid @RequestBody AccountStatusDTO accountStatusDTO) {
         accountService.changeAccountStatus(iban, accountStatusDTO.isActive());
         return ResponseEntity.noContent().build();
     }
@@ -106,14 +140,17 @@ public class AccountController {
     public ResponseEntity<Object> saveAccount(@Valid @RequestBody CreatingAccountDTO accountDTO) throws LimitExceededException {
         return ResponseEntity.status(HttpStatus.CREATED).body(parseAccountObjectToDTO.apply(
                 accountService.saveAccount(accountDTO)));
-        //TODO: Look out for Saving account and Absolute Limit
+
     }
 
     //Update account
-    @PutMapping(value = "/{iban}",consumes = MediaType.APPLICATION_JSON_VALUE)
+    // balance cannot be updated by this endpoint
+    @PutMapping(value = "/{iban}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<Object> updateAccount(@Valid @NotBlank @PathVariable String iban,
-                                                @Valid @RequestBody UpdatingDTO accountDTO) {
+    public ResponseEntity<Object> updateAccount(@NotEmpty(message = "The updating account iban must be provided")
+                                                @PathVariable String iban,
+                                                @Valid @RequestBody UpdatingAccountDTO accountDTO) {
+
         return ResponseEntity.ok(parseAccountObjectToDTO.apply(
                 accountService.updateAccount(iban, accountDTO))); // parsing account object to DTO
     }
@@ -141,4 +178,5 @@ public class AccountController {
                 )
         );
     }
+
 }
