@@ -4,7 +4,7 @@ import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
 import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.User;
-import com.term4.BankingAppGrp1.responseDTOs.TransactionDTO;
+import com.term4.BankingAppGrp1.requestDTOs.TransactionDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
 import com.term4.BankingAppGrp1.services.TransactionService;
 import com.term4.BankingAppGrp1.services.UserService;
@@ -65,7 +65,7 @@ public class Runner implements ApplicationRunner {
         //Seed a transaction
         List<Account> accounts = makeDummyBankaccounts(ruubio, userService.getUser(1L));
 
-        TransactionDTO newTransaction = new TransactionDTO(10.00, accounts.get(0), accounts.get(1), ruubio);
+        TransactionDTO newTransaction = new TransactionDTO(10.00, accounts.get(0).getIban(), accounts.get(1).getIban());
         transactionService.addTransaction(newTransaction);
 
     }
