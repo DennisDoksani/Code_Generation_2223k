@@ -124,7 +124,7 @@ public class AccountController {
     //Change accounts status by IBAN
     @PostMapping(value = "/accountStatus/{iban}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<Object> changeAccountStatus(@NotBlank(message = "Iban must be required inorder to update the status of account")
+    public ResponseEntity<Object> changeAccountStatus(@InhollandIBANPattern
                                                       @PathVariable String iban,
                                                       @Valid @RequestBody AccountStatusDTO accountStatusDTO) {
         accountService.changeAccountStatus(iban, accountStatusDTO.isActive());
@@ -144,7 +144,7 @@ public class AccountController {
     // balance cannot be updated by this endpoint
     @PutMapping(value = "/{iban}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<Object> updateAccount(@NotEmpty(message = "The updating account iban must be provided")
+    public ResponseEntity<Object> updateAccount(@InhollandIBANPattern @NotEmpty(message = "The updating account iban must be provided")
                                                 @PathVariable String iban,
                                                 @Valid @RequestBody UpdatingAccountDTO accountDTO) {
 
