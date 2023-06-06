@@ -1,16 +1,13 @@
 package com.term4.BankingAppGrp1.controllers;
 
-import com.term4.BankingAppGrp1.models.Account;
-import com.term4.BankingAppGrp1.models.AccountType;
 import com.term4.BankingAppGrp1.models.Transaction;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.requestDTOs.ATMDepositDTO;
 import com.term4.BankingAppGrp1.requestDTOs.ATMWithdrawDTO;
 import com.term4.BankingAppGrp1.requestDTOs.TransactionDTO;
-import com.term4.BankingAppGrp1.responseDTOs.TransactionResponseDTO;
+import com.term4.BankingAppGrp1.responseDTOs.ErrorMessageDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
 import com.term4.BankingAppGrp1.services.TransactionService;
-
 import com.term4.BankingAppGrp1.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +32,7 @@ public class TransactionController {
     private TransactionService transactionService;
     private AccountService accountService;
     private UserService userService;
+
     public TransactionController(TransactionService transactionService, AccountService accountService, UserService userService) {
         this.transactionService = transactionService;
         this.accountService = accountService;
@@ -54,7 +52,7 @@ public class TransactionController {
                                                              @RequestParam(required = false) Double amountMin,
                                                              @RequestParam(required = false) Double amountMax,
                                                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateBefore,
-                                                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateAfter ) {
+                                                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateAfter) {
         List<Transaction> transactions = transactionService.getTransactionsWithFilters(getPageable(limit, offset), ibanFrom, ibanTo,
                 amountMin, amountMax, dateBefore, dateAfter);
 
@@ -66,7 +64,7 @@ public class TransactionController {
     @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
     public ResponseEntity<Object> addTransaction(@RequestBody @Valid TransactionDTO transactionDTO,
                                                  @AuthenticationPrincipal UserDetails jwtUser) {
-        if(transactionService.validTransaction(transactionDTO)) {
+        if (transactionService.validTransaction(transactionDTO)) {
             User userPerforming = userService.getUserByEmail(jwtUser.getUsername());
             transactionService.changeBalance(transactionDTO.amount(), transactionDTO.accountFrom(), transactionDTO.accountTo());
             Transaction newTransaction = transactionService.addTransaction(transactionDTO, userPerforming);
@@ -77,17 +75,30 @@ public class TransactionController {
     }
 
     @PostMapping("/atm/deposit")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
-    public ResponseEntity<Object> depositByAtm(@RequestBody @Valid ATMDepositDTO depositDTO) {
-        Long userId = 1L;
-        return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.atmDeposit(depositDTO, userId));
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<Object> depositByAtm(@RequestBody @Valid ATMDepositDTO depositDTO
+            , @AuthenticationPrincipal UserDetails jwtUser) {
+        // checking if the logged user is trying to deposit to his own account or not
+        if (!accountService.isAccountOwnedByCustomer(depositDTO.accountTo(), jwtUser.getUsername()))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ErrorMessageDTO("You are not allowed to deposit to this account"));
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(transactionService.atmDeposit(depositDTO, jwtUser.getUsername()));
     }
 
     @PostMapping("/atm/withdraw")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
-    public ResponseEntity<Object> withdrawByAtm(@RequestBody @Valid ATMWithdrawDTO withdrawDTO) {
-        Long userId = 1L;
-        return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.atmWithdraw(withdrawDTO, userId));
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<Object> withdrawByAtm(@RequestBody @Valid ATMWithdrawDTO withdrawDTO,
+                                                @AuthenticationPrincipal UserDetails jwtUser
+    ) {
+        // checking if the logged user is trying to withdraw from his own account or not
+        if (!accountService.isAccountOwnedByCustomer(withdrawDTO.accountFrom(), jwtUser.getUsername()))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ErrorMessageDTO("You are not allowed to withdraw from this account"));
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(transactionService.atmWithdraw(withdrawDTO, jwtUser.getUsername()));
     }
 
     private Pageable getPageable(int limit, int offset) {

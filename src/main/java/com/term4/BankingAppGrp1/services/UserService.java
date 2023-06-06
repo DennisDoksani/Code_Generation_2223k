@@ -92,7 +92,7 @@ public class UserService {
     }
 
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() ->
+        return userRepository.findByEmailEqualsIgnoreCase(email).orElseThrow(() ->
                 new EntityNotFoundException("User with email: " + email + " was not found"));
     }
 

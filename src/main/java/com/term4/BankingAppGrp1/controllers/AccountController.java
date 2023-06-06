@@ -11,7 +11,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.naming.LimitExceededException;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -61,10 +59,10 @@ public class AccountController {
                     a.getAccountType()
             );
 
-    private final BiFunction<List<Account>, User, UserAccountsDTO>
-            parseListOfAccountAndUserObjectToUserAccountsDTO = (a, u) ->
+    private final TriFunction<List<Account>, User, Double, UserAccountsDTO>
+            parseListOfAccountAndUserObjectToUserAccountsDTO = (a, u, v) ->
             new UserAccountsDTO(parseUserObjectToDTO.apply(u),
-                    a.stream().map(parseAccountObjectToWithoutAccountHolderDTO).toList());
+                    a.stream().map(parseAccountObjectToWithoutAccountHolderDTO).toList(), v);
 
     private final Predicate<GrantedAuthority> isEmployee =
             a -> a.getAuthority().equals(Role.ROLE_EMPLOYEE.name());
@@ -94,7 +92,7 @@ public class AccountController {
     @GetMapping("/{iban}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
     public ResponseEntity<Object> getAccountByIBAN(@InhollandIBANPattern
-                                                       @PathVariable String iban) {
+                                                   @PathVariable String iban) {
         return ResponseEntity.ok(
                 parseAccountObjectToDTO.apply(
                         accountService.getAccountByIBAN(iban))
@@ -149,7 +147,7 @@ public class AccountController {
                                                 @Valid @RequestBody UpdatingAccountDTO accountDTO) {
 
         return ResponseEntity.ok(parseAccountObjectToDTO.apply(
-                accountService.updateAccount(iban, accountDTO))); // parsing account object to DTO
+                accountService.updateAccountDetails(iban, accountDTO))); // parsing account object to DTO
     }
 
     // this endpoint will access by both employee and customer
@@ -167,11 +165,13 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(new ErrorMessageDTO("You are not allowed to access others Accounts Details! "));
         }
-        // TODO : add sum of balance of all accounts
+        User requestingUser = userService.getUserByEmail(email);
+        Double transactionDoneToday = accountService.getTotalTransactedAmountOfTodayByUserId(requestingUser.getId());
         return ResponseEntity.ok(
                 parseListOfAccountAndUserObjectToUserAccountsDTO.apply(
                         accountService.getAccountsByEmailAddress(email),
-                        userService.getUserByEmail(email)
+                        userService.getUserByEmail(email),
+                        transactionDoneToday
                 )
         );
     }
