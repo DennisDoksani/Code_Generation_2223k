@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -95,7 +96,8 @@ public class AccountController {
     //Get Account by IBAN
     @GetMapping("/{iban}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
-    public ResponseEntity<Object> getAccountByIBAN(@PathVariable String iban) {
+    public ResponseEntity<Object> getAccountByIBAN(@Pattern (regexp = "(?i)NL\\d{2}INHO\\d{10}",message ="Not a Valid Iban" )
+                                                       @PathVariable String iban) {
         return ResponseEntity.ok(
                 parseAccountObjectToDTO.apply(
                         accountService.getAccountByIBAN(iban))
