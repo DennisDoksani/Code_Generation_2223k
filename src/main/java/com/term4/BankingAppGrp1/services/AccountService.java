@@ -137,4 +137,8 @@ public class AccountService {
         );
     }
 
+    public List<Account> getAccountsByUserId(long id){
+        return accountRepository.findByCustomer_IdEquals(id);
+    }
+
 }

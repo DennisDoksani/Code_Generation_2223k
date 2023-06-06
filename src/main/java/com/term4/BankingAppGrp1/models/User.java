@@ -1,5 +1,6 @@
 package com.term4.BankingAppGrp1.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,6 +32,7 @@ public class User{
     private LocalDate dateOfBirth;
     private String phoneNumber;
     private String email;
+    @JsonIgnore
     private String password;
     private boolean isActive;
     private double dayLimit = 0;

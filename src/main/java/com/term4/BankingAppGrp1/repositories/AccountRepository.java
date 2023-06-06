@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, String>, JpaSpecificationExecutor<Account> {
@@ -16,6 +18,8 @@ public interface AccountRepository extends JpaRepository<Account, String>, JpaSp
     Page<Account> findAccountByAccountTypeEqualsAndIbanNot(Pageable pageable, AccountType accountType, String iban);
 
     Page<Account> findByAndIbanNot(Pageable pageable, String iban);
+
+    List<Account> findByCustomer_IdEquals(long id);
 
 
     int countAccountByCustomer_IdEqualsAndAccountTypeEquals(long customerId, AccountType accountType);
