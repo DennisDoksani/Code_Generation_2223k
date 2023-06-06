@@ -17,6 +17,7 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -32,6 +33,10 @@ public class UserService {
         this.accountRepository = accountRepository;
         this.phoneNumberUtil = phoneNumberUtil;
     }
+
+    public List<User> getAllUsers() {
+        return (List<User>) userRepository.findAll();
+     }
 
     public User saveUser(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -84,6 +89,11 @@ public class UserService {
     public User getUser(long id) {
         return userRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("User with id: " + id + " was not found"));
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() ->
+                new EntityNotFoundException("User with email: " + email + " was not found"));
     }
 
     private void validateRegistration(RegistrationDTO registrationDTO) {
@@ -161,8 +171,5 @@ public class UserService {
             throw new IllegalArgumentException("Invalid phone number");
     }
 
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() ->
-                new EntityNotFoundException("User with email: " + email + " was not found"));
-    }
+    
 }
