@@ -9,12 +9,14 @@ import com.term4.BankingAppGrp1.repositories.AccountRepository;
 import com.term4.BankingAppGrp1.repositories.TransactionRepository;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
 import com.term4.BankingAppGrp1.requestDTOs.TransactionDTO;
+import com.term4.BankingAppGrp1.responseDTOs.TransactionResponseDTO;
 import com.term4.BankingAppGrp1.util.JwtTokenProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -35,7 +37,8 @@ public class TransactionService {
     }
 
     public List<Transaction> getTransactionsWithFilters(Pageable pageable, String ibanFrom, String ibanTo, Double amountMin, Double amountMax, LocalDate dateBefore, LocalDate dateAfter) {
-        return transactionRepository.getTransactionsWithFilters(pageable, ibanFrom, ibanTo, amountMin, amountMax, dateBefore, dateAfter).getContent();
+        List<Transaction> transactions = transactionRepository.getTransactionsWithFilters(pageable, ibanFrom, ibanTo, amountMin, amountMax, dateBefore, dateAfter).getContent();
+        return transactions;
     }
     public Transaction addTransaction(TransactionDTO transactionDTO, User userPerforming) { return transactionRepository.save(mapDtoToTransaction(transactionDTO, userPerforming)); }
 
@@ -88,5 +91,7 @@ public class TransactionService {
         return transaction;
     }
 
-    
+//    private TransactionResponseDTO mapTransactionToDTO(Transaction transaction) {
+//
+//    }
 }

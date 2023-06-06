@@ -5,6 +5,7 @@ import com.term4.BankingAppGrp1.models.AccountType;
 import com.term4.BankingAppGrp1.models.Transaction;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.requestDTOs.TransactionDTO;
+import com.term4.BankingAppGrp1.responseDTOs.TransactionResponseDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
 import com.term4.BankingAppGrp1.services.TransactionService;
 
@@ -55,6 +56,8 @@ public class TransactionController {
                                                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateAfter ) {
         List<Transaction> transactions = transactionService.getTransactionsWithFilters(getPageable(limit, offset), ibanFrom, ibanTo,
                 amountMin, amountMax, dateBefore, dateAfter);
+
+
         return ResponseEntity.ok().body(transactions);
     }
 
