@@ -37,23 +37,23 @@ public class AccountController {
     private final AccountService accountService;
     private final UserService userService;
 
-    private final Function<User, AccountHolderDTO> parseUserObjectToDTO = u ->
+    private final Function<User, AccountHolderDTO> mapUserObjectToDTO = u ->
             new AccountHolderDTO(u.getId(),
                     u.getDayLimit(), u.getTransactionLimit()
                     , u.getFirstName(), u.getLastName()
             );
 
-    private final Function<Account, AccountDTO> parseAccountObjectToDTO = a ->
+    private final Function<Account, AccountDTO> mapAccountObjectToDTO = a ->
             new AccountDTO(
                     a.getIban(), a.getBalance(), a.getAbsoluteLimit(), a.getCreationDate(), a.isActive(),
-                    a.getAccountType(), parseUserObjectToDTO.apply(a.getCustomer())
+                    a.getAccountType(), mapUserObjectToDTO.apply(a.getCustomer())
             );
 
-    private final Function<Account, SearchingAccountDTO> parseAccountObjectToSearchingDTO = a ->
+    private final Function<Account, SearchingAccountDTO> mapAccountObjectToSearchingDTO = a ->
             new SearchingAccountDTO(a.getCustomer().getFullName(), a.getIban());
 
     private final Function<Account, AccountWithoutAccountHolderDTO>
-            parseAccountObjectToWithoutAccountHolderDTO = a ->
+            mapAccountObjectToWithoutAccountHolderDTO = a ->
             new AccountWithoutAccountHolderDTO(
                     a.getIban(), a.getBalance(), a.getAbsoluteLimit(), a.getCreationDate(),
                     a.getAccountType()
@@ -61,8 +61,8 @@ public class AccountController {
 
     private final TriFunction<List<Account>, User, Double, UserAccountsDTO>
             parseListOfAccountAndUserObjectToUserAccountsDTO = (a, u, v) ->
-            new UserAccountsDTO(parseUserObjectToDTO.apply(u),
-                    a.stream().map(parseAccountObjectToWithoutAccountHolderDTO).toList(), v);
+            new UserAccountsDTO(mapUserObjectToDTO.apply(u),
+                    a.stream().map(mapAccountObjectToWithoutAccountHolderDTO).toList(), v);
 
     private final Predicate<GrantedAuthority> isEmployee =
             a -> a.getAuthority().equals(Role.ROLE_EMPLOYEE.name());
@@ -79,22 +79,30 @@ public class AccountController {
     public ResponseEntity<Object> getAllAccounts(@RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
                                                  @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset,
                                                  @RequestParam(required = false) String accountType)
-    //Spring boot is asking for a default value for limit and offset to be string
+    //Spring boot is asking for a default value  to be string
     {
         List<Account> accounts = accountService.getAllAccounts(limit, offset,
                 accountType == null ? null : AccountType.valueOf(accountType.toUpperCase()));
         return ResponseEntity.ok(
-                accounts.parallelStream().map(parseAccountObjectToDTO).toList() // using Parallel Stream to improve performance
+                accounts.parallelStream().map(mapAccountObjectToDTO).toList() // using Parallel Stream to improve performance
         );
     }
 
     //Get Account by IBAN
+    // when it is customer it can access be his/her own account
+    // when it is employee it can access anyone's account
     @GetMapping("/{iban}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
     public ResponseEntity<Object> getAccountByIBAN(@InhollandIBANPattern
-                                                   @PathVariable String iban) {
+                                                   @PathVariable String iban,
+                                                   @AuthenticationPrincipal UserDetails jwtUser) {
+        if (jwtUser.getAuthorities().stream().noneMatch(isEmployee) &&
+                !accountService.isAccountOwnedByCustomer(iban, jwtUser.getUsername()))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                    new ErrorMessageDTO("You are not allowed to access this account!")
+            );
         return ResponseEntity.ok(
-                parseAccountObjectToDTO.apply(
+                mapAccountObjectToDTO.apply(
                         accountService.getAccountByIBAN(iban))
         );
     }
@@ -114,7 +122,7 @@ public class AccountController {
             );
         }
         return ResponseEntity.ok(
-                accounts.parallelStream().map(parseAccountObjectToSearchingDTO).toList()
+                accounts.parallelStream().map(mapAccountObjectToSearchingDTO).toList()
                 // using Parallel Stream to improve performance
         );
     }
@@ -133,7 +141,7 @@ public class AccountController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<Object> saveAccount(@Valid @RequestBody CreatingAccountDTO accountDTO) throws LimitExceededException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(parseAccountObjectToDTO.apply(
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapAccountObjectToDTO.apply(
                 accountService.saveAccount(accountDTO)));
 
     }
@@ -146,7 +154,7 @@ public class AccountController {
                                                 @PathVariable String iban,
                                                 @Valid @RequestBody UpdatingAccountDTO accountDTO) {
 
-        return ResponseEntity.ok(parseAccountObjectToDTO.apply(
+        return ResponseEntity.ok(mapAccountObjectToDTO.apply(
                 accountService.updateAccountDetails(iban, accountDTO))); // parsing account object to DTO
     }
 
