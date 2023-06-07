@@ -1,7 +1,7 @@
 package com.term4.BankingAppGrp1.services;
 
 import com.term4.BankingAppGrp1.models.User;
-import com.term4.BankingAppGrp1.requestDTOs.UserUpdateDTO;
+import com.term4.BankingAppGrp1.responseDTOs.UserDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface UserServiceInterface {
     String deleteUser(long id);
     Optional<User> getUser(long id);
-    User updateUser(UserUpdateDTO userUpdateDTO);
+    User updateUser(UserDTO userDTO);
 }
