@@ -68,6 +68,10 @@ public class TransactionService {
     public Boolean validTransaction(TransactionDTO dto) {
         Account accountTo = accountRepository.findById(dto.accountTo()).get();
         Account accountFrom = accountRepository.findById(dto.accountFrom()).get();
+        
+        //Amount must be a positive number
+        if (dto.amount() <= 0)
+            throw new IllegalArgumentException("Amount must be a positive number");
 
         //This statement checks if money is being transferred to or from a savings account that does not belong to the same user
         if (((accountFrom.getAccountType() == AccountType.CURRENT && accountTo.getAccountType() == AccountType.SAVINGS) || (accountFrom.getAccountType() == AccountType.SAVINGS && accountTo.getAccountType() == AccountType.CURRENT)) && accountFrom.getCustomer().getBsn() != accountTo.getCustomer().getBsn())
