@@ -147,5 +147,8 @@ public class AccountService {
         return accountRepository.existsAccountByIbanEqualsAndCustomerEmailEquals(iban, email);
     }
 
+    public List<Account> getAccountsByUserId(long id){
+        return accountRepository.findByCustomer_IdEquals(id);
+    }
 
 }

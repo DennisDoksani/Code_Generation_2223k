@@ -1,10 +1,11 @@
 package com.term4.BankingAppGrp1.services;
 
+import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.AccountRepository;
 import com.term4.BankingAppGrp1.repositories.UserRepository;
 import com.term4.BankingAppGrp1.requestDTOs.RegistrationDTO;
-import com.term4.BankingAppGrp1.requestDTOs.UserUpdateDTO; 
+import com.term4.BankingAppGrp1.responseDTOs.UserDTO;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -36,7 +37,7 @@ public class UserService {
 
     public List<User> getAllUsers() {
         return (List<User>) userRepository.findAll();
-     }
+    }
 
     public User saveUser(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -52,7 +53,7 @@ public class UserService {
                 .lastName(registrationDTO.lastName())
                 .dateOfBirth(LocalDate.parse(registrationDTO.dateOfBirth()))
                 .phoneNumber(registrationDTO.phoneNumber())
-                .email(registrationDTO.email())
+                .email(registrationDTO.email().toLowerCase())
                 .password(bCryptPasswordEncoder.encode(registrationDTO.password()))
                 .build();
 
@@ -60,28 +61,31 @@ public class UserService {
     }
 
     public String deleteUser(long id) {
-
-        if (userRepository.existsById(id)) {
-            userRepository.deleteById(id);
-            return "User deleted successfully";
+        if (userRepository.existsById(id)){
+            List<Account> userAccounts = accountRepository.findByCustomer_IdEquals(id);
+            if (userAccounts.isEmpty()){
+                userRepository.deleteById(id);
+                return "User deleted successfully!";
+            } else {
+                throw new IllegalArgumentException("User has associated bank accounts and cannot be deleted");
+            }
         } else {
-            return "User not found in the database";
+            throw new EntityNotFoundException("User with id " + id + " does not exist.");
         }
     }
 
-    public User updateUser(UserUpdateDTO userUpdateDTO) {
-        User updatingUser = userRepository.findById(userUpdateDTO.bsn()).orElseThrow(() ->
-                new EntityNotFoundException("The updating user with BSN: " + userUpdateDTO.bsn() + " was not found"));
+    public User updateUser(UserDTO userDTO) {
+        User updatingUser = userRepository.findByBsn(userDTO.bsn()).orElseThrow(() ->
+                new EntityNotFoundException("The updating user with BSN: " + userDTO.bsn() + " was not found"));
 
-        updatingUser.setFirstName(userUpdateDTO.firstName());
-        updatingUser.setLastName(userUpdateDTO.lastName());
-        updatingUser.setDateOfBirth(userUpdateDTO.dateOfBirth());
-        updatingUser.setPhoneNumber(userUpdateDTO.phoneNumber());
-        updatingUser.setEmail(userUpdateDTO.email());
-        updatingUser.setPassword(bCryptPasswordEncoder.encode(userUpdateDTO.password()));
-        updatingUser.setActive(userUpdateDTO.isActive());
-        updatingUser.setDayLimit(userUpdateDTO.dayLimit());
-        updatingUser.setTransactionLimit(userUpdateDTO.transactionLimit());
+        updatingUser.setFirstName(userDTO.firstName());
+        updatingUser.setLastName(userDTO.lastName());
+        updatingUser.setDateOfBirth(userDTO.dateOfBirth());
+        updatingUser.setPhoneNumber(userDTO.phoneNumber());
+        updatingUser.setEmail(userDTO.email());
+        updatingUser.setActive(userDTO.isActive());
+        updatingUser.setDayLimit(userDTO.dayLimit());
+        updatingUser.setTransactionLimit(userDTO.transactionLimit());
 
         return userRepository.save(updatingUser);
     }
