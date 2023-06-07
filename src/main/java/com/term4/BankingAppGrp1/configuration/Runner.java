@@ -47,7 +47,7 @@ public class Runner implements ApplicationRunner {
     }
 
     private void seedRuubyoUserWithTransactions() {
-       User ruubio= User.builder()
+        User ruubio = User.builder()
                 .bsn("582022290")
                 .firstName("Ruubyo")
                 .lastName("Gaming")
@@ -63,7 +63,7 @@ public class Runner implements ApplicationRunner {
         userService.saveUser(ruubio);
 
         //Seed a transaction
-        List<Account> accounts = makeDummyBankaccounts(ruubio, userService.getUser(1L));
+        List<Account> accounts = makeDummyBankAccounts(ruubio, userService.getUser(1L));
 
         TransactionDTO newTransaction = new TransactionDTO(10.00, accounts.get(0).getIban(), accounts.get(1).getIban());
         transactionService.addTransaction(newTransaction, ruubio);
@@ -99,18 +99,44 @@ public class Runner implements ApplicationRunner {
         accountService.saveAccount(seedAccount);
     }
 
-    private List<Account> makeDummyBankaccounts(User user, User joshMf) {
+    private List<Account> makeDummyBankAccounts(User user, User secondSeedCustomer) {
 
-        Account savings = new Account("NL01INHO0000000003", 9999.0, LocalDate.now(), 0, true, AccountType.SAVINGS, user);
-        Account current = new Account("NL01INHO0000000002", 290.0, LocalDate.now(), 0, true, AccountType.CURRENT, user);
+        Account savings = Account.builder()
+                .iban("NL01INHO0000000003")
+                .balance(9999.0)
+                .isActive(true)
+                .accountType(AccountType.SAVINGS)
+                .customer(user)
+                .build();
+
+        Account current = Account.builder()
+                .iban("NL01INHO0000000002")
+                .balance(290.0)
+                .isActive(true)
+                .accountType(AccountType.CURRENT)
+                .customer(user)
+                .build();
+
         accountService.saveAccount(savings);
         accountService.saveAccount(current);
 
 
-        Account seedAccount = new Account(AccountType.CURRENT, joshMf);
-        Account seedSavings = new Account(AccountType.SAVINGS, joshMf);
-        Account seedHardcodedIban = new Account("NL72INHO0579629781",
-                900, LocalDate.now(), 0, true, AccountType.CURRENT, joshMf);
+        Account seedAccount = Account.builder()
+                .accountType(AccountType.CURRENT)
+                .customer(secondSeedCustomer)
+                .build();
+        Account seedSavings = Account.builder()
+                .accountType(AccountType.SAVINGS)
+                .customer(secondSeedCustomer)
+                .build();
+
+        Account seedHardcodedIban = Account.builder()
+                .iban("NL72INHO0579629781")
+                .balance(900.0)
+                .creationDate(LocalDate.now())
+                .accountType(AccountType.CURRENT)
+                .customer(secondSeedCustomer)
+                .build();
         accountService.saveAccount(seedAccount);
         accountService.saveAccount(seedHardcodedIban);
         accountService.saveAccount(savings);
@@ -123,12 +149,12 @@ public class Runner implements ApplicationRunner {
     private void seedAccounts(User customer, User employeeCustomer) {
         //Seed some (200) bank current accounts 
         for (int i = 0; i < 100; i++) {
-            accountService.saveAccount(new Account(AccountType.CURRENT, customer));
-            accountService.saveAccount(new Account(AccountType.CURRENT, employeeCustomer));
+            accountService.saveAccount(Account.builder().accountType(AccountType.CURRENT).customer(customer).build());
+            accountService.saveAccount(Account.builder().accountType(AccountType.CURRENT).customer(employeeCustomer).build());
         }
         //Seed savings accounts 
-        accountService.saveAccount(new Account(AccountType.SAVINGS, customer));
-        accountService.saveAccount(new Account(AccountType.SAVINGS, employeeCustomer));
+        accountService.saveAccount(Account.builder().accountType(AccountType.SAVINGS).customer(customer).build());
+        accountService.saveAccount(Account.builder().accountType(AccountType.SAVINGS).customer(employeeCustomer).build());
 
 
     }

@@ -6,7 +6,6 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
 import jakarta.persistence.FetchType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,8 +19,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity(name = "users")
-@Inheritance
-
 public class User{
 
     @Id
@@ -38,8 +35,10 @@ public class User{
     @JsonIgnore
     private String password;
     private boolean isActive;
-    private double dayLimit = 0;
-    private double transactionLimit = 0;
+    @Builder.Default
+    private double dayLimit=500 ;
+    @Builder.Default
+    private double transactionLimit = 300;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Role> roles;
 
