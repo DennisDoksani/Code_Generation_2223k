@@ -25,7 +25,7 @@ public class AuthService {
 
     public LoginResponseDTO login(String email, String password) throws AuthenticationException {
         // See if a user with the provided username exists or throw exception (deliberately vague)
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmailEqualsIgnoreCase(email)
                 .orElseThrow(() -> new AuthenticationException("Invalid username/password"));
 
         // Check if the password hash matches
