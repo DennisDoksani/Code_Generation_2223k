@@ -1,5 +1,6 @@
 package com.term4.BankingAppGrp1.models;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,11 +26,13 @@ public class User{
     @Id
     @GeneratedValue
     private long id;
+    @Column(unique = true)
     private String bsn;
     private String firstName;
     private String lastName;
     private LocalDate dateOfBirth;
     private String phoneNumber;
+    @Column(unique = true)
     private String email;
     private String password;
     private boolean isActive;
