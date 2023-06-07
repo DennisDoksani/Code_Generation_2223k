@@ -38,8 +38,8 @@ public class User{
     @JsonIgnore
     private String password;
     private boolean isActive;
-    private double dayLimit = 0;
-    private double transactionLimit = 0;
+    private double dayLimit = 200;
+    private double transactionLimit = 200;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Role> roles;
 
