@@ -20,8 +20,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity(name = "users")
-@Inheritance
-
 public class User{
 
     @Id
