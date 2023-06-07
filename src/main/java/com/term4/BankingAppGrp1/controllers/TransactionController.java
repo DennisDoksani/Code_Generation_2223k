@@ -27,6 +27,7 @@ import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_LIMIT_S
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_OFFSET_STRING;
 
 @RestController
+@CrossOrigin(allowedHeaders = "*", origins = "*")
 @RequestMapping("/transactions")
 public class TransactionController {
     private TransactionService transactionService;
