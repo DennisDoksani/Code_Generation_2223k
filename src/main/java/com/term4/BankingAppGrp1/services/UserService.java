@@ -52,7 +52,7 @@ public class UserService {
                 .lastName(registrationDTO.lastName())
                 .dateOfBirth(LocalDate.parse(registrationDTO.dateOfBirth()))
                 .phoneNumber(registrationDTO.phoneNumber())
-                .email(registrationDTO.email())
+                .email(registrationDTO.email().toLowerCase())
                 .password(bCryptPasswordEncoder.encode(registrationDTO.password()))
                 .build();
 
