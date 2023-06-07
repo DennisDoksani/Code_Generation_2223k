@@ -75,7 +75,7 @@ public class UserService {
     }
 
     public User updateUser(UserDTO userDTO) {
-        User updatingUser = userRepository.findById(userDTO.bsn()).orElseThrow(() ->
+        User updatingUser = userRepository.findByBsn(userDTO.bsn()).orElseThrow(() ->
                 new EntityNotFoundException("The updating user with BSN: " + userDTO.bsn() + " was not found"));
 
         updatingUser.setFirstName(userDTO.firstName());
