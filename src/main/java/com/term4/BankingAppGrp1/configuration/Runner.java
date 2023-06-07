@@ -170,6 +170,8 @@ public class Runner implements ApplicationRunner {
                 .password("password")
                 .isActive(true)
                 .roles(List.of(Role.ROLE_EMPLOYEE, Role.ROLE_CUSTOMER))
+                .dayLimit(1000)
+                .transactionLimit(300)
                 .build();
         userService.saveUser(seedEmployeeCustomer);
         return seedEmployeeCustomer;
@@ -186,6 +188,8 @@ public class Runner implements ApplicationRunner {
                 .password("password")
                 .isActive(true)
                 .roles(List.of(Role.ROLE_CUSTOMER))
+                .dayLimit(300)
+                .transactionLimit(300)
                 .build();
         userService.saveUser(seedCustomer);
         return seedCustomer;
