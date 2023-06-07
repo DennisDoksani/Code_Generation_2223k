@@ -53,6 +53,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<User> getUser(@PathVariable long id) {
         return ResponseEntity.ok(userService.getUser(id));
     }
@@ -65,6 +66,7 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<Object> getAllUsers() {
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users.stream().map(parseUserObjectToDTO).toList());

@@ -6,5 +6,5 @@ public record AccountHolderDTO( @NotNull(message = "User Id cannot be left empty
                                 double dayLimit ,
                                 double transactionLimit,
                                @NotNull(message = "First Name cannot be left empty") String firstName,
-                               @NotNull(message = "First Name cannot be left empty") String lastName) {
+                               @NotNull(message = "Last Name cannot be left empty") String lastName) {
 }
