@@ -8,6 +8,7 @@ class BankingAppGrp1ApplicationTests {
 
 	@Test
 	void contextLoads() {
+		assert(true);
 	}
 
 }

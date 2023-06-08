@@ -76,7 +76,8 @@ public class UserTest {
     @Test
     void getFullNameWithNullsShouldNotThrowException() {
         setUp();
-        
         Assertions.assertDoesNotThrow(() -> user.getFullName());
     }
+
+    
 }
