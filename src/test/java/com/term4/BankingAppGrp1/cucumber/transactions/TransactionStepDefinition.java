@@ -1,9 +1,7 @@
 package com.term4.BankingAppGrp1.cucumber.transactions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -44,8 +42,5 @@ public class TransactionStepDefinition extends BaseStepDefinition {
                 .split(",")).toList();
 
         Assertions.assertTrue(options.contains(method.toUpperCase()));
-
     }
-
-
 }

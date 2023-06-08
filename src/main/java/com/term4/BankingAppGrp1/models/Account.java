@@ -29,12 +29,6 @@ public class Account {
     private AccountType accountType;
     @ManyToOne
     private User customer;
-    public void setBalance(double balance) {
-        if (balance > 0)
-            this.balance = balance;
-        else
-           throw new IllegalArgumentException("Balance can not be negative");
-    }
 
 
 }

@@ -3,7 +3,7 @@ package com.term4.BankingAppGrp1.models;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
- class TransactionTest {
+public class TransactionTest {
     Transaction transaction = new Transaction();
 
     @Test
@@ -21,6 +21,4 @@ import org.junit.jupiter.api.Test;
 
         Assertions.assertEquals("Amount can not be zero or under", exception2.getMessage());
     }
-
-    
 }

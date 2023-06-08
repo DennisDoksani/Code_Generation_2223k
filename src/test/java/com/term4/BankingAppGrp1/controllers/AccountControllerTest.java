@@ -1,7 +1,6 @@
-package com.term4.BankingAppGrp1.controller;
+package com.term4.BankingAppGrp1.controllers;
 
 import com.term4.BankingAppGrp1.configuration.ApiTestConfiguration;
-import com.term4.BankingAppGrp1.controllers.TransactionController;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;

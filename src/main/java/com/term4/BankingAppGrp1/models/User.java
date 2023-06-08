@@ -38,7 +38,7 @@ public class User{
     @Builder.Default
     private double dayLimit=500 ;
     @Builder.Default
-    private double transactionLimit = 300;
+    private double transactionLimit = 200;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Role> roles;
 

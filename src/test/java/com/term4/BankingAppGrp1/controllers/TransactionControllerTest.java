@@ -1,7 +1,6 @@
-package com.term4.BankingAppGrp1.controller;
+package com.term4.BankingAppGrp1.controllers;
 
 import com.term4.BankingAppGrp1.configuration.ApiTestConfiguration;
-import com.term4.BankingAppGrp1.controllers.TransactionController;
 import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
 import com.term4.BankingAppGrp1.models.Role;
@@ -10,9 +9,11 @@ import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.requestDTOs.TransactionDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
 import com.term4.BankingAppGrp1.services.TransactionService;
+
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectWriter;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.SerializationFeature;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
