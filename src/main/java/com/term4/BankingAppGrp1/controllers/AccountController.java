@@ -1,6 +1,7 @@
 package com.term4.BankingAppGrp1.controllers;
 
 import com.term4.BankingAppGrp1.models.*;
+import com.term4.BankingAppGrp1.models.InhollandIBANPattern;
 import com.term4.BankingAppGrp1.requestDTOs.AccountStatusDTO;
 import com.term4.BankingAppGrp1.requestDTOs.CreatingAccountDTO;
 import com.term4.BankingAppGrp1.requestDTOs.UpdatingAccountDTO;
