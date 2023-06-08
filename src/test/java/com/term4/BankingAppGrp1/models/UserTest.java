@@ -79,5 +79,4 @@ public class UserTest {
         Assertions.assertDoesNotThrow(() -> user.getFullName());
     }
 
-    
 }

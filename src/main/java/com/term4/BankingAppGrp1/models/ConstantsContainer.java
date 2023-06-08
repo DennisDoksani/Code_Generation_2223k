@@ -10,4 +10,6 @@ public interface ConstantsContainer {
     public final int DEFAULT_CURRENT_ACCOUNT_LIMIT = 3; // TODO : change limit for user Creating Account
     public final int DEFAULT_SAVINGS_ACCOUNT_LIMIT = 1;
 
+    public final String EMAIL_REGEX_PATTERN = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+
 }
