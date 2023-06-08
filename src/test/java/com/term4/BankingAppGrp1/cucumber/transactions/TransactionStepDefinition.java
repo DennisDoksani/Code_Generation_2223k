@@ -42,8 +42,5 @@ public class TransactionStepDefinition extends BaseStepDefinition {
                 .split(",")).toList();
 
         Assertions.assertTrue(options.contains(method.toUpperCase()));
-
     }
-
-
 }

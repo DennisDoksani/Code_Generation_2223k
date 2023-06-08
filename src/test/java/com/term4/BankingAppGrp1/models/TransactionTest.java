@@ -21,6 +21,4 @@ public class TransactionTest {
 
         Assertions.assertEquals("Amount can not be zero or under", exception2.getMessage());
     }
-
-    
 }

@@ -22,7 +22,7 @@ import javax.naming.LimitExceededException;
 
 @RestControllerAdvice
 public class APIExceptionHandler {
-    // this method will try and  catch any method that throws EntityNotFoundException and return a 404
+
     @ExceptionHandler(value = {EntityNotFoundException.class})
     public ResponseEntity<Object> handleException(EntityNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorMessageDTO(e.getMessage()));
@@ -33,7 +33,6 @@ public class APIExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessageDTO(e.getMessage()));
     }
 
-    // sending conflict status code when limit is exceeded
     @ExceptionHandler(value = {LimitExceededException.class})
     public ResponseEntity<Object> handleException(LimitExceededException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO(e.getMessage()));
@@ -44,7 +43,6 @@ public class APIExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO(e.getMessage()));
     }
 
-    // All the Exceptions that are related to Jakarta Binding Exception
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<Object> handleValidationException(
             MethodArgumentNotValidException e) {
