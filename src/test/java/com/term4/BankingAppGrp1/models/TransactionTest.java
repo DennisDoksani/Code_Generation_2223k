@@ -1,10 +1,9 @@
-package com.term4.BankingAppGrp1.model;
+package com.term4.BankingAppGrp1.models;
 
-import com.term4.BankingAppGrp1.models.Transaction;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TransactionTest {
+ class TransactionTest {
     Transaction transaction = new Transaction();
 
     @Test
