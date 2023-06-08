@@ -7,16 +7,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.FetchType;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 @Entity(name = "users")
 public class User{
@@ -36,13 +32,11 @@ public class User{
     private String password;
     private boolean isActive;
     @Builder.Default
-    private double dayLimit=500 ;
+    private double dayLimit = 500;
     @Builder.Default
-    private double transactionLimit = 300;
+    private double transactionLimit = 200;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Role> roles;
-
-
 
     public void setDayLimit(double dayLimit) {
         if (dayLimit > 0)
@@ -57,6 +51,7 @@ public class User{
         else 
             this.transactionLimit = 0;
     }
+
     public String getFullName(){
         return firstName + " " + lastName;
     }
