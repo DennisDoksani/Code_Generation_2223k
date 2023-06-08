@@ -52,7 +52,8 @@ public class AccountService {
         accountHolder.setLastName(account.accountHolder().lastName());
         accountHolder.setDayLimit(account.accountHolder().dayLimit());
         accountHolder.setTransactionLimit(account.accountHolder().transactionLimit());
-        userService.saveUser(accountHolder); // saving the updated account holder
+        userService.saveUserWithoutHashingPassword(accountHolder); // saving the updated account holder
+        // no need to hash the password again
         return accountRepository.save(accountToUpdate); // saving the updated account
     }
 
@@ -63,7 +64,7 @@ public class AccountService {
         else
             checkIfUserHasReachedAccountLimit(AccountType.SAVINGS, creatingAccountDTO.accountHolderId(),
                     DEFAULT_SAVINGS_ACCOUNT_LIMIT);
-        Account account = parseCreatingAccountDTOToAccount(creatingAccountDTO);
+        Account account = mapCreatingAccountDTOToAccount(creatingAccountDTO);
         userService.saveUser(account.getCustomer()); // will get update with the new Limits for the user
         return accountRepository.save(account);
     }
@@ -119,12 +120,16 @@ public class AccountService {
         accountRepository.save(updatingAccount);
     }
 
-    private Account parseCreatingAccountDTOToAccount(CreatingAccountDTO creatingAccountDTO) {
+    private Account mapCreatingAccountDTOToAccount(CreatingAccountDTO creatingAccountDTO) {
         User accountHolder = userService.getUser(creatingAccountDTO.accountHolderId());
         accountHolder.setDayLimit(creatingAccountDTO.dayLimit());
         accountHolder.setTransactionLimit(creatingAccountDTO.transactionLimit());
         // converting the account type to uppercase to match the enum values
-        return new Account(AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase()), accountHolder);
+        return Account.builder()
+                .accountType(AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase()))
+                .customer(accountHolder)
+                .build();
+
     }
 
     // this method will be used to get all the accounts of a customer
@@ -143,11 +148,12 @@ public class AccountService {
         return totalTransactionAmount == null ? 0 : totalTransactionAmount; // returning primitive double so null
         // check is needed
     }
+
     public boolean isAccountOwnedByCustomer(String iban, String email) {
         return accountRepository.existsAccountByIbanEqualsAndCustomerEmailEquals(iban, email);
     }
 
-    public List<Account> getAccountsByUserId(long id){
+    public List<Account> getAccountsByUserId(long id) {
         return accountRepository.findByCustomer_IdEquals(id);
     }
 

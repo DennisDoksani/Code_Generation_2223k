@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.GenericGenerator;
 import java.time.LocalDate;
 
@@ -19,22 +18,16 @@ public class Account {
     @GeneratedValue(generator = "IBANGenerator", strategy = GenerationType.IDENTITY)
     @GenericGenerator(name = "IBANGenerator", strategy = "com.term4.BankingAppGrp1.generators.IBANGenerator")
     private String iban;
-    //@Column(columnDefinition = "double default 20.00")
     private double balance;
-    //@Column(columnDefinition = "DATE DEFAULT CURRENT_DATE")
+    @Builder.Default
     private LocalDate creationDate = LocalDate.now();
-    //@Column(columnDefinition = "double default 0.0")
     private double absoluteLimit;
-    //@Column(columnDefinition = "boolean DEFAULT TRUE")
+    @Builder.Default
     private boolean isActive = true;
     @Enumerated(EnumType.ORDINAL)
     private AccountType accountType;
     @ManyToOne
     private User customer;
 
-    public Account(AccountType accountType, User customer) {
-        this.accountType = accountType;
-        this.customer = customer;
-    }
 
 }

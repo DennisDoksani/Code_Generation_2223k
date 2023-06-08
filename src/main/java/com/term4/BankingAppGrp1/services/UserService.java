@@ -43,6 +43,9 @@ public class UserService {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
+    public void saveUserWithoutHashingPassword(User user) {
+        userRepository.save(user);
+    }
 
     public User registerUser(RegistrationDTO registrationDTO) {
 
