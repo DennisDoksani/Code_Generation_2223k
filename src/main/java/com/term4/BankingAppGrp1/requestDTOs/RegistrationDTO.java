@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 public record RegistrationDTO(
     @NotBlank(message="BSN is required.") String bsn, 
     @NotBlank(message="Email is required.")
-    @Email(message="Email is invalid.", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$") String email,
+    @Email(message="Email is invalid.") String email,
     @NotBlank(message="Password is required.") String password,  
     @NotBlank(message="First name is required.") String firstName,  
     @NotBlank(message="Last name is required.") String lastName,  

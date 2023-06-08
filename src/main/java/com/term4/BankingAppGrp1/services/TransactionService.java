@@ -23,9 +23,9 @@ import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_INHOLLA
 
 @Service
 public class TransactionService {
-    private TransactionRepository transactionRepository;
-    private AccountRepository accountRepository;
-    private UserRepository userRepository;
+    private final TransactionRepository transactionRepository;
+    private final AccountRepository accountRepository;
+    private final UserRepository userRepository;
     private final UserService userService;
 
     public TransactionService(TransactionRepository transactionRepository, AccountRepository accountRepository, UserRepository userRepository, UserService userService) {
@@ -85,7 +85,7 @@ public class TransactionService {
 
         if (dto.amount() > accountFrom.getCustomer().getTransactionLimit())
             throw new IllegalArgumentException("The amount you are trying to transfer exceeds the transaction limit");
-        // Checks first if the accountFrom has transactions made today and then if the amount will exceed the day limit
+        //TODO: Should fetch the daily transactions from the user, not just the account
         if (getSumOfMoneyTransferred(accountFrom.getIban(), LocalDate.now()) > 0.0 && dto.amount() + getSumOfMoneyTransferred(accountFrom.getIban(), LocalDate.now()) > accountFrom.getCustomer().getDayLimit())
             throw new IllegalArgumentException("The amount you are trying to transfer will exceed the day limit for this account");
 

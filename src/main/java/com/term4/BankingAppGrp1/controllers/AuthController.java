@@ -2,6 +2,7 @@ package com.term4.BankingAppGrp1.controllers;
 
 import javax.naming.AuthenticationException;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +25,7 @@ public class AuthController {
     }
     
     @PostMapping("/login")
-    public LoginResponseDTO login(@RequestBody LoginDTO dto) throws AuthenticationException{ 
+    public LoginResponseDTO login(@Valid @RequestBody LoginDTO dto) throws AuthenticationException{
         return authService.login(dto.email(), dto.password());
     }
 }
