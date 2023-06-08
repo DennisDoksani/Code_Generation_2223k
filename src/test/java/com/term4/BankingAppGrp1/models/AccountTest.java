@@ -13,7 +13,7 @@ class AccountTest {
     private Account account;
 
     @BeforeEach
-    void setUp() {
+    void init() {
         account = Account.builder().build();
     }
 
