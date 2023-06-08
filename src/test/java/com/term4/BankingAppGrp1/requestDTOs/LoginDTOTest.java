@@ -24,7 +24,7 @@ public class LoginDTOTest {
     }
 
     @Test
-    void creatingLoginDTOWithoutAValidEmailShouldResultInAnException() {
+    void creatingLoginDTOWithoutAnEmailShouldResultInAConstraintViolationException() {
 
         LoginDTO loginDTO = new LoginDTO("", "password");
 
@@ -34,11 +34,30 @@ public class LoginDTOTest {
     }
 
     @Test
-    void creatingLoginDTOWithoutAValidPasswordShouldResultInAnException() {
+    void creatingLoginDTOWithoutAValidEmailStringShouldResultInAConstraintViolationException() {
 
-        Exception exception = Assertions.assertThrows(MethodArgumentNotValidException.class, () -> {
-            new LoginDTO("email@email.com", "");
-        });
+        LoginDTO loginDTO = new LoginDTO("notAnEmail", "password");
+
+        Set<ConstraintViolation<LoginDTO>> violations = this.validator.validate(loginDTO);
+        String message = violations.iterator().next().getMessage();
+        assertEquals("Email is invalid.", message);
+    }
+
+    @Test
+    void creatingLoginDTOWithoutAPasswordShouldResultInAConstraintViolationException() {
+
+        LoginDTO loginDTO = new LoginDTO("email@email.com", "");
+
+        Set<ConstraintViolation<LoginDTO>> violations = this.validator.validate(loginDTO);
+        String message = violations.iterator().next().getMessage();
+        assertEquals("Password is required.", message);
+    }
+
+    @Test
+    void creatingLoginDTOWithAnEmailAndPasswordShouldResultInAValidObject() {
+
+        LoginDTO loginDTO = new LoginDTO("email@email.com", "password");
+        Assertions.assertNotNull(loginDTO);
     }
 }
 
