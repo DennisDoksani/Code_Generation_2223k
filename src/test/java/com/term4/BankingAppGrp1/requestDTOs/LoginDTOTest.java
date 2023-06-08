@@ -25,7 +25,6 @@ public class LoginDTOTest {
 
     @Test
     void creatingLoginDTOWithoutAnEmailShouldResultInAConstraintViolationException() {
-
         LoginDTO loginDTO = new LoginDTO("", "password");
 
         Set<ConstraintViolation<LoginDTO>> violations = this.validator.validate(loginDTO);
@@ -35,7 +34,6 @@ public class LoginDTOTest {
 
     @Test
     void creatingLoginDTOWithoutAValidEmailStringShouldResultInAConstraintViolationException() {
-
         LoginDTO loginDTO = new LoginDTO("notAnEmail", "password");
 
         Set<ConstraintViolation<LoginDTO>> violations = this.validator.validate(loginDTO);
@@ -45,7 +43,6 @@ public class LoginDTOTest {
 
     @Test
     void creatingLoginDTOWithoutAPasswordShouldResultInAConstraintViolationException() {
-
         LoginDTO loginDTO = new LoginDTO("email@email.com", "");
 
         Set<ConstraintViolation<LoginDTO>> violations = this.validator.validate(loginDTO);
@@ -55,7 +52,6 @@ public class LoginDTOTest {
 
     @Test
     void creatingLoginDTOWithAnEmailAndPasswordShouldResultInAValidObject() {
-
         LoginDTO loginDTO = new LoginDTO("email@email.com", "password");
         Assertions.assertNotNull(loginDTO);
     }
