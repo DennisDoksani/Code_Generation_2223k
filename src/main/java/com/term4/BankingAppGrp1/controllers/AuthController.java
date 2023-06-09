@@ -3,7 +3,7 @@ package com.term4.BankingAppGrp1.controllers;
 import javax.naming.AuthenticationException;
 
 import jakarta.validation.Valid;
-import org.jetbrains.annotations.NotNull;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

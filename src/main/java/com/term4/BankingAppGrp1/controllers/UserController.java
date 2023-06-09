@@ -5,8 +5,7 @@ import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.responseDTOs.UserDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
 import jakarta.validation.Valid;
-
-import org.jetbrains.annotations.NotNull;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
