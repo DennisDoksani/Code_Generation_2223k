@@ -1,11 +1,13 @@
 package com.term4.BankingAppGrp1.controllers;
 
+import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.Transaction;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.requestDTOs.ATMDepositDTO;
 import com.term4.BankingAppGrp1.requestDTOs.ATMWithdrawDTO;
 import com.term4.BankingAppGrp1.requestDTOs.TransactionDTO;
 import com.term4.BankingAppGrp1.responseDTOs.ErrorMessageDTO;
+import com.term4.BankingAppGrp1.responseDTOs.TransactionResponseDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
 import com.term4.BankingAppGrp1.services.TransactionService;
 import com.term4.BankingAppGrp1.services.UserService;
@@ -15,13 +17,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_LIMIT_STRING;
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_OFFSET_STRING;
@@ -34,6 +39,10 @@ public class TransactionController {
     private AccountService accountService;
     private UserService userService;
 
+    //Authority check by Bijay
+    private final Predicate<GrantedAuthority> isEmployee =
+            a -> a.getAuthority().equals(Role.ROLE_EMPLOYEE.name());
+
     public TransactionController(TransactionService transactionService, AccountService accountService, UserService userService) {
         this.transactionService = transactionService;
         this.accountService = accountService;
@@ -45,7 +54,8 @@ public class TransactionController {
 //        return ResponseEntity.ok().body(transactionService.getAllTransactions());
 //    }
 
-    @GetMapping()   //Make dto for the accounts
+    @GetMapping()
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
     public ResponseEntity<Object> getTransactionsWithFilters(@RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
                                                              @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset,
                                                              @RequestParam(required = false) String ibanFrom,
@@ -53,12 +63,25 @@ public class TransactionController {
                                                              @RequestParam(required = false) Double amountMin,
                                                              @RequestParam(required = false) Double amountMax,
                                                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateBefore,
-                                                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateAfter) {
-        List<Transaction> transactions = transactionService.getTransactionsWithFilters(getPageable(limit, offset), ibanFrom, ibanTo,
+                                                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateAfter,
+                                                             @AuthenticationPrincipal UserDetails jwtUser) {
+        if(jwtUser.getAuthorities().stream().noneMatch(isEmployee) && (!transactionService.accountBelongsToUser(ibanTo,  jwtUser.getUsername()) && !transactionService.accountBelongsToUser(ibanFrom, jwtUser.getUsername())) ) {
+            throw new AccessDeniedException("Standard customers only have access to their own transaction data");
+        }   //Ask how to put a custom message here
+        List<TransactionResponseDTO> transactions = transactionService.getTransactionsWithFilters(getPageable(limit, offset), ibanFrom, ibanTo,
                 amountMin, amountMax, dateBefore, dateAfter);
 
-
         return ResponseEntity.ok().body(transactions);
+    }
+
+    @GetMapping("/account/{iban}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
+    public ResponseEntity<Object> getTransactionsOffAccount(@RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
+                                                            @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset,
+                                                            @PathVariable String iban) {
+
+        List<TransactionResponseDTO> transactionsOffAccount = transactionService.getTransactionsOffAccount(getPageable(limit, offset), iban);
+        return ResponseEntity.ok().body(transactionsOffAccount);
     }
 
     @PostMapping
@@ -68,7 +91,7 @@ public class TransactionController {
         if (transactionService.validTransaction(transactionDTO)) {
             User userPerforming = userService.getUserByEmail(jwtUser.getUsername());
             transactionService.changeBalance(transactionDTO.amount(), transactionDTO.accountFrom(), transactionDTO.accountTo());
-            Transaction newTransaction = transactionService.addTransaction(transactionDTO, userPerforming);
+            TransactionResponseDTO newTransaction = transactionService.addTransaction(transactionDTO, userPerforming);
             return ResponseEntity.status(HttpStatus.CREATED).body(newTransaction);
         }
 

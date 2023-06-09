@@ -6,6 +6,5 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-//Ask if the @data etc is necessary
-public record TransactionResponseDTO(double amount, TransactionAccountDTO accountFrom, TransactionAccountDTO accountTo, LocalDate date, LocalTime time, String userPerforming) {
+public record TransactionResponseDTO(Long id, double amount, TransactionAccountDTO accountFrom, TransactionAccountDTO accountTo, LocalDate date, LocalTime time, String userPerforming) {
 }
