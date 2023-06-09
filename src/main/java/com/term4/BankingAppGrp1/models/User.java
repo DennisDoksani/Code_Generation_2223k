@@ -42,8 +42,6 @@ public class User{
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Role> roles;
 
-
-
     public void setDayLimit(double dayLimit) {
         if (dayLimit > 0)
             this.dayLimit = dayLimit;

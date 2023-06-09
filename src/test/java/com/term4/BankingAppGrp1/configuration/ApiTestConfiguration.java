@@ -9,4 +9,6 @@ public class ApiTestConfiguration {
 
     @MockBean
     private JwtTokenProvider jwtTokenProvider;
+
+
 }
