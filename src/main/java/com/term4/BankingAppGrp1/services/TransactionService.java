@@ -73,6 +73,8 @@ public class TransactionService {
         if (dto.amount() <= 0)
             throw new IllegalArgumentException("Amount must be a positive number");
 
+        if(!accountTo.isActive() || !accountFrom.isActive())
+            throw new IllegalArgumentException("You can not transfer to or from an inactive account");
         //This statement checks if money is being transferred to or from a savings account that does not belong to the same user
         if (((accountFrom.getAccountType() == AccountType.CURRENT && accountTo.getAccountType() == AccountType.SAVINGS) || (accountFrom.getAccountType() == AccountType.SAVINGS && accountTo.getAccountType() == AccountType.CURRENT)) && accountFrom.getCustomer().getBsn() != accountTo.getCustomer().getBsn())
             throw new IllegalArgumentException("You can not transfer money from or to a savings account that does not belong to the same user");

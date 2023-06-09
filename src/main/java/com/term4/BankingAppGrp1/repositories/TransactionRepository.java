@@ -1,6 +1,5 @@
 package com.term4.BankingAppGrp1.repositories;
 
-import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.Transaction;
 
 import org.springframework.data.domain.Page;
