@@ -22,20 +22,14 @@ import javax.naming.LimitExceededException;
 
 @RestControllerAdvice
 public class APIExceptionHandler {
-
-    @ExceptionHandler(value = {EntityNotFoundException.class})
-    public ResponseEntity<Object> handleException(EntityNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorMessageDTO(e.getMessage()));
-    }
-
     @ExceptionHandler(value = {AuthenticationException.class})
     public ResponseEntity<Object> handleException(AuthenticationException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessageDTO(e.getMessage()));
     }
 
-    @ExceptionHandler(value = {LimitExceededException.class})
-    public ResponseEntity<Object> handleException(LimitExceededException e) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO(e.getMessage()));
+    @ExceptionHandler(value = {AccessDeniedException.class})
+    public ResponseEntity<Object> handleException(AccessDeniedException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorMessageDTO("Access Denied"));
     }
 
     @ExceptionHandler(value = {IllegalArgumentException.class})
@@ -55,13 +49,7 @@ public class APIExceptionHandler {
             ObjectError objectError = e.getBindingResult().getGlobalErrors().get(0);
             errorMessage = objectError.getDefaultMessage();
         }
-
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO(errorMessage));
-    }
-
-    @ExceptionHandler(value = {AccessDeniedException.class})
-    public ResponseEntity<Object> handleException(AccessDeniedException e) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorMessageDTO("Access Denied"));
     }
 
     @ExceptionHandler(value = {HttpRequestMethodNotSupportedException.class})
@@ -79,8 +67,18 @@ public class APIExceptionHandler {
                 new ErrorMessageDTO(error));
     }
 
+    @ExceptionHandler(value = {EntityNotFoundException.class})
+    public ResponseEntity<Object> handleException(EntityNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorMessageDTO(e.getMessage()));
+    }
+
     @ExceptionHandler(value = {EntityExistsException.class})
     public ResponseEntity<Object> handleException(EntityExistsException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO(e.getMessage()));
+    }
+
+    @ExceptionHandler(value = {LimitExceededException.class})
+    public ResponseEntity<Object> handleException(LimitExceededException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO(e.getMessage()));
     }
 }

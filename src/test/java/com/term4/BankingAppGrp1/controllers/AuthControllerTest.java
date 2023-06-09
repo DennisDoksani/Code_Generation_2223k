@@ -14,6 +14,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -31,9 +33,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(ApiTestConfiguration.class)
 public class AuthControllerTest {
 
-    @Autowired
-    private WebApplicationContext webApplicationContext;
+    //@Autowired
+    //private WebApplicationContext webApplicationContext;
 
+    @Autowired
     private MockMvc mockMvc;
 
     @MockBean
@@ -43,7 +46,7 @@ public class AuthControllerTest {
 
     @BeforeEach
     public void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        //mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         loginDto = new LoginDTO("email@email.com", "password");
         loginResponseDto = new LoginResponseDTO("token", 1, "email@email.com", "name");
     }
