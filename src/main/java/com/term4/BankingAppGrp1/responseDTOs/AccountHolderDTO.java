@@ -1,5 +1,6 @@
 package com.term4.BankingAppGrp1.responseDTOs;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
@@ -8,9 +9,9 @@ public record AccountHolderDTO(@NotNull(message = "User Id cannot be left empty"
                                @PositiveOrZero(message = "The day limit cannot be Negative")
                                @NotNull(message = "Day Limit cannot be left empty")
                                Double dayLimit,
-                               @PositiveOrZero(message = "The Transaction limit cannot be Negative")
+                               @PositiveOrZero(message = "The transaction limit cannot be Negative")
                                @NotNull(message = "Transaction Limit cannot be left empty")
                                Double transactionLimit,
-                               @NotNull(message = "First Name cannot be left empty") String firstName,
-                               @NotNull(message = "Last Name cannot be left empty") String lastName) {
+                               @NotBlank(message = "First Name cannot be left empty") String firstName,
+                               @NotBlank(message = "Last Name cannot be left empty") String lastName) {
 }
