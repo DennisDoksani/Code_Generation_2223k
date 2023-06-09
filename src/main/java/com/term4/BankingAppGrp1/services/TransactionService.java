@@ -83,8 +83,8 @@ public class TransactionService {
         return mapTransactionToDto(newTransaction);
     }
 
-    public Double getSumOfMoneyTransferred(String iban, LocalDate date) {
-        return transactionRepository.getSumOfMoneyTransferred(iban, date).orElse(0.0); //Ask if this orElse is redundant
+    public Double getSumOfMoneyTransferred(String user, LocalDate date) {
+        return transactionRepository.getSumOfMoneyTransferred(user, date, AccountType.CURRENT).orElse(0.0); //Ask if this orElse is redundant
     }
 
     public void changeBalance(double amount, String accountFrom, String accountTo) {
@@ -101,8 +101,10 @@ public class TransactionService {
     }
 
     public Boolean validTransaction(TransactionDTO dto) {
-        Account accountTo = accountRepository.findById(dto.accountTo()).get();
-        Account accountFrom = accountRepository.findById(dto.accountFrom()).get();
+        Account accountTo = accountRepository.findById(dto.accountTo())
+                .orElseThrow(() -> new EntityNotFoundException("Account " + dto.accountTo() + " not found"));
+        Account accountFrom = accountRepository.findById(dto.accountFrom())
+                .orElseThrow(() -> new EntityNotFoundException("Account " + dto.accountFrom() + " not found"));
         
         //Amount must be a positive number
         if (dto.amount() <= 0)
@@ -123,7 +125,7 @@ public class TransactionService {
         if (dto.amount() > accountFrom.getCustomer().getTransactionLimit())
             throw new IllegalArgumentException("The amount you are trying to transfer exceeds the transaction limit");
         // Checks first if the accountFrom has transactions made today and then if the amount will exceed the day limit
-        if (getSumOfMoneyTransferred(accountFrom.getIban(), LocalDate.now()) > 0.0 && dto.amount() + getSumOfMoneyTransferred(accountFrom.getIban(), LocalDate.now()) > accountFrom.getCustomer().getDayLimit())
+        if (accountTo.getAccountType() != AccountType.SAVINGS && dto.amount() + getSumOfMoneyTransferred(accountFrom.getCustomer().getEmail(), LocalDate.now()) > accountFrom.getCustomer().getDayLimit())
             throw new IllegalArgumentException("The amount you are trying to transfer will exceed the day limit for this account");
 
 

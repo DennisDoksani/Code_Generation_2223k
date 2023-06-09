@@ -111,7 +111,7 @@ public class TransactionControllerTest {
     @Test
     @WithMockUser()
     void tryingToMakeATransactionWhenTheDayLimitHasBeenReachedShouldResultInIllegalArgumentException() throws Exception {
-        when(transactionService.getSumOfMoneyTransferred("NL01INHO0000000002", LocalDate.now()))
+        when(transactionService.getSumOfMoneyTransferred(testUser.getEmail(), LocalDate.now()))
                 .thenReturn(100.0);
 
         TransactionDTO dto = new TransactionDTO(100.0, testAccount1.getIban(), testAccount2.getIban());
