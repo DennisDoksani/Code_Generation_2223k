@@ -1,21 +1,89 @@
 package com.term4.BankingAppGrp1.controllers;
 
 import com.term4.BankingAppGrp1.configuration.ApiTestConfiguration;
+import com.term4.BankingAppGrp1.models.Account;
+import com.term4.BankingAppGrp1.models.AccountType;
+import com.term4.BankingAppGrp1.models.Role;
+import com.term4.BankingAppGrp1.models.User;
+import com.term4.BankingAppGrp1.services.AccountService;
+import com.term4.BankingAppGrp1.services.UserService;
+import com.term4.BankingAppGrp1.util.JwtTokenProvider;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(TransactionController.class)
+@WebMvcTest(AccountController.class)
 @Import(ApiTestConfiguration.class)
-public class AccountControllerTest {
-    @Mock
+ class AccountControllerTest {
     @Autowired
     private MockMvc mockMvc;
+    @MockBean
+    private AccountService accountService;
+    @MockBean
+    private UserService userService;
+
+    private Account testingAccount;
+    private User testingUser;
+
+    @BeforeEach
+    void init() {
+        testingUser = User.builder()
+                .bsn("277545146")
+                .firstName("EmployeeCustomer")
+                .lastName("Seed")
+                .dateOfBirth(LocalDate.of(1990, 1, 1))
+                .phoneNumber("0611111111")
+                .email("employeecustomer@seed.com")
+                .password("password")
+                .isActive(true)
+                .roles(List.of(Role.ROLE_EMPLOYEE, Role.ROLE_CUSTOMER))
+                .dayLimit(1000)
+                .transactionLimit(300)
+                .build();
+
+        testingAccount = Account.builder()
+                .iban("NL72INHO0579629781")
+                .balance(900.0)
+                .creationDate(LocalDate.now())
+                .accountType(AccountType.CURRENT)
+                .customer(testingUser)
+                .build();
+
+    }
+    @Test
+    void whenJwtTokenISNotProvidedAndAccessGetAllEndpointsGivesUnauthorized() throws Exception {
+        when(accountService.getAllAccounts(
+                1,
+                0,
+                null
+        )).thenReturn(List.of(testingAccount));
+
+
+        this.mockMvc.perform(
+                        MockMvcRequestBuilders.get("/accounts")
+                .param("limit", "1")
+                .param("offset", "0")).andDo(print())
+                .andExpect(status().isUnauthorized())
+                ;
+    }
+
 
 
 }
