@@ -10,12 +10,16 @@ import com.term4.BankingAppGrp1.repositories.UserRepository;
 import com.term4.BankingAppGrp1.requestDTOs.ATMDepositDTO;
 import com.term4.BankingAppGrp1.requestDTOs.ATMWithdrawDTO;
 import com.term4.BankingAppGrp1.requestDTOs.TransactionDTO;
+import com.term4.BankingAppGrp1.responseDTOs.TransactionAccountDTO;
+import com.term4.BankingAppGrp1.responseDTOs.TransactionResponseDTO;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_INHOLLAND_BANK_IBAN;
@@ -39,9 +43,34 @@ public class TransactionService {
         return transactionRepository.findAll();
     }
 
-    public List<Transaction> getTransactionsWithFilters(Pageable pageable, String ibanFrom, String ibanTo, Double amountMin, Double amountMax, LocalDate dateBefore, LocalDate dateAfter) {
+    public List<TransactionResponseDTO> getTransactionsWithFilters(Pageable pageable, String ibanFrom, String ibanTo, Double amountMin, Double amountMax, LocalDate dateBefore, LocalDate dateAfter) {
         List<Transaction> transactions = transactionRepository.getTransactionsWithFilters(pageable, ibanFrom, ibanTo, amountMin, amountMax, dateBefore, dateAfter).getContent();
-        return transactions;
+        List<TransactionResponseDTO> responseDTOS = new ArrayList<>();
+        transactions.forEach(
+                Transaction -> responseDTOS.add(mapTransactionToDto(Transaction))
+        );
+        return responseDTOS;
+    }
+    //This method checks if either the account to or account from belongs to a customer to prevent customers from accessing
+    // someone else's transaction data
+    public boolean oneAccountBelongsToUser(String ibanTo, String ibanFrom, String userName) {
+        Account accountTo = null;
+        Account accountFrom = null;
+
+        if(ibanTo != null) {
+            accountTo = accountRepository.findById(ibanTo)
+                    .orElseThrow(() -> new EntityNotFoundException("Account " + ibanTo + " not found"));
+            if (accountTo.getCustomer().getEmail().equals(userName))
+                return true;
+        }
+
+        if(ibanFrom != null) {
+            accountFrom = accountRepository.findById(ibanFrom)
+                    .orElseThrow(() -> new EntityNotFoundException("Account " + ibanFrom + " not found"));
+            if(accountFrom.getCustomer().getEmail().equals(userName))
+                return true;
+        }
+        return false;
     }
 
     public Transaction addTransaction(TransactionDTO transactionDTO, User userPerforming) {
@@ -104,6 +133,29 @@ public class TransactionService {
         transaction.setTimestamp(LocalTime.now());
         transaction.setUserPerforming(userPerforming);
         return transaction;
+    }
+
+    private TransactionResponseDTO mapTransactionToDto(Transaction transaction){
+        TransactionAccountDTO accountToDTO = new TransactionAccountDTO(
+                transaction.getAccountTo().getIban(),
+                transaction.getAccountTo().getAccountType(),
+                transaction.getAccountTo().getCustomer().getFullName());
+
+        TransactionAccountDTO accountFromDTO = new TransactionAccountDTO(
+                transaction.getAccountFrom().getIban(),
+                transaction.getAccountFrom().getAccountType(),
+                transaction.getAccountFrom().getCustomer().getFullName());
+
+        TransactionResponseDTO responseDTO = new TransactionResponseDTO(
+                transaction.getTransactionID(),
+                transaction.getAmount(),
+                accountFromDTO,
+                accountToDTO,
+                transaction.getDate(),
+                transaction.getTimestamp(),
+                transaction.getUserPerforming().getFullName());
+
+        return responseDTO;
     }
 
     // this method will execute the atm transaction

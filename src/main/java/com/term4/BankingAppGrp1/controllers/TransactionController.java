@@ -7,6 +7,7 @@ import com.term4.BankingAppGrp1.requestDTOs.ATMDepositDTO;
 import com.term4.BankingAppGrp1.requestDTOs.ATMWithdrawDTO;
 import com.term4.BankingAppGrp1.requestDTOs.TransactionDTO;
 import com.term4.BankingAppGrp1.responseDTOs.ErrorMessageDTO;
+import com.term4.BankingAppGrp1.responseDTOs.TransactionResponseDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
 import com.term4.BankingAppGrp1.services.TransactionService;
 import com.term4.BankingAppGrp1.services.UserService;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -63,13 +65,10 @@ public class TransactionController {
                                                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateBefore,
                                                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateAfter,
                                                              @AuthenticationPrincipal UserDetails jwtUser) throws Exception {
-        if(jwtUser.getAuthorities().stream().noneMatch(isEmployee) && ibanFrom == null && ibanTo == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new Exception(
-                            "Standard customers only have access to their own transaction data"
-                    ));
-        }
-        List<Transaction> transactions = transactionService.getTransactionsWithFilters(getPageable(limit, offset), ibanFrom, ibanTo,
+        if(jwtUser.getAuthorities().stream().noneMatch(isEmployee) && ((ibanFrom == null && ibanTo == null) || !transactionService.oneAccountBelongsToUser(ibanTo, ibanFrom, jwtUser.getUsername()))  ) {
+            throw new AccessDeniedException("Standard customers only have access to their own transaction data");
+        }   //Ask how to put a custom message here
+        List<TransactionResponseDTO> transactions = transactionService.getTransactionsWithFilters(getPageable(limit, offset), ibanFrom, ibanTo,
                 amountMin, amountMax, dateBefore, dateAfter);
 
         return ResponseEntity.ok().body(transactions);

@@ -7,6 +7,8 @@ import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.Transaction;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.requestDTOs.TransactionDTO;
+import com.term4.BankingAppGrp1.responseDTOs.TransactionAccountDTO;
+import com.term4.BankingAppGrp1.responseDTOs.TransactionResponseDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
 import com.term4.BankingAppGrp1.services.TransactionService;
 
@@ -47,6 +49,7 @@ public class TransactionControllerTest {
     private MockMvc mockMvc;
 
     private Transaction testTransaction1;
+    private TransactionResponseDTO responseDTO;
     private Account testAccount1;
     private Account testAccount2;
     private User testUser;
@@ -80,13 +83,23 @@ public class TransactionControllerTest {
 
         testTransaction1 = new Transaction(10.0, testAccount1, testAccount2,
                 LocalDate.now(), LocalTime.now(), testUser);
+
+        responseDTO = new TransactionResponseDTO(
+                testTransaction1.getTransactionID(),
+                testTransaction1.getAmount(),
+                new TransactionAccountDTO(testAccount2.getIban(), testAccount2.getAccountType(), testUser.getFullName()),
+                new TransactionAccountDTO(testAccount1.getIban(), testAccount1.getAccountType(), testUser.getFullName()),
+                testTransaction1.getDate(),
+                testTransaction1.getTimestamp(),
+                testUser.getFullName());
+
     }
 
     @Test
     @WithMockUser()
     void getTransactionsWithoutSpecifyingFiltersShouldReturnAListOfOne() throws Exception {
         when(transactionService.getTransactionsWithFilters(PageRequest.of(0 / 50, 50), null, null, null, null, null, null))
-                .thenReturn(List.of(testTransaction1));
+                .thenReturn(List.of(responseDTO));
 
         this.mockMvc.perform(
                         MockMvcRequestBuilders.get("/transactions"))
