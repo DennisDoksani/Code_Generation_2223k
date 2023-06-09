@@ -2,6 +2,7 @@ package com.term4.BankingAppGrp1.services;
 
 import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
+import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.AccountRepository;
 import com.term4.BankingAppGrp1.requestDTOs.CreatingAccountDTO;
@@ -56,7 +57,7 @@ public class AccountService {
         // no need to hash the password again
         return accountRepository.save(accountToUpdate); // saving the updated account
     }
-
+    @Transactional
     public Account saveAccount(CreatingAccountDTO creatingAccountDTO) throws LimitExceededException {
         if ((AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase()).equals(AccountType.CURRENT)))
             checkIfUserHasReachedAccountLimit(AccountType.CURRENT, creatingAccountDTO.accountHolderId(),
@@ -65,7 +66,8 @@ public class AccountService {
             checkIfUserHasReachedAccountLimit(AccountType.SAVINGS, creatingAccountDTO.accountHolderId(),
                     DEFAULT_SAVINGS_ACCOUNT_LIMIT);
         Account account = mapCreatingAccountDTOToAccount(creatingAccountDTO);
-        userService.saveUser(account.getCustomer()); // will get update with the new Limits for the user
+        userService.saveUserWithoutHashingPassword(account.getCustomer()); // will get update with the new Limits for the user
+        account.getCustomer().addRole(Role.ROLE_CUSTOMER); // Add customer role to the user
         return accountRepository.save(account);
     }
 

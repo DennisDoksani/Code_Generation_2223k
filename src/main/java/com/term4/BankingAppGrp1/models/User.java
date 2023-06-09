@@ -60,4 +60,15 @@ public class User{
     public String getFullName(){
         return firstName + " " + lastName;
     }
+
+    public void addRole(Role role){
+        if (roles.contains(role))
+            return;
+
+        roles.add(role);
+    }
+
+    public void removeRole(Role role){
+        roles.remove(role);
+    }
 }
