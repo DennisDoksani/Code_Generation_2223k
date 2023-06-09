@@ -10,12 +10,16 @@ import com.term4.BankingAppGrp1.repositories.UserRepository;
 import com.term4.BankingAppGrp1.requestDTOs.ATMDepositDTO;
 import com.term4.BankingAppGrp1.requestDTOs.ATMWithdrawDTO;
 import com.term4.BankingAppGrp1.requestDTOs.TransactionDTO;
+import com.term4.BankingAppGrp1.responseDTOs.TransactionAccountDTO;
+import com.term4.BankingAppGrp1.responseDTOs.TransactionResponseDTO;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_INHOLLAND_BANK_IBAN;
@@ -39,13 +43,44 @@ public class TransactionService {
         return transactionRepository.findAll();
     }
 
-    public List<Transaction> getTransactionsWithFilters(Pageable pageable, String ibanFrom, String ibanTo, Double amountMin, Double amountMax, LocalDate dateBefore, LocalDate dateAfter) {
+    public List<TransactionResponseDTO> getTransactionsWithFilters(Pageable pageable, String ibanFrom, String ibanTo, Double amountMin, Double amountMax, LocalDate dateBefore, LocalDate dateAfter) {
         List<Transaction> transactions = transactionRepository.getTransactionsWithFilters(pageable, ibanFrom, ibanTo, amountMin, amountMax, dateBefore, dateAfter).getContent();
-        return transactions;
+        List<TransactionResponseDTO> responseDTOS = new ArrayList<>();
+        transactions.forEach(
+                Transaction -> responseDTOS.add(mapTransactionToDto(Transaction))
+        );
+        return responseDTOS;
+    }
+    public List<TransactionResponseDTO> getTransactionsOffAccount(Pageable pageable, String iban) {
+        List<Transaction> transactions = transactionRepository.getTransactionsOffAccount(pageable, iban).getContent();
+        if(transactions.isEmpty())
+            throw new EntityNotFoundException("No transactions found for account " + iban);
+
+        List<TransactionResponseDTO> responseDTOS = new ArrayList<>();
+        transactions.forEach(
+                Transaction -> responseDTOS.add(mapTransactionToDto(Transaction))
+        );
+
+        return responseDTOS;
+    }
+    //This method checks if either the account to or account from belongs to a customer to prevent customers from accessing
+    // someone else's transaction data
+    public boolean accountBelongsToUser(String iban, String userName) {
+        Account account = null;
+
+        if(iban != null) {
+            account = accountRepository.findById(iban)
+                    .orElseThrow(() -> new EntityNotFoundException("Account " + iban + " not found"));
+            return account.getCustomer().getEmail().equals(userName);
+        }
+
+        return false;
     }
 
-    public Transaction addTransaction(TransactionDTO transactionDTO, User userPerforming) {
-        return transactionRepository.save(mapDtoToTransaction(transactionDTO, userPerforming));
+    public TransactionResponseDTO addTransaction(TransactionDTO transactionDTO, User userPerforming) {
+        Transaction newTransaction = transactionRepository.save(mapDtoToTransaction(transactionDTO, userPerforming));
+
+        return mapTransactionToDto(newTransaction);
     }
 
     public Double getSumOfMoneyTransferred(String iban, LocalDate date) {
@@ -73,6 +108,8 @@ public class TransactionService {
         if (dto.amount() <= 0)
             throw new IllegalArgumentException("Amount must be a positive number");
 
+        if(!accountTo.isActive() || !accountFrom.isActive())
+            throw new IllegalArgumentException("You can not transfer to or from an inactive account");
         //This statement checks if money is being transferred to or from a savings account that does not belong to the same user
         if (((accountFrom.getAccountType() == AccountType.CURRENT && accountTo.getAccountType() == AccountType.SAVINGS) || (accountFrom.getAccountType() == AccountType.SAVINGS && accountTo.getAccountType() == AccountType.CURRENT)) && accountFrom.getCustomer().getBsn() != accountTo.getCustomer().getBsn())
             throw new IllegalArgumentException("You can not transfer money from or to a savings account that does not belong to the same user");
@@ -104,9 +141,32 @@ public class TransactionService {
         return transaction;
     }
 
+    private TransactionResponseDTO mapTransactionToDto(Transaction transaction){
+        TransactionAccountDTO accountToDTO = new TransactionAccountDTO(
+                transaction.getAccountTo().getIban(),
+                transaction.getAccountTo().getAccountType(),
+                transaction.getAccountTo().getCustomer().getFullName());
+
+        TransactionAccountDTO accountFromDTO = new TransactionAccountDTO(
+                transaction.getAccountFrom().getIban(),
+                transaction.getAccountFrom().getAccountType(),
+                transaction.getAccountFrom().getCustomer().getFullName());
+
+        TransactionResponseDTO responseDTO = new TransactionResponseDTO(
+                transaction.getTransactionID(),
+                transaction.getAmount(),
+                accountFromDTO,
+                accountToDTO,
+                transaction.getDate(),
+                transaction.getTimestamp(),
+                transaction.getUserPerforming().getFullName());
+
+        return responseDTO;
+    }
+
     // this method will execute the atm transaction
     @Transactional // making a atomic state
-    public Transaction atmDeposit(ATMDepositDTO depositDTO, String userPerformingEmail) {
+    public TransactionResponseDTO atmDeposit(ATMDepositDTO depositDTO, String userPerformingEmail) {
         User userPerforming = userService.getUserByEmail(userPerformingEmail);
         // when deposit is made, the money will be transferred from  inholland bank account
         TransactionDTO transactionDTO = new TransactionDTO(
@@ -115,7 +175,7 @@ public class TransactionService {
                 DEFAULT_INHOLLAND_BANK_IBAN
         );
         if (validTransaction(transactionDTO)) {
-            Transaction transaction = addTransaction(transactionDTO, userPerforming);
+            TransactionResponseDTO transaction = addTransaction(transactionDTO, userPerforming);
             changeBalance(depositDTO.amount(), DEFAULT_INHOLLAND_BANK_IBAN, depositDTO.accountTo());
             return transaction;
         }
@@ -124,7 +184,7 @@ public class TransactionService {
 
     // this method will execute the atm withdraw transaction
     @Transactional // making the method transactional so that if any error occurs, the transaction will be rolled back
-    public Transaction atmWithdraw(ATMWithdrawDTO withdrawDTO, String userPerformingEmail) {
+    public TransactionResponseDTO atmWithdraw(ATMWithdrawDTO withdrawDTO, String userPerformingEmail) {
         // using service layer so that Null pointer exception is avoided
         User userPerforming = userService.getUserByEmail(userPerformingEmail);
         // when withdraw is made, the money will be transferred to  inholland bank account
@@ -134,7 +194,7 @@ public class TransactionService {
                 withdrawDTO.accountFrom()
         );
         if (validTransaction(transactionDTO)) {
-            Transaction transaction = addTransaction(transactionDTO, userPerforming);
+            TransactionResponseDTO transaction = addTransaction(transactionDTO, userPerforming);
             changeBalance(withdrawDTO.amount(), withdrawDTO.accountFrom(), DEFAULT_INHOLLAND_BANK_IBAN);
             return transaction;
         }

@@ -52,8 +52,10 @@ public class UserController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<User> getUser(@PathVariable long id) {
-        return ResponseEntity.ok(userService.getUser(id));
+    public ResponseEntity<UserDTO> getUser(@PathVariable long id) {
+        User user = userService.getUser(id);
+        UserDTO userDTO = parseUserObjectToDTO.apply(user);
+        return ResponseEntity.ok(userDTO);
     }
 
     @PutMapping("/{id}")
