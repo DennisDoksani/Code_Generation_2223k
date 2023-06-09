@@ -3,10 +3,7 @@ package com.term4.BankingAppGrp1.controllers;
 import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.responseDTOs.UserDTO;
-import com.term4.BankingAppGrp1.responseDTOs.AccountHolderDTO;
-import com.term4.BankingAppGrp1.responseDTOs.UserDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
