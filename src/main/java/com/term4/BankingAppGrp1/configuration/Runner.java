@@ -111,7 +111,7 @@ public class Runner implements ApplicationRunner {
 
         Account current = Account.builder()
                 .iban("NL01INHO0000000002")
-                .balance(290.0)
+                .balance(2900.0)
                 .isActive(true)
                 .accountType(AccountType.CURRENT)
                 .customer(user)
