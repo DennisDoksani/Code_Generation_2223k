@@ -175,7 +175,7 @@ public class AccountController {
                     .body(new ErrorMessageDTO("You are not allowed to access others Accounts Details! "));
         }
         User requestingUser = userService.getUserByEmail(email);
-        Double transactionDoneToday = accountService.getTotalTransactedAmountOfTodayByUserId(requestingUser.getId());
+        double transactionDoneToday = accountService.getTotalTransactedAmountOfTodayByUserEmail(requestingUser.getEmail());
         return ResponseEntity.ok(
                 parseListOfAccountAndUserObjectToUserAccountsDTO.apply(
                         accountService.getAccountsByEmailAddress(email),

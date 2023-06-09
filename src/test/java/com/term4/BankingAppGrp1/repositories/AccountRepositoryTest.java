@@ -257,12 +257,7 @@ class AccountRepositoryTest {
         }
 
         @Override
-        public Double getTotalTransactionsDoneTodayByUser(long customerId) {
-            return null;
-        }
-
-        @Override
-        public boolean existsAccountByIbanEqualsAndCustomerEmailEquals(String iban, String email) {
+        public boolean existsAccountByIbanEqualsAndCustomerEmailEqualsIgnoreCase(String iban, String email) {
             return false;
         }
     };

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.naming.LimitExceededException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.LongFunction;
@@ -25,12 +26,14 @@ import static com.term4.BankingAppGrp1.repositories.AccountSpecifications.*;
 public class AccountService {
     private final AccountRepository accountRepository;
     private final UserService userService;
+    private final TransactionService transactionService;
     private final BiFunction<Integer, Integer, Pageable> getPageableByLimitAndOffset = (limit, offset) ->
             PageRequest.of((offset / limit), limit);
 
-    public AccountService(AccountRepository accountRepository, UserService userService) {
+    public AccountService(AccountRepository accountRepository, UserService userService, TransactionService transactionService) {
         this.accountRepository = accountRepository;
         this.userService = userService;
+        this.transactionService = transactionService;
     }
 
     public void saveAccount(Account newAccount) {
@@ -142,15 +145,12 @@ public class AccountService {
         );
     }
 
-    public double getTotalTransactedAmountOfTodayByUserId(long userId) {
-        // this method have a Double as return type so that it can return null and the null check can be done
-        Double totalTransactionAmount = accountRepository.getTotalTransactionsDoneTodayByUser(userId);
-        return totalTransactionAmount == null ? 0 : totalTransactionAmount; // returning primitive double so null
-        // check is needed
+    public double getTotalTransactedAmountOfTodayByUserEmail(String userEmail) {
+       return transactionService.getSumOfMoneyTransferred(userEmail, LocalDate.now());
     }
 
     public boolean isAccountOwnedByCustomer(String iban, String email) {
-        return accountRepository.existsAccountByIbanEqualsAndCustomerEmailEquals(iban, email);
+        return accountRepository.existsAccountByIbanEqualsAndCustomerEmailEqualsIgnoreCase(iban, email);
     }
 
     public List<Account> getAccountsByUserId(long id) {

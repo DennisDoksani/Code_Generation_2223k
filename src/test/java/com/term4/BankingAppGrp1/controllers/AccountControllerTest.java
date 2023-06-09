@@ -43,7 +43,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith({SpringExtension.class})
 @WebMvcTest(AccountController.class)
 @Import(ApiTestConfiguration.class)
-@WebAppConfiguration
  class AccountControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -82,14 +81,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
     }
     @Test
-    @WithMockUser(username = "admin", password = "admin", roles = "CUSTOMER")
+    @WithMockUser(username = "admin",  roles = {"CUSTOMER"})
     void whenJwtTokenISNotProvidedAndAccessGetAllEndpointsGivesUnauthorized() throws Exception {
         when(accountService.getAllAccounts(
                 1,
                 0,
                 null
         )).thenReturn(List.of(testingAccount));
-
 
         this.mockMvc.perform(
                         MockMvcRequestBuilders.get("/accounts")
@@ -98,7 +96,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 .andExpect(status().isOk())
                 ;
     }
+  @Test
+  @WithMockUser(username = "admin", roles = {"CUSTOMER"})
+  void whenCustomerTriesToAccessTheEndpointITShouldGiveForbidden() throws Exception {
+    when(accountService.getAllAccounts(
+        1,
+        0,
+        null
+    )).thenReturn(List.of(testingAccount));
 
-
+    this.mockMvc.perform(
+            MockMvcRequestBuilders.get("/accounts")
+                .param("limit", "1")
+                .param("offset", "0")).andDo(print())
+        .andExpect(status().isForbidden());
+  }
 
 }
