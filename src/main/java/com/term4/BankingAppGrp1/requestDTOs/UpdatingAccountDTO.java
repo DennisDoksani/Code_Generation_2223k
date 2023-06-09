@@ -4,7 +4,7 @@ import com.term4.BankingAppGrp1.responseDTOs.AccountHolderDTO;
 import jakarta.validation.constraints.NotNull;
 
 public record UpdatingAccountDTO(
-        double absoluteLimit,
-        @NotNull(message = " The active field cannot be left empty") Boolean isActive,
-        AccountHolderDTO accountHolder) {
+        @NotNull(message = "Absolute Limit cannot be Null") Double absoluteLimit,
+        @NotNull(message = "The active field cannot be left empty") Boolean isActive,
+        @NotNull(message = "The AccountHolder Details cannot be empty") AccountHolderDTO accountHolder) {
 }

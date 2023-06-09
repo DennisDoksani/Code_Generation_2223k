@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CreatingAccountDTOTest extends  ValidatingConstraints {
 
     @Test
-    void whenCreatingAccountDTOWithoutAnDayShouldResultInAConstraintViolationExceptionWithMessage() {
+    void whenCreatingAccountDTOWithoutADayLimitShouldResultInAConstraintViolationExceptionWithMessage() {
         CreatingAccountDTO creatingAccountDTO =
                 new CreatingAccountDTO(null, 1.00, "Savings", 1L);
         assertEquals("Day Limit cannot be left empty", getMessageFromViolations(creatingAccountDTO));
