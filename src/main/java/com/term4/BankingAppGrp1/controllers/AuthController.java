@@ -3,6 +3,8 @@ package com.term4.BankingAppGrp1.controllers;
 import javax.naming.AuthenticationException;
 
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +19,6 @@ import com.term4.BankingAppGrp1.services.AuthService;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/auth")
 public class AuthController {
-
     private final AuthService authService;
 
     public AuthController(AuthService authService) {
@@ -25,7 +26,7 @@ public class AuthController {
     }
     
     @PostMapping("/login")
-    public LoginResponseDTO login(@Valid @RequestBody LoginDTO dto) throws AuthenticationException{
+    public LoginResponseDTO login(@Valid @RequestBody @NotNull LoginDTO dto) throws AuthenticationException{
         return authService.login(dto.email(), dto.password());
     }
 }

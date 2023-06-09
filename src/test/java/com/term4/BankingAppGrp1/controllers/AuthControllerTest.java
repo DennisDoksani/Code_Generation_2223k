@@ -52,6 +52,7 @@ public class AuthControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     void login() throws Exception {
         when(authService.login(loginDto.email(), loginDto.password()))
                 .thenReturn(loginResponseDto);

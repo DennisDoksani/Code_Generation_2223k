@@ -6,6 +6,7 @@ import com.term4.BankingAppGrp1.responseDTOs.UserDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
 import jakarta.validation.Valid;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -69,7 +70,7 @@ public class UserController {
         return ResponseEntity.ok(users.stream().map(parseUserObjectToDTO).toList());
     }
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> saveUser(@Valid @RequestBody RegistrationDTO user){
+    public ResponseEntity<User> saveUser(@NotNull @Valid @RequestBody RegistrationDTO user){
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUser(user));
     }
 }
