@@ -79,7 +79,7 @@ class AccountHolderDTOTest extends ValidatingConstraints {
     @Test
     void whenFirstNameIsBlankThenThrowsConstraintsViolationExceptionWithMessage() {
         AccountHolderDTO accountHolderDTO = new AccountHolderDTO(1L, 50.00,
-                50.00, null, "test");
+                50.00, " ", "test");
         assertEquals("First Name cannot be left empty",
                 getMessageFromViolations(accountHolderDTO));
 
