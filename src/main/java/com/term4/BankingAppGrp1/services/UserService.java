@@ -28,6 +28,9 @@ public class UserService {
     private final AccountRepository accountRepository;
     private final PhoneNumberUtil phoneNumberUtil;
 
+    private final int MIN_AGE_IN_YEARS = 18;
+    private final String PHONE_NUMBER_REGION = "NL";
+
     public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, AccountRepository accountRepository, PhoneNumberUtil phoneNumberUtil) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -152,8 +155,8 @@ public class UserService {
             LocalDate date = LocalDate.parse(dateOfBirth);
 
             //Check if date is further than 18 years ago
-            if (date.isAfter(LocalDate.now().minusYears(18)))
-                throw new IllegalArgumentException("User must be at least 18 years old");
+            if (date.isAfter(LocalDate.now().minusYears(MIN_AGE_IN_YEARS)))
+                throw new IllegalArgumentException(("User must be at least " + MIN_AGE_IN_YEARS + " years old"));
 
         } catch (Exception e) {
             throw new IllegalArgumentException(e.getMessage());
@@ -166,7 +169,7 @@ public class UserService {
   
         try {
             //The parse method tries to parse the string into a phone number of NL type, unless a different country code is provided.
-            number = phoneNumberUtil.parse(phoneNumber, "NL");
+            number = phoneNumberUtil.parse(phoneNumber, PHONE_NUMBER_REGION);
             
         }
         catch (NumberParseException e) {

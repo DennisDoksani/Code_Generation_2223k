@@ -10,6 +10,7 @@ import com.term4.BankingAppGrp1.requestDTOs.TransactionDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
 import com.term4.BankingAppGrp1.services.TransactionService;
 
+import com.term4.BankingAppGrp1.services.UserService;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectWriter;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.SerializationFeature;
@@ -56,6 +57,9 @@ public class TransactionControllerTest {
 
     @MockBean
     private AccountService accountService;
+
+    @MockBean
+    private UserService userService;
 
     public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 

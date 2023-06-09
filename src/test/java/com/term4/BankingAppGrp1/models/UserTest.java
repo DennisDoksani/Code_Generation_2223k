@@ -16,25 +16,21 @@ public class UserTest {
 
     @Test
     void userBuilderShouldResultInValidUserObject() {
-        setUp();
         Assertions.assertNotNull(user);
     }
 
     @Test
     void userBuilderShouldDefaultTo200AsTransactionLimit() {
-        setUp();
         Assertions.assertEquals(200, user.getTransactionLimit());
     }
 
     @Test
     void userBuilderShouldDefaultTo500AsDayLimit() {
-        setUp();
         Assertions.assertEquals(500, user.getDayLimit());
     }
 
     @Test
     void setDayLimitToNegativeNumberShouldResultInDayLimitBeingSetToZero() {
-        setUp();
         user.setDayLimit(-1);
 
         Assertions.assertEquals(0, user.getDayLimit());
@@ -42,7 +38,6 @@ public class UserTest {
 
     @Test
     void setDayLimitToPositiveNumberShouldResultInDayLimitBeingSetToThatNumber() {
-        setUp();
         user.setDayLimit(1);
 
         Assertions.assertEquals(1, user.getDayLimit());
@@ -50,7 +45,6 @@ public class UserTest {
 
     @Test
     void setTransactionLimitToNegativeNumberShouldResultInTransactionLimitBeingSetToZero() {
-        setUp();
         user.setTransactionLimit(-1);
 
         Assertions.assertEquals(0, user.getTransactionLimit());
@@ -58,7 +52,6 @@ public class UserTest {
 
     @Test
     void setTransactionLimitToPositiveNumberShouldResultInTransactionLimitBeingSetToThatNumber() {
-        setUp();
         user.setTransactionLimit(1);
 
         Assertions.assertEquals(1, user.getTransactionLimit());
@@ -66,7 +59,6 @@ public class UserTest {
 
     @Test
     void getFullNameShouldReturnFirstNameAndLastName() {
-        setUp();
         user.setFirstName("John");
         user.setLastName("Doe");
 
@@ -75,9 +67,6 @@ public class UserTest {
 
     @Test
     void getFullNameWithNullsShouldNotThrowException() {
-        setUp();
         Assertions.assertDoesNotThrow(() -> user.getFullName());
     }
-
-    
 }

@@ -51,7 +51,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             // If something else went wrong, return an Internal Server Error response
             catch (Exception ex) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write("Something went wrong. Please try again later.");
+                response.getWriter().write("Something went wrong while validating the JWT. Please try again later.");
                 response.getWriter().flush();
                 return;
             }
