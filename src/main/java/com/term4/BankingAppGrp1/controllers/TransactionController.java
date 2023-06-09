@@ -64,14 +64,24 @@ public class TransactionController {
                                                              @RequestParam(required = false) Double amountMax,
                                                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateBefore,
                                                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateAfter,
-                                                             @AuthenticationPrincipal UserDetails jwtUser) throws Exception {
-        if(jwtUser.getAuthorities().stream().noneMatch(isEmployee) && ((ibanFrom == null && ibanTo == null) || !transactionService.oneAccountBelongsToUser(ibanTo, ibanFrom, jwtUser.getUsername()))  ) {
+                                                             @AuthenticationPrincipal UserDetails jwtUser) {
+        if(jwtUser.getAuthorities().stream().noneMatch(isEmployee) && (!transactionService.accountBelongsToUser(ibanTo,  jwtUser.getUsername()) && !transactionService.accountBelongsToUser(ibanFrom, jwtUser.getUsername())) ) {
             throw new AccessDeniedException("Standard customers only have access to their own transaction data");
         }   //Ask how to put a custom message here
         List<TransactionResponseDTO> transactions = transactionService.getTransactionsWithFilters(getPageable(limit, offset), ibanFrom, ibanTo,
                 amountMin, amountMax, dateBefore, dateAfter);
 
         return ResponseEntity.ok().body(transactions);
+    }
+
+    @GetMapping("/account/{iban}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
+    public ResponseEntity<Object> getTransactionsOffAccount(@RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
+                                                            @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset,
+                                                            @PathVariable String iban) {
+
+        List<TransactionResponseDTO> transactionsOffAccount = transactionService.getTransactionsOffAccount(getPageable(limit, offset), iban);
+        return ResponseEntity.ok().body(transactionsOffAccount);
     }
 
     @PostMapping
@@ -81,7 +91,7 @@ public class TransactionController {
         if (transactionService.validTransaction(transactionDTO)) {
             User userPerforming = userService.getUserByEmail(jwtUser.getUsername());
             transactionService.changeBalance(transactionDTO.amount(), transactionDTO.accountFrom(), transactionDTO.accountTo());
-            Transaction newTransaction = transactionService.addTransaction(transactionDTO, userPerforming);
+            TransactionResponseDTO newTransaction = transactionService.addTransaction(transactionDTO, userPerforming);
             return ResponseEntity.status(HttpStatus.CREATED).body(newTransaction);
         }
 
