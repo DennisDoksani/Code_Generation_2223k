@@ -4,7 +4,6 @@ import javax.naming.AuthenticationException;
 
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
