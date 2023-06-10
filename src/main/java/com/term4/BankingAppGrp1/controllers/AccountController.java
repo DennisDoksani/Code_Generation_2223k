@@ -112,7 +112,7 @@ public class AccountController {
     @GetMapping("/searchByCustomerName")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
     public ResponseEntity<Object> searchAccountByCustomerName(
-            @NotBlank(message = "Customer name cannot be empty inorder to search") @RequestParam String customerName,
+            @NotBlank(message = "Customer name cannot be empty in order to search") @RequestParam String customerName,
             @RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
             @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset) {
 
@@ -143,7 +143,7 @@ public class AccountController {
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<Object> saveAccount(@Valid @RequestBody CreatingAccountDTO accountDTO) throws LimitExceededException {
         return ResponseEntity.status(HttpStatus.CREATED).body(mapAccountObjectToDTO.apply(
-                accountService.saveAccount(accountDTO)));
+                accountService.saveAccountWithLimitCheck (accountDTO)));
 
     }
 
@@ -175,7 +175,7 @@ public class AccountController {
                     .body(new ErrorMessageDTO("You are not allowed to access others Accounts Details! "));
         }
         User requestingUser = userService.getUserByEmail(email);
-        Double transactionDoneToday = accountService.getTotalTransactedAmountOfTodayByUserId(requestingUser.getId());
+        double transactionDoneToday = accountService.getTotalTransactedAmountOfTodayByUserEmail(requestingUser.getEmail());
         return ResponseEntity.ok(
                 parseListOfAccountAndUserObjectToUserAccountsDTO.apply(
                         accountService.getAccountsByEmailAddress(email),

@@ -100,7 +100,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    @WithMockUser()
+    @WithMockUser(username = "employee", roles = {"EMPLOYEE"})
     void getTransactionsWithoutSpecifyingFiltersShouldReturnAListOfOne() throws Exception {
         when(transactionService.getTransactionsWithFilters(PageRequest.of(0 / 50, 50), null, null, null, null, null, null))
                 .thenReturn(List.of(responseDTO));
@@ -113,7 +113,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    @WithMockUser()
+    @WithMockUser(username = "customer", roles = {"CUSTOMER"})
     void tryingToMakeATransactionWhenTheDayLimitHasBeenReachedShouldResultInIllegalArgumentException() throws Exception {
         when(transactionService.getSumOfMoneyTransferred(testUser.getEmail(), LocalDate.now()))
                 .thenReturn(100.0);

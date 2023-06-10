@@ -14,7 +14,6 @@ import java.util.List;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, String>, JpaSpecificationExecutor<Account> {
-    //TODO : Add active status and current Accounts only
 
     Page<Account> findAccountByAccountTypeEqualsAndIbanNot(Pageable pageable, AccountType accountType, String iban);
 
@@ -25,10 +24,7 @@ public interface AccountRepository extends JpaRepository<Account, String>, JpaSp
 
     int countAccountByCustomer_IdEqualsAndAccountTypeEquals(long customerId, AccountType accountType);
 
-    @Query("SELECT sum(t.amount) FROM Transaction t WHERE t.accountFrom.customer.id =" +
-            " :customerId AND t.date = CURRENT_DATE")
-    Double getTotalTransactionsDoneTodayByUser(long customerId);
-    boolean existsAccountByIbanEqualsAndCustomerEmailEquals(String iban, String email);
+    boolean existsAccountByIbanEqualsAndCustomerEmailEqualsIgnoreCase(String iban, String email);
 
 
 }

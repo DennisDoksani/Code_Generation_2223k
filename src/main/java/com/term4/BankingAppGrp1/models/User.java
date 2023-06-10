@@ -42,8 +42,6 @@ public class User{
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Role> roles;
 
-
-
     public void setDayLimit(double dayLimit) {
         if (dayLimit > 0)
             this.dayLimit = dayLimit;
@@ -59,5 +57,16 @@ public class User{
     }
     public String getFullName(){
         return firstName + " " + lastName;
+    }
+
+    public void addRole(Role role){
+        if (roles.contains(role))
+            return;
+
+        roles.add(role);
+    }
+
+    public void removeRole(Role role){
+        roles.remove(role);
     }
 }

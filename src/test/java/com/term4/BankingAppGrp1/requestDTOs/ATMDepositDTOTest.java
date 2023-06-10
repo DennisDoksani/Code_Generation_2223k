@@ -3,9 +3,9 @@ package com.term4.BankingAppGrp1.requestDTOs;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ATMDepositDTOTest {
+public class ATMDepositDTOTest extends ValidatingConstraints {
     @BeforeEach
-    void setUp() {
+    public void setUp() {
     }
 
     @Test
