@@ -112,7 +112,7 @@ public class AccountController {
     @GetMapping("/searchByCustomerName")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
     public ResponseEntity<Object> searchAccountByCustomerName(
-            @NotBlank(message = "Customer name cannot be empty inorder to search") @RequestParam String customerName,
+            @NotBlank(message = "Customer name cannot be empty in order to search") @RequestParam String customerName,
             @RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
             @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset) {
 

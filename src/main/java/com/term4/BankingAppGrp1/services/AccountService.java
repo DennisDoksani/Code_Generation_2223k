@@ -11,6 +11,7 @@ import static com.term4.BankingAppGrp1.repositories.AccountSpecifications.isNotB
 
 import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
+import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.AccountRepository;
 import com.term4.BankingAppGrp1.requestDTOs.CreatingAccountDTO;
@@ -110,23 +111,43 @@ public class AccountService {
     Page<Account> accounts;
     if (accountType != null)
     // getting all accounts except the own  bank account when account type is specified
+
     {
       accounts = accountRepository.findAccountByAccountTypeEqualsAndIbanNot(
           getPageableByLimitAndOffset.apply(limit, offset), accountType,
           DEFAULT_INHOLLAND_BANK_IBAN);
     } else
     // getting all accounts except the own  bank account when account type is not specified
+
     {
       accounts = accountRepository.findByAndIbanNot(
           getPageableByLimitAndOffset.apply(limit, offset)
           , DEFAULT_INHOLLAND_BANK_IBAN);
     }
+
     return accounts.getContent();
   }
 
   public Account getAccountByIBAN(String iban) {
     return accountRepository.findById(iban).orElseThrow(() ->
         new EntityNotFoundException("Account with IBAN: " + iban + " was not found"));
+  }
+
+  @Transactional
+  public Account saveAccount(CreatingAccountDTO creatingAccountDTO) throws LimitExceededException {
+    if ((AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase())
+        .equals(AccountType.CURRENT))) {
+      checkIfUserHasReachedAccountLimit(AccountType.CURRENT, creatingAccountDTO.accountHolderId(),
+          DEFAULT_CURRENT_ACCOUNT_LIMIT);
+    } else {
+      checkIfUserHasReachedAccountLimit(AccountType.SAVINGS, creatingAccountDTO.accountHolderId(),
+          DEFAULT_SAVINGS_ACCOUNT_LIMIT);
+    }
+    Account account = mapCreatingAccountDTOToAccount(creatingAccountDTO);
+    userService.saveUserWithoutHashingPassword(
+        account.getCustomer()); // will get update with the new Limits for the user
+    account.getCustomer().addRole(Role.ROLE_CUSTOMER); // Add customer role to the user
+    return accountRepository.save(account);
   }
 
   public List<Account> searchAccountByCustomerName(String customerName, int limit, int offset) {
