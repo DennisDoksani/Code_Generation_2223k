@@ -143,7 +143,7 @@ public class AccountController {
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<Object> saveAccount(@Valid @RequestBody CreatingAccountDTO accountDTO) throws LimitExceededException {
         return ResponseEntity.status(HttpStatus.CREATED).body(mapAccountObjectToDTO.apply(
-                accountService.saveAccountWithLimitCheck (accountDTO)));
+                accountService.createAccountWithLimitCheck (accountDTO)));
 
     }
 
@@ -161,7 +161,7 @@ public class AccountController {
 
     // this endpoint will access by both employee and customer
     // if the user is employee, user can access all accounts of any users
-    // if the user is customer, user can access only his accounts by verifying with JWOT token
+    // if the user is customer, user can access only his accounts by verifying with JWT token
     // This endpoint will only return the active accounts only
     @GetMapping("/user/{email}")
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
