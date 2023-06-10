@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,8 +29,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 
 @ExtendWith({SpringExtension.class})
-@WebMvcTest(AccountController.class)
+@WebMvcTest(controllers = AccountController.class)
 @Import(ApiTestConfiguration.class)
+@EnableMethodSecurity
 class AccountControllerTest {
 
   @Autowired
@@ -69,8 +72,8 @@ class AccountControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = {"CUSTOMER"})
-  void whenJwtTokenISNotProvidedAndAccessGetAllEndpointsGivesUnauthorized() throws Exception {
+  @WithAnonymousUser
+  void whenNoAuthIsProvidedGetAllEndpointGivesUnauthorized() throws Exception {
     when(accountService.getAllAccounts(
         1,
         0,
@@ -81,13 +84,13 @@ class AccountControllerTest {
             MockMvcRequestBuilders.get("/accounts")
                 .param("limit", "1")
                 .param("offset", "0")).andDo(print())
-        .andExpect(status().isOk())
+        .andExpect(status().isUnauthorized())
     ;
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = {"CUSTOMER"})
-  void whenCustomerTriesToAccessTheEndpointITShouldGiveForbidden() throws Exception {
+  @WithMockUser(username = "customer", roles = {"CUSTOMER"})
+  void whenCustomerAuthIsProvidedGetAllEndpointGivesForbidden() throws Exception {
     when(accountService.getAllAccounts(
         1,
         0,
@@ -99,6 +102,22 @@ class AccountControllerTest {
                 .param("limit", "1")
                 .param("offset", "0")).andDo(print())
         .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithMockUser(username = "employee", roles = {"EMPLOYEE"})
+  void whenEmployeeAuthIsProvidedGetAllEndpointGivesOK() throws Exception {
+    when(accountService.getAllAccounts(
+            1,
+            0,
+            null
+    )).thenReturn(List.of(testingAccount));
+
+    this.mockMvc.perform(
+                    MockMvcRequestBuilders.get("/accounts")
+                            .param("limit", "1")
+                            .param("offset", "0")).andDo(print())
+            .andExpect(status().isOk());
   }
 
 }
