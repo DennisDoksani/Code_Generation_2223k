@@ -69,11 +69,12 @@ public class AccountService {
     return accountRepository.save(accountToUpdate); // saving the updated account
   }
 
-  // this method is used to create a new account from user side and
+  // this method is used to create a new account from user side
   // it performs the limit check of account creation for the user
   @Transactional
-  public Account saveAccountWithLimitCheck(CreatingAccountDTO creatingAccountDTO) throws LimitExceededException {
-    try{
+  public Account createAccountWithLimitCheck(CreatingAccountDTO creatingAccountDTO)
+      throws LimitExceededException {
+    try {
       if ((AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase())
           .equals(AccountType.CURRENT))) {
         checkIfUserHasReachedAccountLimit(AccountType.CURRENT, creatingAccountDTO.accountHolderId(),
@@ -87,12 +88,10 @@ public class AccountService {
           account.getCustomer()); // will get update with the new Limits for the user
       account.getCustomer().addRole(Role.ROLE_CUSTOMER); // Add customer role to the user
       return accountRepository.save(account);
-    }
-    catch (IllegalArgumentException e){
+    } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException("The account type is not valid");
     }
   }
-
 
 
   private void checkIfUserHasReachedAccountLimit(AccountType accountType, long userId, int limit)
@@ -109,10 +108,8 @@ public class AccountService {
 
   public List<Account> getAllAccounts(int limit, int offset, AccountType accountType) {
     Page<Account> accounts;
-    if (accountType != null)
     // getting all accounts except the own  bank account when account type is specified
-
-    {
+    if (accountType != null) {
       accounts = accountRepository.findAccountByAccountTypeEqualsAndIbanNot(
           getPageableByLimitAndOffset.apply(limit, offset), accountType,
           DEFAULT_INHOLLAND_BANK_IBAN);
@@ -132,7 +129,6 @@ public class AccountService {
     return accountRepository.findById(iban).orElseThrow(() ->
         new EntityNotFoundException("Account with IBAN: " + iban + " was not found"));
   }
-
 
 
   public List<Account> searchAccountByCustomerName(String customerName, int limit, int offset) {
@@ -157,15 +153,18 @@ public class AccountService {
   }
 
   private Account mapCreatingAccountDTOToAccount(CreatingAccountDTO creatingAccountDTO) {
-    User accountHolder = userService.getUser(creatingAccountDTO.accountHolderId());
-    accountHolder.setDayLimit(creatingAccountDTO.dayLimit());
-    accountHolder.setTransactionLimit(creatingAccountDTO.transactionLimit());
-    // converting the account type to uppercase to match the enum values
-    return Account.builder()
-        .accountType(AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase()))
-        .customer(accountHolder)
-        .build();
-
+    try {
+      User accountHolder = userService.getUser(creatingAccountDTO.accountHolderId());
+      accountHolder.setDayLimit(creatingAccountDTO.dayLimit());
+      accountHolder.setTransactionLimit(creatingAccountDTO.transactionLimit());
+      // converting the account type to uppercase to match the enum values
+      return Account.builder()
+          .accountType(AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase()))
+          .customer(accountHolder)
+          .build();
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("The account type is not valid");
+    }
   }
 
   // this method will be used to get all the accounts of a customer
