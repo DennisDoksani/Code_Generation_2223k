@@ -154,7 +154,7 @@ public class TransactionService {
                 transaction.getAccountFrom().getAccountType(),
                 transaction.getAccountFrom().getCustomer().getFullName());
 
-        TransactionResponseDTO responseDTO = new TransactionResponseDTO(
+        return new TransactionResponseDTO(
                 transaction.getTransactionID(),
                 transaction.getAmount(),
                 accountFromDTO,
@@ -162,8 +162,6 @@ public class TransactionService {
                 transaction.getDate(),
                 transaction.getTimestamp(),
                 transaction.getUserPerforming().getFullName());
-
-        return responseDTO;
     }
 
     // this method will execute the atm transaction
