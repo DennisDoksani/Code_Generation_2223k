@@ -71,28 +71,28 @@ public class AccountService {
 
   // this method is used to create a new account from user side and
   // it performs the limit check of account creation for the user
-  public Account saveAccountWithLimitCheck(CreatingAccountDTO creatingAccountDTO)
-      throws LimitExceededException {
-    try {
+  @Transactional
+  public Account saveAccountWithLimitCheck(CreatingAccountDTO creatingAccountDTO) throws LimitExceededException {
+    try{
       if ((AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase())
           .equals(AccountType.CURRENT))) {
-        checkIfUserHasReachedAccountLimit(AccountType.CURRENT,
-            creatingAccountDTO.accountHolderId(),
+        checkIfUserHasReachedAccountLimit(AccountType.CURRENT, creatingAccountDTO.accountHolderId(),
             DEFAULT_CURRENT_ACCOUNT_LIMIT);
       } else {
-        checkIfUserHasReachedAccountLimit(AccountType.SAVINGS,
-            creatingAccountDTO.accountHolderId(),
+        checkIfUserHasReachedAccountLimit(AccountType.SAVINGS, creatingAccountDTO.accountHolderId(),
             DEFAULT_SAVINGS_ACCOUNT_LIMIT);
       }
       Account account = mapCreatingAccountDTOToAccount(creatingAccountDTO);
-      userService.saveUser(
+      userService.saveUserWithoutHashingPassword(
           account.getCustomer()); // will get update with the new Limits for the user
+      account.getCustomer().addRole(Role.ROLE_CUSTOMER); // Add customer role to the user
       return accountRepository.save(account);
-    } catch (IllegalArgumentException e) {
+    }
+    catch (IllegalArgumentException e){
       throw new IllegalArgumentException("The account type is not valid");
     }
-
   }
+
 
 
   private void checkIfUserHasReachedAccountLimit(AccountType accountType, long userId, int limit)
@@ -133,22 +133,7 @@ public class AccountService {
         new EntityNotFoundException("Account with IBAN: " + iban + " was not found"));
   }
 
-  @Transactional
-  public Account saveAccount(CreatingAccountDTO creatingAccountDTO) throws LimitExceededException {
-    if ((AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase())
-        .equals(AccountType.CURRENT))) {
-      checkIfUserHasReachedAccountLimit(AccountType.CURRENT, creatingAccountDTO.accountHolderId(),
-          DEFAULT_CURRENT_ACCOUNT_LIMIT);
-    } else {
-      checkIfUserHasReachedAccountLimit(AccountType.SAVINGS, creatingAccountDTO.accountHolderId(),
-          DEFAULT_SAVINGS_ACCOUNT_LIMIT);
-    }
-    Account account = mapCreatingAccountDTOToAccount(creatingAccountDTO);
-    userService.saveUserWithoutHashingPassword(
-        account.getCustomer()); // will get update with the new Limits for the user
-    account.getCustomer().addRole(Role.ROLE_CUSTOMER); // Add customer role to the user
-    return accountRepository.save(account);
-  }
+
 
   public List<Account> searchAccountByCustomerName(String customerName, int limit, int offset) {
     Page<Account> accounts = accountRepository.findAll(
