@@ -143,7 +143,7 @@ public class AccountController {
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<Object> saveAccount(@Valid @RequestBody CreatingAccountDTO accountDTO) throws LimitExceededException {
         return ResponseEntity.status(HttpStatus.CREATED).body(mapAccountObjectToDTO.apply(
-                accountService.saveAccount(accountDTO)));
+                accountService.saveAccountWithLimitCheck (accountDTO)));
 
     }
 
