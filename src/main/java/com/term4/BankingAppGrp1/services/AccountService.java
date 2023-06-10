@@ -72,19 +72,25 @@ public class AccountService {
   // it performs the limit check of account creation for the user
   public Account saveAccountWithLimitCheck(CreatingAccountDTO creatingAccountDTO)
       throws LimitExceededException {
-    if ((AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase())
-        .equals(AccountType.CURRENT))) {
-      checkIfUserHasReachedAccountLimit(AccountType.CURRENT,
-          creatingAccountDTO.accountHolderId(),
-          DEFAULT_CURRENT_ACCOUNT_LIMIT);
-    } else {
-      checkIfUserHasReachedAccountLimit(AccountType.SAVINGS,
-          creatingAccountDTO.accountHolderId(),
-          DEFAULT_SAVINGS_ACCOUNT_LIMIT);
+    try {
+      if ((AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase())
+          .equals(AccountType.CURRENT))) {
+        checkIfUserHasReachedAccountLimit(AccountType.CURRENT,
+            creatingAccountDTO.accountHolderId(),
+            DEFAULT_CURRENT_ACCOUNT_LIMIT);
+      } else {
+        checkIfUserHasReachedAccountLimit(AccountType.SAVINGS,
+            creatingAccountDTO.accountHolderId(),
+            DEFAULT_SAVINGS_ACCOUNT_LIMIT);
+      }
+      Account account = mapCreatingAccountDTOToAccount(creatingAccountDTO);
+      userService.saveUser(
+          account.getCustomer()); // will get update with the new Limits for the user
+      return accountRepository.save(account);
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("The account type is not valid");
     }
-    Account account = mapCreatingAccountDTOToAccount(creatingAccountDTO);
-    userService.saveUser(account.getCustomer()); // will get update with the new Limits for the user
-    return accountRepository.save(account);
+
   }
 
 

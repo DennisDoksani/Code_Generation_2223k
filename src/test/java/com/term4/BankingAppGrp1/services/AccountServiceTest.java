@@ -12,6 +12,7 @@ import com.term4.BankingAppGrp1.models.InhollandIBANPattern;
 import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.AccountRepository;
+import com.term4.BankingAppGrp1.requestDTOs.CreatingAccountDTO;
 import com.term4.BankingAppGrp1.requestDTOs.UpdatingAccountDTO;
 import com.term4.BankingAppGrp1.responseDTOs.AccountHolderDTO;
 import jakarta.persistence.EntityNotFoundException;
@@ -48,6 +49,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
   private Account savingsAccount;
   private Account inhollandBankAccount;
   private User seedEmployee;
+  private CreatingAccountDTO creatingAccountDTO;
 
   private UpdatingAccountDTO updatingAccountDTO;
   private AccountHolderDTO accountHolderDTO;
@@ -100,6 +102,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
     accountHolderDTO = new AccountHolderDTO(seedEmployee.getId(),seedEmployee.getDayLimit(),
         seedEmployee.getTransactionLimit(),seedEmployee.getFirstName(), seedEmployee.getLastName());
     updatingAccountDTO = new UpdatingAccountDTO(currentAccount.getAbsoluteLimit(),currentAccount.isActive(),accountHolderDTO);
+    creatingAccountDTO = new CreatingAccountDTO(seedEmployee.getDayLimit() ,seedEmployee.getTransactionLimit(),
+        currentAccount.getAccountType().name(),seedEmployee.getId());
+
   }
 
   @Test
@@ -149,7 +154,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
     Mockito.verify(accountRepository, Mockito.times(1)).save(currentAccount);
   }
 
+  @Test
+  void updatingAccountDetailsShouldNotUpdatePassword(){
+    when(accountRepository.findById(currentAccount.getIban())).thenReturn(Optional.of(currentAccount));
+    when(accountRepository.save(currentAccount)).thenReturn(currentAccount); // Mock the save method to return the updatedAccount object
+    Account updatedAccount = accountService.updateAccountDetails(currentAccount.getIban(), updatingAccountDTO);
+    assertEquals(updatedAccount.getCustomer().getPassword(), currentAccount.getCustomer().getPassword());
 
-
-
+  }
+  @Test
+  void 
 }
