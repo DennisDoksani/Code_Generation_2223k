@@ -227,23 +227,26 @@ class AccountServiceTest {
     Account createdAccount = accountService.createAccountWithLimitCheck(creatingAccountDTO);
 
     assertNotNull(createdAccount);
+    assertEquals(seedEmployeeCustomer, createdAccount.getCustomer());
     assertEquals(Arrays.asList(Role.ROLE_EMPLOYEE, ROLE_CUSTOMER),
         new ArrayList<>(createdAccount.getCustomer().getRoles()));
   }
 
   @Test
-    //TODO: FIx this test
   void creatingAnAccountForUserShouldNotChangeTheStoredPassword() throws LimitExceededException {
-    // Mocking accountRepository.countAccountByCustomer_IdEqualsAndAccountTypeEquals()
+    User seedEmployeeCustomer = seedEmployee;
+    seedEmployeeCustomer.setRoles(List.of(Role.ROLE_EMPLOYEE, ROLE_CUSTOMER));
+
+    Account updatedCustomerAccount = new Account();
+    updatedCustomerAccount.setCustomer(seedEmployeeCustomer);
+
     when(accountRepository
         .countAccountByCustomer_IdEqualsAndAccountTypeEquals(seedEmployee.getId(),
             AccountType.CURRENT))
         .thenReturn(2);
-    // Mocking accountRepository.save()
-    when(accountRepository.save(currentAccount)).thenReturn(currentAccount);
-    when(userService.getUser(seedEmployee.getId())).thenReturn(seedEmployee);
+    when(accountRepository.save(Mockito.any(Account.class))).thenReturn(updatedCustomerAccount);
+    when(userService.getUser(seedEmployee.getId())).thenReturn(seedEmployeeCustomer);
 
-    // Call the method under test
     Account createdAccount = accountService.createAccountWithLimitCheck(creatingAccountDTO);
 
     // Assert that the stored password remains unchanged
