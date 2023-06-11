@@ -5,10 +5,11 @@ import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_OFFSET_
 
 import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
-import com.term4.BankingAppGrp1.models.InhollandIBANPattern;
+import com.term4.BankingAppGrp1.models.customValidators.InhollandIBANPattern;
 import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.TriFunction;
 import com.term4.BankingAppGrp1.models.User;
+import com.term4.BankingAppGrp1.models.customValidators.ValidAccountType;
 import com.term4.BankingAppGrp1.requestDTOs.AccountStatusDTO;
 import com.term4.BankingAppGrp1.requestDTOs.CreatingAccountDTO;
 import com.term4.BankingAppGrp1.requestDTOs.UpdatingAccountDTO;
@@ -97,7 +98,7 @@ public class AccountController {
   public ResponseEntity<Object> getAllAccounts(
       @RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
       @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset,
-      @RequestParam(required = false) String accountType)
+      @RequestParam(required = false) @ValidAccountType String accountType)
   //Spring boot is asking for a default value  to be string
   {
       List<Account> accounts = accountService.getAllAccounts(limit, offset,
