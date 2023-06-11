@@ -25,6 +25,7 @@ public abstract class BankingAppTestData {
   protected AccountDTO accountDTO;
 
   protected AccountHolderDTO accountHolderDTO;
+  protected AccountHolderDTO customerAccountHolderDTO;
 
   @BeforeEach
   protected void setupData() {
@@ -76,6 +77,9 @@ public abstract class BankingAppTestData {
     accountHolderDTO = new AccountHolderDTO(employeeUser.getId(), employeeUser.getDayLimit(),
         employeeUser.getTransactionLimit(),
         employeeUser.getFirstName(), employeeUser.getLastName());
+    customerAccountHolderDTO = new AccountHolderDTO(customerUser.getId(),employeeUser.getDayLimit(),
+        employeeUser.getTransactionLimit(),
+        customerUser.getFirstName(), customerUser.getLastName());
     accountDTO = new AccountDTO(employeeAccount.getIban(), employeeAccount.getBalance(),
         employeeAccount.getAbsoluteLimit(), employeeAccount.getCreationDate()
         , employeeAccount.isActive(),
