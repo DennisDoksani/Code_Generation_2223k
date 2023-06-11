@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @AllArgsConstructor // for seeding bank account
 public class Account {
     @Id
-    @GeneratedValue(generator = "IBANGenerator", strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "IBANGenerator", strategy = GenerationType.IDENTITY) // makes Unique IBAN
     @GenericGenerator(name = "IBANGenerator", strategy = "com.term4.BankingAppGrp1.generators.IBANGenerator")
     private String iban;
     private double balance;
