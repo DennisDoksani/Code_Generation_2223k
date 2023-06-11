@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import com.term4.BankingAppGrp1.cucumber.BaseStepDefinitions;
 import com.term4.BankingAppGrp1.services.UserService;
 
 import io.cucumber.java.en.Given;
@@ -24,7 +25,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.Arrays;
 import java.util.List;
 
-public class AccountStepDefinitions extends BaseStepDefinition {
+public class AccountStepDefinitions extends BaseStepDefinitions {
 
   @Autowired
   private TestRestTemplate restTemplate;

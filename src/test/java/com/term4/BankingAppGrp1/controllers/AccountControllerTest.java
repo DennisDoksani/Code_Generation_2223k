@@ -72,9 +72,10 @@ class AccountControllerTest extends BankingAppTestData {
     this.mockMvc.perform(
             MockMvcRequestBuilders.get("/accounts")
                 .param("limit", "1")
-                .param("offset", "0")).andDo(print())
-        .andExpect(status().isUnauthorized())
-    ;
+                .param("offset", "0"))
+            .andDo(print())
+            .andExpect(status().isUnauthorized());
+
   }
 
   @Test
@@ -778,9 +779,4 @@ class AccountControllerTest extends BankingAppTestData {
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value("Last Name cannot be left empty"));
   }
-
-
 }
-
-
-
