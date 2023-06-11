@@ -1,4 +1,4 @@
-package com.term4.BankingAppGrp1.cucumber.transactions;
+package com.term4.BankingAppGrp1.cucumber;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
