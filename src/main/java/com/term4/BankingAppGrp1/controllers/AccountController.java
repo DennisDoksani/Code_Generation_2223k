@@ -5,11 +5,10 @@ import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_OFFSET_
 
 import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
-import com.term4.BankingAppGrp1.models.customValidators.InhollandIBANPattern;
 import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.TriFunction;
 import com.term4.BankingAppGrp1.models.User;
-import com.term4.BankingAppGrp1.models.customValidators.ValidAccountType;
+import com.term4.BankingAppGrp1.models.customValidators.InhollandIBANPattern;
 import com.term4.BankingAppGrp1.requestDTOs.AccountStatusDTO;
 import com.term4.BankingAppGrp1.requestDTOs.CreatingAccountDTO;
 import com.term4.BankingAppGrp1.requestDTOs.UpdatingAccountDTO;
@@ -98,15 +97,23 @@ public class AccountController {
   public ResponseEntity<Object> getAllAccounts(
       @RequestParam(defaultValue = DEFAULT_LIMIT_STRING, required = false) int limit,
       @RequestParam(defaultValue = DEFAULT_OFFSET_STRING, required = false) int offset,
-      @RequestParam(required = false) @ValidAccountType String accountType)
+      @RequestParam(required = false) String accountType)
   //Spring boot is asking for a default value  to be string
+  // this Should be Allowed to be null so we cant use @ValidAccountAnnotation
   {
-      List<Account> accounts = accountService.getAllAccounts(limit, offset,
-          accountType == null ? null : AccountType.valueOf(accountType.toUpperCase()));
-      return ResponseEntity.ok(
-          accounts.parallelStream().map(mapAccountObjectToDTO).toList()
-          // using Parallel Stream to improve performance
-      );
+    AccountType passingAccountType = null;
+    try {
+      if (accountType != null) {
+        passingAccountType = AccountType.valueOf(accountType.toUpperCase());
+      }
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("Account type is not valid"); //this will be caught by RestControllerExceptionHandler
+    }
+    List<Account> accounts = accountService.getAllAccounts(limit, offset, passingAccountType);
+    return ResponseEntity.ok(
+        accounts.parallelStream().map(mapAccountObjectToDTO).toList()
+        // using Parallel Stream to improve performance
+    );
   }
 
   //Get Account by IBAN
@@ -117,12 +124,12 @@ public class AccountController {
   public ResponseEntity<Object> getAccountByIBAN(@InhollandIBANPattern
   @PathVariable String iban,
       @AuthenticationPrincipal UserDetails jwtUser) {
-      if (jwtUser.getAuthorities().stream().noneMatch(isEmployee) &&
-          !accountService.isAccountOwnedByCustomer(iban, jwtUser.getUsername())) {
-          return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-              new ErrorMessageDTO("You are not allowed to access this account!")
-          );
-      }
+    if (jwtUser.getAuthorities().stream().noneMatch(isEmployee) &&
+        !accountService.isAccountOwnedByCustomer(iban, jwtUser.getUsername())) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+          new ErrorMessageDTO("You are not allowed to access this account!")
+      );
+    }
     return ResponseEntity.ok(
         mapAccountObjectToDTO.apply(
             accountService.getAccountByIBAN(iban))
@@ -206,7 +213,7 @@ public class AccountController {
     return ResponseEntity.ok(
         parseListOfAccountAndUserObjectToUserAccountsDTO.apply(
             accountService.getAccountsByEmailAddress(email),
-           requestingUser,
+            requestingUser,
             transactionDoneToday
         )
     );
