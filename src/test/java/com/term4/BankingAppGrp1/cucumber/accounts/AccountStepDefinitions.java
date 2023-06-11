@@ -1,7 +1,7 @@
 package com.term4.BankingAppGrp1.cucumber.accounts;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.term4.BankingAppGrp1.cucumber.transactions.BaseStepDefinition;
+import com.term4.BankingAppGrp1.cucumber.BaseStepDefinition;
 import com.term4.BankingAppGrp1.requestDTOs.LoginDTO;
 import com.term4.BankingAppGrp1.responseDTOs.AccountDTO;
 import com.term4.BankingAppGrp1.services.UserService;
@@ -41,7 +41,6 @@ public class AccountStepDefinitions extends BaseStepDefinition {
       throw new IllegalArgumentException("Invalid role");
     }
     httpHeaders.add("Authorization", "Bearer " + getToken(loginDTO));
-
   }
 
   @Then("the response status code should be {int}")

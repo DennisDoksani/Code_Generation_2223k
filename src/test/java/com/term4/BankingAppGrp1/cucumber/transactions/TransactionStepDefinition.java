@@ -1,7 +1,7 @@
 package com.term4.BankingAppGrp1.cucumber.transactions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.term4.BankingAppGrp1.cucumber.BaseStepDefinitions;
+import com.term4.BankingAppGrp1.cucumber.BaseStepDefinition;
 import io.cucumber.java.en.Given;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class TransactionStepDefinition extends BaseStepDefinitions {
+public class TransactionStepDefinition extends BaseStepDefinition {
 
     @Autowired
     private TestRestTemplate restTemplate;
