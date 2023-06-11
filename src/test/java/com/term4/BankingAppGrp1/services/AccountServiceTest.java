@@ -151,7 +151,7 @@ class AccountServiceTest {
   }
 
   @Test
-  void UpdateAccountDetailsWithNonExistingIBanShouldThrowEntityNotFoundExceptionWithMessage() {
+  void updateAccountDetailsWithNonExistingIBanShouldThrowEntityNotFoundExceptionWithMessage() {
     when(accountRepository.findById(DEFAULT_INHOLLAND_BANK_IBAN)).thenReturn(
         Optional.of(inhollandBankAccount));
     Exception exception = Assertions.catchException(() ->
