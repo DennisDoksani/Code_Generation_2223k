@@ -1,4 +1,9 @@
 package com.term4.BankingAppGrp1.responseDTOs;
 
-public record SearchingAccountDTO(String accountHolder,String iban) {
+import jakarta.validation.constraints.NotBlank;
+
+public record SearchingAccountDTO(
+        String iban,
+        String accountHolderName){ 
+
 }

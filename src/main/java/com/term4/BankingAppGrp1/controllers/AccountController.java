@@ -68,7 +68,7 @@ public class AccountController {
       );
 
   private final Function<Account, SearchingAccountDTO> mapAccountObjectToSearchingDTO = a ->
-      new SearchingAccountDTO(a.getCustomer().getFullName(), a.getIban());
+      new SearchingAccountDTO(a.getIban(), a.getCustomer().getFullName());
 
   private final Function<Account, AccountWithoutAccountHolderDTO>
       mapAccountObjectToWithoutAccountHolderDTO = a ->
@@ -174,11 +174,10 @@ public class AccountController {
       throws LimitExceededException {
     return ResponseEntity.status(HttpStatus.CREATED).body(mapAccountObjectToDTO.apply(
         accountService.createAccountWithLimitCheck(accountDTO)));
-
   }
 
   //Update account
-  // balance cannot be updated by this endpoint
+  //Balance cannot be updated by this endpoint
   @PutMapping(value = "/{iban}", consumes = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('EMPLOYEE')")
   public ResponseEntity<Object> updateAccount(
