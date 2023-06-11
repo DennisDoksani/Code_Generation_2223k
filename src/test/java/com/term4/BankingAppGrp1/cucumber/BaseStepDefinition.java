@@ -19,9 +19,10 @@ public class BaseStepDefinition {
   @Autowired
   protected TestRestTemplate restTemplate;
 
-  protected ResponseEntity<String> response;
   @Autowired
   protected ObjectMapper objectMapper;
+
+  protected ResponseEntity<String> response;
   protected HttpHeaders httpHeaders = new HttpHeaders();
   protected final String accountEndpoint = "/accounts";
   protected final String EMPLOYEE_EMAIL = "employee@seed.com";
