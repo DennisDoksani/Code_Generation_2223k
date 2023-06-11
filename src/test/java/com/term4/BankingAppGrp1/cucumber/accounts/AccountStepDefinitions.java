@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.term4.BankingAppGrp1.cucumber.BaseStepDefinition;
 import com.term4.BankingAppGrp1.requestDTOs.LoginDTO;
 import com.term4.BankingAppGrp1.responseDTOs.AccountDTO;
+import com.term4.BankingAppGrp1.responseDTOs.ErrorMessageDTO;
 import com.term4.BankingAppGrp1.services.UserService;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -67,5 +68,26 @@ public class AccountStepDefinitions extends BaseStepDefinition {
     Assertions.assertTrue(accounts.size() > 0);
   }
 
+
+  @And("the response should be an object with an {string} property")
+  public void theResponseShouldBeAnObjectWithAnProperty(String iban)
+      throws JsonProcessingException {
+    AccountDTO account = objectMapper.readValue(response.getBody(), AccountDTO.class);
+    Assertions.assertEquals(iban, account.getIban());
+  }
+
+  @And("the response should be error message {string}")
+  public void theResponseShouldBeErrorMessage(String errorMessage) throws JsonProcessingException {
+    ErrorMessageDTO error = objectMapper.readValue(response.getBody(), ErrorMessageDTO.class);
+    Assertions.assertEquals(errorMessage, error.message());
+  }
+
+  @And("the response should have {int} object")
+  public void theResponseShouldHaveObject(int numberOfObjects) throws JsonProcessingException {
+    List<AccountDTO> accounts = objectMapper.
+        readValue(response.getBody(),
+            objectMapper.getTypeFactory().constructCollectionType(List.class, AccountDTO.class));
+    Assertions.assertEquals(numberOfObjects, accounts.size());
+  }
 
 }
