@@ -59,9 +59,10 @@ public class UserController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<User> updateUser(@RequestBody UserDTO userDTO) {
-        User updatedUser = userService.updateUser(userDTO);
-        return ResponseEntity.ok(updatedUser);
+    public ResponseEntity<Object> updateUser(@RequestBody UserDTO userDTO,
+                                           @PathVariable long id) {
+        return ResponseEntity.ok(parseUserObjectToDTO.apply(
+                userService.updateUser(id, userDTO)));
     }
 
     @GetMapping
