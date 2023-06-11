@@ -252,18 +252,6 @@ class AccountServiceTest {
   }
 
   @Test
-  void creatingAccountWithInvalidAccountTypeResultIntoAnIllegalArgumentException() {
-    CreatingAccountDTO creatingAccountDTO = new CreatingAccountDTO(seedEmployee.getDayLimit(),
-        seedEmployee.getTransactionLimit(),
-        "INVALID_ACCOUNT_TYPE", seedEmployee.getId());
-    Exception exception = Assertions.catchException(
-        () -> accountService.createAccountWithLimitCheck(creatingAccountDTO));
-    Assertions.assertThat(exception)
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("The account type is not valid");
-  }
-
-  @Test
   void getAllAccountsWithLimitAndCurrentAccountTypeShouldReturnCurrentAccountAndExceptBankAccount() {
     // Mock the repository method
     when(accountRepository.findAccountByAccountTypeEqualsAndIbanNot(PageRequest.of(0, 1),

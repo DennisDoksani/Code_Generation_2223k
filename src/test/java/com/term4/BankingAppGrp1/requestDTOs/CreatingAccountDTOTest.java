@@ -28,13 +28,13 @@ class CreatingAccountDTOTest extends  ValidatingConstraints {
     void whenCreatingAccountDTOWithoutAnTransactionLimitShouldResultInAConstraintViolationExceptionWithMessage() {
         CreatingAccountDTO creatingAccountDTO =
                 new CreatingAccountDTO(1.00, null, "Savings", 1L);
-        assertEquals("Dat Limit cannot be left empty", getMessageFromViolations(creatingAccountDTO));
+        assertEquals("Transaction Limit cannot be left empty", getMessageFromViolations(creatingAccountDTO));
     }
     @Test
     void whenCreatingAccountDTOWithNegativeTransactionLimitShouldResultInAConstraintViolationExceptionWithMessage() {
         CreatingAccountDTO creatingAccountDTO =
                 new CreatingAccountDTO(1.00, -1.00, "Savings", 1L);
-        assertEquals("Day Limit cannot be negative", getMessageFromViolations(creatingAccountDTO));
+        assertEquals("Transaction Limit cannot be negative", getMessageFromViolations(creatingAccountDTO));
     }
     @Test
     void whenCreatingAccountDTOWithValidTransactionLimitShouldResultInAValidObject() {
