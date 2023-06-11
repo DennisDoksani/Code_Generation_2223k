@@ -54,16 +54,10 @@ public class AuthControllerTest {
     @BeforeEach
     public void setUp() throws Exception {
         validLoginDto = new LoginDTO("email@email.com", "password");
-        wrongPasswordLoginDto = new LoginDTO("email", "wrongPassword");
-        wrongEmailLoginDto = new LoginDTO("wrongEmail", "password");
+        wrongPasswordLoginDto = new LoginDTO("email@email.com", "wrongPassword");
+        wrongEmailLoginDto = new LoginDTO("wrong@email.com", "password");
 
         loginResponseDto = new LoginResponseDTO("token", 1, "email@email.com", "name");
-
-
-
-
-
-
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
@@ -94,8 +88,7 @@ public class AuthControllerTest {
 
         mockMvc.perform(post("/auth/login")
                         .contentType("application/json")
-                        .content("{\"email\":\"" + wrongPasswordLoginDto.email() + "\"," +
-                                "\"password\":\"" + wrongPasswordLoginDto.password() + "\"}"))
+                        .content(wrongPasswordRequest))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().json("{" +
@@ -109,18 +102,14 @@ public class AuthControllerTest {
                 .thenThrow(new AuthenticationException("Invalid username/password"));
 
         String wrongEmailRequest = ow.writeValueAsString(wrongEmailLoginDto);
+        String loginResponseToken = ow.writeValueAsString(loginResponseDto);
 
         mockMvc.perform(post("/auth/login")
                         .contentType("application/json")
-                        .content("{\"email\":\"" + validLoginDto.email() + "\"," +
-                                "\"password\":\"" + validLoginDto.password() + "\"}"))
-                .andExpect(status().isOk())
+                        .content(wrongEmailRequest))
+                .andExpect(status().isUnauthorized())
                 .andExpect(content().json("{" +
-                        "\"jwt\":\"" + loginResponseDto.jwt()
-                        + "\",\"id\":" + loginResponseDto.id()
-                        + ",\"email\":\"" + loginResponseDto.email()
-                        + "\",\"name\":\"" + loginResponseDto.name() + "\"" +
-                        "}"
-                ));
+                        "\"message\":\"Invalid username/password\"" +
+                        "}"));
     }
 }
