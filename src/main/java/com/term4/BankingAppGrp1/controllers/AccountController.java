@@ -107,7 +107,7 @@ public class AccountController {
         passingAccountType = AccountType.valueOf(accountType.toUpperCase());
       }
     } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException("Account type is not valid"); //this will be caught by RestControllerExceptionHandler
+      throw new IllegalArgumentException("The account type is not valid"); //this will be caught by RestControllerExceptionHandler
     }
     List<Account> accounts = accountService.getAllAccounts(limit, offset, passingAccountType);
     return ResponseEntity.ok(

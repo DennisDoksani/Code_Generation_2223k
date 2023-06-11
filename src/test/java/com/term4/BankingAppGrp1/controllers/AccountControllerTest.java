@@ -6,12 +6,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.term4.BankingAppGrp1.configuration.ApiTestConfiguration;
+import com.term4.BankingAppGrp1.models.AccountType;
 import com.term4.BankingAppGrp1.requestDTOs.AccountStatusDTO;
+import com.term4.BankingAppGrp1.requestDTOs.CreatingAccountDTO;
+import com.term4.BankingAppGrp1.requestDTOs.UpdatingAccountDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
 import com.term4.BankingAppGrp1.services.UserService;
 import com.term4.BankingAppGrp1.testingData.BankingAppTestData;
+import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
+import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import javax.naming.LimitExceededException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,10 +46,16 @@ class AccountControllerTest extends BankingAppTestData {
   private AccountService accountService;
   @MockBean
   private UserService userService;
+  private CreatingAccountDTO creatingAccountDTO;
+  private UpdatingAccountDTO updatingAccountDTO;
 
   @BeforeEach
   void init() {
     super.setupData();
+    updatingAccountDTO= new UpdatingAccountDTO(customerAccount.getAbsoluteLimit(),customerAccount.isActive(),customerAccountHolderDTO);
+    creatingAccountDTO = new CreatingAccountDTO(customerUser.getDayLimit(),
+        customerUser.getTransactionLimit(),
+        AccountType.CURRENT.name(), customerUser.getId());
 
   }
 
@@ -139,7 +151,19 @@ class AccountControllerTest extends BankingAppTestData {
 
   }
 
-
+  @Test
+  @WithMockUser(roles = {"EMPLOYEE"})
+  void whenEmployeeJWtIsProvidedGETAccountsWithInvalidAccountTypeFilterReturnsBadRequest()
+      throws Exception {
+    this.mockMvc.perform(
+            MockMvcRequestBuilders.get("/accounts")
+                .param("limit", "1")
+                .param("offset", "0")
+                .param("accountType", "INVALID"))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").value("The account type is not valid"));
+  }
 
   @Test
   @WithMockUser(roles = {"EMPLOYEE"})
@@ -402,6 +426,93 @@ class AccountControllerTest extends BankingAppTestData {
         .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value("Customer name cannot be empty in order to search"));
+  }
+
+  @Test
+  @WithAnonymousUser
+  void whenAnonymousUserTryToAccessGETSearchingAccountsByCustomerNameReturnsUnauthorized()
+      throws Exception {
+    String searchingName = employeeUser.getFirstName();
+    when(accountService.searchAccountByCustomerName(searchingName, 2, 0))
+        .thenReturn(List.of());
+    this.mockMvc.perform(
+            MockMvcRequestBuilders.get("/accounts/searchByCustomerName")
+                .param("limit", "2")
+                .param("offset", "0")
+                .param("customerName", searchingName))
+        .andDo(print())
+        .andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  @WithAnonymousUser
+  void whenAnonymousUserTryToAccessPOSTAccountsReturnsUnauthorized() throws Exception {
+    this.mockMvc.perform(
+            MockMvcRequestBuilders.post("/accounts")
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isUnauthorized());
+  }
+
+  @Test //TODo: Look POsts
+  @WithMockUser(roles = {"CUSTOMER"})
+  void whenCustomerTryToAccessPOSTAccountsReturnsForbidden() throws Exception {
+    this.mockMvc.perform(
+            MockMvcRequestBuilders.post("/accounts")
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithMockUser(roles = {"EMPLOYEE"},username = EMPLOYEE_EMAIL)
+  void whenCustomerTryToAccessPOSTAccountsReturnsCreatedWithNewAccount()
+      throws Exception {
+    when(accountService.createAccountWithLimitCheck(creatingAccountDTO)).thenReturn(customerAccount);
+    when(userService.getUserByEmail(customerUser.getEmail())).thenReturn(employeeUser);
+    this.mockMvc.perform(
+        MockMvcRequestBuilders.post("/accounts")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{"
+                + "\"accountType\": \"SAVINGS\"}"))
+        .andDo(print())
+        .andExpect(status().isCreated());
+  }
+  @Test
+  @WithMockUser(roles = {"CUSTOMER"},username = CUSTOMER_EMAIL)
+  void whenCustomerTryToAccessPUTAccountsReturnsForbidden() throws Exception {
+    this.mockMvc.perform(
+            MockMvcRequestBuilders.put("/accounts")
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isForbidden());
+  }
+  @Test
+  @WithMockUser(roles = {"EMPLOYEE"},username = EMPLOYEE_EMAIL)
+  void whenEmployeeTryToAccessPUTAccountsWithNonExistingIBANReturnsNotFound() throws Exception {
+    when(accountService.updateAccountDetails(customerAccount.getIban(),updatingAccountDTO ))
+        .thenThrow(new EntityNotFoundException("Account not found"));
+    when(userService.getUserByEmail(customerUser.getEmail())).thenReturn(employeeUser);
+    this.mockMvc.perform(
+        MockMvcRequestBuilders.put("/accounts/"+customerAccount.getIban())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{"
+                + "\"accountType\": \"SAVINGS\"}"))
+        .andDo(print())
+        .andExpect(status().isNotFound());
+  }
+  @Test
+  @WithMockUser(roles = {"EMPLOYEE"},username = EMPLOYEE_EMAIL)
+  void whenEmployeeTryToAccessPUTAccountsWithExistingIBANReturnsUpdatedAccount() throws Exception {
+    when(accountService.updateAccountDetails(customerAccount.getIban(),updatingAccountDTO ))
+        .thenReturn(customerAccount);
+    when(userService.getUserByEmail(customerUser.getEmail())).thenReturn(employeeUser);
+    this.mockMvc.perform(
+        MockMvcRequestBuilders.put("/accounts/"+customerAccount.getIban())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(updatingAccountDTO)))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
 
