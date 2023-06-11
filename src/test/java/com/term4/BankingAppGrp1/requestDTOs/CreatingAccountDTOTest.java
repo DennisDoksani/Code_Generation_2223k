@@ -45,8 +45,8 @@ class CreatingAccountDTOTest extends  ValidatingConstraints {
     @Test
     void whenCreatingAccountDTOWithoutAnAccountTypeShouldResultInAConstraintViolationExceptionWithMessage() {
         CreatingAccountDTO creatingAccountDTO =
-                new CreatingAccountDTO(1.00, 1.00, "", 1L);
-        assertEquals("accountType cannot be left empty", getMessageFromViolations(creatingAccountDTO));
+                new CreatingAccountDTO(1.00, 1.00, null, 1L);
+        assertEquals("The account type is not valid", getMessageFromViolations(creatingAccountDTO));
     }
     @Test
     void whenCreatingAccountDTOWithAnAccountTypeShouldResultInAValidObject() {
