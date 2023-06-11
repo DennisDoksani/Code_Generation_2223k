@@ -18,6 +18,7 @@ import com.term4.BankingAppGrp1.services.UserService;
 import com.term4.BankingAppGrp1.testingData.BankingAppTestData;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import javax.naming.LimitExceededException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -779,4 +780,24 @@ class AccountControllerTest extends BankingAppTestData {
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value("Last Name cannot be left empty"));
   }
+  @Test
+  @WithMockUser(roles = {"EMPLOYEE"}, username = EMPLOYEE_EMAIL)
+  void whenEmployeeTriesToPOSTAccountForUserIfLimitExceedReturnsConflict() throws Exception {
+    when(accountService.createAccountWithLimitCheck( new CreatingAccountDTO(50.0,40.00, "Savings", 1L))).
+        thenThrow(new LimitExceededException("The user has reached the maximum number of accounts"));
+    this.mockMvc.perform(
+            MockMvcRequestBuilders.post("/accounts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(
+                    new CreatingAccountDTO(50.0,40.00, "Savings", 1L)))
+                .with(csrf()))
+        .andDo(print())
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.message").value("The user has reached the maximum number of accounts"));
+  }
+
+
 }
+
+
+
