@@ -399,12 +399,10 @@ class AccountControllerTest extends BankingAppTestData {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.size()").value(2))
         .andExpectAll(
-            jsonPath("$[0].accountHolder").value(employeeAccount.getCustomer().getFirstName()
-                + " " + employeeAccount.getCustomer().getLastName()),
-            jsonPath("$[0].iban").value(employeeAccount.getIban()),
-            jsonPath("$[1].accountHolder").value(customerAccount.getCustomer().getFirstName()
-                + " " + customerAccount.getCustomer().getLastName()),
-            jsonPath("$[1].iban").value(customerAccount.getIban())
+                jsonPath("$[0].iban").value(employeeAccount.getIban()),
+                jsonPath("$[0].accountHolderName").value(employeeAccount.getCustomer().getFullName()),
+                jsonPath("$[1].iban").value(customerAccount.getIban()),
+                jsonPath("$[1].accountHolderName").value(customerAccount.getCustomer().getFullName())
         );
   }
 
