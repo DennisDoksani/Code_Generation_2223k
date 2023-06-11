@@ -11,10 +11,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import com.term4.BankingAppGrp1.services.UserService;
 import com.term4.BankingAppGrp1.requestDTOs.RegistrationDTO;
-
 import java.util.List;
 import java.util.function.Function;
 
