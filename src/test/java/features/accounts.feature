@@ -20,13 +20,13 @@ Feature: Everything to do with Accounts endpoint
     And the response should be an array of objects
     And the response should have 1 object
 
-    Scenario: trying to access the get all endpoint as an employee with Invalid Account Type
+  Scenario: trying to access the get all endpoint as an employee with Invalid Account Type
     Given I log in as an "employee"
     When I send a GET request to "accounts?accountType=invalid"
     Then the response status code should be 400
     And the response should be error message "The account type is not valid"
 
-    Scenario: trying to access the get all endpoint as an employee with Valid Account Type
+  Scenario: trying to access the get all endpoint as an employee with Valid Account Type
     Given I log in as an "employee"
     When I send a GET request to "accounts?accountType=Savings&limit=2&offset=0"
     Then the response status code should be 200
@@ -63,5 +63,18 @@ Feature: Everything to do with Accounts endpoint
     When I send a GET request to "accounts/NL72INH00579629783"
     Then the response status code should be 400
     And the response should be error message "Not a valid Iban for Inholland bank"
+
+  Scenario: when trying to search customer name with name
+    Given I log in as an "employee"
+    When I send a GET request to "accounts/searchByCustomerName?limit=3&offset=0&customerName=Customer Seed"
+    Then the response status code should be 200
+    And the response should be an array of objects
+    And the response should have 3 object
+
+  Scenario: when trying to search customer name with name that does not exist
+    Given I log in as an "customer"
+    When I send a GET request to "accounts/searchByCustomerName?limit=3&offset=0&customerName=Invalid_Test"
+    Then the response status code should be 404
+    And the response should be error message "No accounts found by this name Invalid_Test!"
 
 
