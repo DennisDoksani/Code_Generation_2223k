@@ -32,7 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc(addFilters = false)
 @EnableMethodSecurity
 public class AuthControllerTest {
-/*
+
   @Autowired
   private MockMvc mockMvc;
 
@@ -105,5 +105,5 @@ public class AuthControllerTest {
         .andExpect(content().json("{" +
             "\"message\":\"Invalid username/password\"" +
             "}"));
-  }*/
+  }
 }

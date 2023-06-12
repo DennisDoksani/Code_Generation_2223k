@@ -40,7 +40,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 @Import(ApiTestConfiguration.class)
 @EnableMethodSecurity
 class AccountControllerTest extends BankingAppTestData {
-/*
+
   @Autowired
   private MockMvc mockMvc;
   @MockBean
@@ -799,7 +799,7 @@ class AccountControllerTest extends BankingAppTestData {
         .andExpect(status().isConflict())
         .andExpect(
             jsonPath("$.message").value("The user has reached the maximum number of accounts"));
-  }*/
+  }
 
 
 }

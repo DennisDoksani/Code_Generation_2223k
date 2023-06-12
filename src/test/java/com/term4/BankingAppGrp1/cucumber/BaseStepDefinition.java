@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 @CucumberContextConfiguration
 public class BaseStepDefinition {
 
-  /*@Autowired
+  @Autowired
   protected TestRestTemplate restTemplate;
 
   @Autowired
@@ -42,5 +42,5 @@ public class BaseStepDefinition {
             new HttpEntity<>(objectMapper.writeValueAsString(loginDTO), httpHeaders), String.class);
     LoginResponseDTO tokenDTO = objectMapper.readValue(response.getBody(), LoginResponseDTO.class);
     return tokenDTO.jwt();
-  }*/
+  }
 }
