@@ -77,4 +77,39 @@ Feature: Everything to do with Accounts endpoint
     Then the response status code should be 404
     And the response should be error message "No accounts found by this name Invalid_Test!"
 
+  Scenario: when customer tries to search their accounts by email they get all their accounts
+    Given I log in as an "customer"
+    When I send a GET request to "accounts/user/customer@seed.com"
+    Then the response status code should be 200
+    And The response should be an UserAccountsDTO List
+
+  Scenario: when customer tries to load other accounts by providing other's email should give forbidden
+    Given I log in as an "customer"
+    When I send a GET request to "accounts/user/employeeCustomer@seed.com"
+    Then the response status code should be 403
+    And the response should be error message "You are not allowed to access others Accounts Details!"
+
+  Scenario: when employee tries to load other accounts by providing other's email should give accounts
+    Given I log in as an "employee"
+    When I send a GET request to "accounts/user/customer@seed.com"
+    Then the response status code should be 200
+    And The response should be an UserAccountsDTO List
+
+  Scenario: when customer tries to post new account with valid Account Creating DTO
+    Given I log in as an "customer"
+    When I send a POST request to "accounts"
+    Then the response status code should be 403
+    And the response should be error message "Access Denied"
+
+    Scenario: when employee tries to post new account with valid Account Creating DTO
+    Given I log in as an "employee"
+    When I send a POST request to "accounts" with a valid CreatingAccountDTO
+    Then the response status code should be 201
+      And the response should have 1 object
+
+
+
+
+
+
 
