@@ -156,8 +156,6 @@ public class Runner implements ApplicationRunner {
         //Seed savings accounts 
         accountService.saveAccount(Account.builder().accountType(AccountType.SAVINGS).customer(customer).build());
         accountService.saveAccount(Account.builder().accountType(AccountType.SAVINGS).customer(employeeCustomer).build());
-
-
     }
 
     private User seedEmployeeCustomer() {

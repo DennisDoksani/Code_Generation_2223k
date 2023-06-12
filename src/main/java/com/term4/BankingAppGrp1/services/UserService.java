@@ -123,11 +123,11 @@ public class UserService {
     private void validateBsn(String bsnString) {
         //Check if numeric
         if (!bsnString.matches("[0-9]+"))
-            throw new IllegalArgumentException("BSN must be numeric");
+            throw new IllegalArgumentException("BSN must be numeric.");
 
         //BSN length has to be 8 or 9
         if (bsnString.length() != 9 && bsnString.length() != 8) {
-            throw new IllegalArgumentException("Invalid BSN length");
+            throw new IllegalArgumentException("Invalid BSN length.");
         }
         //If length is 8, then we have to prepend a 0 to make length 9.
         else if (bsnString.length() == 8) {
@@ -146,7 +146,7 @@ public class UserService {
         }
 
         if (sum % 11 != 0)
-            throw new IllegalArgumentException("Invalid BSN");
+            throw new IllegalArgumentException("BSN is invalid.");
     }
 
     private void validateDateOfBirth(String dateOfBirth) {
@@ -156,7 +156,7 @@ public class UserService {
 
             //Check if date is further than 18 years ago
             if (date.isAfter(LocalDate.now().minusYears(MIN_AGE_IN_YEARS)))
-                throw new IllegalArgumentException(("User must be at least " + MIN_AGE_IN_YEARS + " years old"));
+                throw new IllegalArgumentException(("User must be at least " + MIN_AGE_IN_YEARS + " years old."));
 
         } catch (Exception e) {
             throw new IllegalArgumentException(e.getMessage());
@@ -174,12 +174,12 @@ public class UserService {
         }
         catch (NumberParseException e) {
             //If there's an exception while parsing the number, that means the number invalid
-            throw new IllegalArgumentException("Invalid phone number");
+            throw new IllegalArgumentException("Phone number is invalid.");
         }
 
         //If the isValidNumber method returns false, that means the number is invalid
         if(!phoneNumberUtil.isValidNumber(number))
-            throw new IllegalArgumentException("Invalid phone number");
+            throw new IllegalArgumentException("Phone number is invalid.");
     }
 
     
