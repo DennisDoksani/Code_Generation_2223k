@@ -1,7 +1,6 @@
-package com.term4.BankingAppGrp1.cucumber.accounts;
+package com.term4.BankingAppGrp1.cucumber;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.term4.BankingAppGrp1.cucumber.BaseStepDefinition;
 import com.term4.BankingAppGrp1.requestDTOs.LoginDTO;
 import com.term4.BankingAppGrp1.responseDTOs.AccountDTO;
 import com.term4.BankingAppGrp1.responseDTOs.ErrorMessageDTO;
