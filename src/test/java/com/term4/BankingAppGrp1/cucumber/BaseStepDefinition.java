@@ -24,10 +24,9 @@ public class BaseStepDefinition {
 
   protected ResponseEntity<String> response;
   protected HttpHeaders httpHeaders = new HttpHeaders();
-  protected final String ACCOUNT_ENDPOINT = "/accounts";
   protected final String LOGIN_ENDPOINT = "/auth/login";
   protected final String USERS_ENDPOINT = "/users";
-  protected final String TRANSACTIONS_ENDPOINT = "/transactions";
+  protected  final String CUSTOMER_EMAIL_WITHOUT_ACCOUNT="employee@seed.com";
 
   protected final String EMPLOYEE_EMAIL = "employee@seed.com";
   protected final String EMPLOYEE_CUSTOMER_EMAIL = "employeecustomer@seed.com";
