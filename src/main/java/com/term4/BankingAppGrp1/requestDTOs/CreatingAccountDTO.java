@@ -12,7 +12,6 @@ public record CreatingAccountDTO(
     @NotNull(message = "Transaction Limit cannot be left empty")
     @PositiveOrZero(message = "Transaction Limit cannot be negative")
     Double transactionLimit,
-    @NotBlank(message = "accountType cannot be left empty")
     @ValidAccountType
     String accountType,
     @NotNull(message = "accountHolderId cannot be left empty") Long accountHolderId) {
