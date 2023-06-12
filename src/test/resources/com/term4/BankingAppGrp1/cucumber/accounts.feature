@@ -109,7 +109,7 @@ Feature: Everything to do with Accounts endpoint
 
   Scenario: when employee tries to post new account with valid Account Creating DTO and limit is ok
     Given I log in as an "customerWithoutAc"
-    When I send a POST request to "accounts" with a valid CreatingAccountDTO
+    When I send a POST Request to "accounts" with Valid CreatingAccountDTO
     Then the response status code should be 201
     And the response should be an Account object with Iban
 
