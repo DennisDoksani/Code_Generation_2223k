@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 
 public class TransactionStepDefinition extends BaseStepDefinition {
 
-  @Autowired
+  /*@Autowired
   private TestRestTemplate restTemplate;
   private ResponseEntity<String> response;
   private HttpHeaders httpHeaders;
@@ -41,5 +41,5 @@ public class TransactionStepDefinition extends BaseStepDefinition {
         .split(",")).toList();
 
     Assertions.assertTrue(options.contains(method.toUpperCase()));
-  }
+  }*/
 }

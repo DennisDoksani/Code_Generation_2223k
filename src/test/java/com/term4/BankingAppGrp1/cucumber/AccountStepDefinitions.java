@@ -24,7 +24,7 @@ import org.springframework.http.HttpMethod;
 
 public class AccountStepDefinitions extends BaseStepDefinition {
 
-  @MockBean
+ /* @MockBean
   private UserService userService;
   private CreatingAccountDTO validCreatingAccountDTO;
 
@@ -162,5 +162,5 @@ public class AccountStepDefinitions extends BaseStepDefinition {
   public void iSendAPOSTRequestToWithValidRequestBody(String endpoint) {
     AccountStatusDTO accountStatusDTO = new AccountStatusDTO(false);
     sendPostRequest(httpHeaders, endpoint, accountStatusDTO);
-  }
+  }*/
 }

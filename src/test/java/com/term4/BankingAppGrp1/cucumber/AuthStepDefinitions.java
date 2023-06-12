@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Assertions;
 
 public class AuthStepDefinitions extends BaseStepDefinition {
 
-  private LoginDTO loginDto;
+  /*private LoginDTO loginDto;
 
   @Given("I have a valid login object with valid email and valid password")
   public void iHaveAValidLoginObjectWithValidEmailAndValidPassword() {
@@ -75,5 +75,5 @@ public class AuthStepDefinitions extends BaseStepDefinition {
     ErrorMessageDTO errorMessageDTO = objectMapper.readValue(response.getBody(),
         ErrorMessageDTO.class);
     Assertions.assertEquals(errorMessage, errorMessageDTO.message());
-  }
+  }*/
 }

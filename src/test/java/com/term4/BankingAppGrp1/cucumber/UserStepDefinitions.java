@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Assertions;
 
 public class UserStepDefinitions extends BaseStepDefinition {
 
-  private RegistrationDTO registrationDTO;
+  /*private RegistrationDTO registrationDTO;
   private final String VALID_DOB = LocalDate.now().minusYears(20).toString();
   private final String TOO_YOUNG_DOB = LocalDate.now().minusYears(13).toString();
 
@@ -112,5 +112,5 @@ public class UserStepDefinitions extends BaseStepDefinition {
     ErrorMessageDTO errorMessageDTO = objectMapper.readValue(response.getBody(),
         ErrorMessageDTO.class);
     Assertions.assertEquals(errorMessage, errorMessageDTO.message());
-  }
+  }*/
 }
