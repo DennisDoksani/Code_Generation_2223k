@@ -1,5 +1,11 @@
 package com.term4.BankingAppGrp1.controllers;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.term4.BankingAppGrp1.configuration.ApiTestConfiguration;
 import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
@@ -11,12 +17,14 @@ import com.term4.BankingAppGrp1.responseDTOs.TransactionAccountDTO;
 import com.term4.BankingAppGrp1.responseDTOs.TransactionResponseDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
 import com.term4.BankingAppGrp1.services.TransactionService;
-
 import com.term4.BankingAppGrp1.services.UserService;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectWriter;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.SerializationFeature;
-
+import java.nio.charset.Charset;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,45 +40,37 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.nio.charset.Charset;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
-
-import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(TransactionController.class)
 @Import(ApiTestConfiguration.class)
 @EnableMethodSecurity
 public class TransactionControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
 
-    private Transaction testTransaction1;
-    private TransactionResponseDTO responseDTO;
-    private Account testAccount1;
-    private Account testAccount2;
-    private User testUser;
+  @Autowired
+  private MockMvc mockMvc;
 
-    @MockBean
-    private TransactionService transactionService;
+  private Transaction testTransaction1;
+  private TransactionResponseDTO responseDTO;
+  private Account testAccount1;
+  private Account testAccount2;
+  private User testUser;
 
-    @MockBean
-    private AccountService accountService;
+  @MockBean
+  private TransactionService transactionService;
 
-    @MockBean
-    private UserService userService;
+  @MockBean
+  private AccountService accountService;
 
-    public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+  @MockBean
+  private UserService userService;
 
-    @BeforeEach
-    void Init() {
-        testUser = User.builder()
+  public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(
+      MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(),
+      Charset.forName("utf8"));
+
+  @BeforeEach
+  void Init() {
+    testUser = User.builder()
         .bsn("582022290")
         .firstName("Ruubyo")
         .lastName("Gaming")
@@ -84,52 +84,58 @@ public class TransactionControllerTest {
         .roles(List.of(Role.ROLE_EMPLOYEE))
         .build();
 
-        testAccount1 = new Account("NL01INHO0000000003", 100, LocalDate.now(), 0, true, AccountType.SAVINGS, testUser);
-        testAccount2 = new Account("NL01INHO0000000002", 100, LocalDate.now(), 0, true, AccountType.CURRENT, testUser);
+    testAccount1 = new Account("NL01INHO0000000003", 100, LocalDate.now(), 0, true,
+        AccountType.SAVINGS, testUser);
+    testAccount2 = new Account("NL01INHO0000000002", 100, LocalDate.now(), 0, true,
+        AccountType.CURRENT, testUser);
 
-        testTransaction1 = new Transaction(10.0, testAccount1, testAccount2,
-                LocalDate.now(), LocalTime.now(), testUser);
+    testTransaction1 = new Transaction(10.0, testAccount1, testAccount2,
+        LocalDate.now(), LocalTime.now(), testUser);
 
-        responseDTO = new TransactionResponseDTO(
-                testTransaction1.getTransactionID(),
-                testTransaction1.getAmount(),
-                new TransactionAccountDTO(testAccount2.getIban(), testAccount2.getAccountType(), testUser.getFullName()),
-                new TransactionAccountDTO(testAccount1.getIban(), testAccount1.getAccountType(), testUser.getFullName()),
-                testTransaction1.getDate(),
-                testTransaction1.getTimestamp(),
-                testUser.getFullName());
+    responseDTO = new TransactionResponseDTO(
+        testTransaction1.getTransactionID(),
+        testTransaction1.getAmount(),
+        new TransactionAccountDTO(testAccount2.getIban(), testAccount2.getAccountType(),
+            testUser.getFullName()),
+        new TransactionAccountDTO(testAccount1.getIban(), testAccount1.getAccountType(),
+            testUser.getFullName()),
+        testTransaction1.getDate(),
+        testTransaction1.getTimestamp(),
+        testUser.getFullName());
 
-    }
+  }
 
-    @Test
-    @WithMockUser(username = "employee", roles = {"EMPLOYEE"})
-    void getTransactionsWithoutSpecifyingFiltersShouldReturnAListOfOne() throws Exception {
-        when(transactionService.getTransactionsWithFilters(PageRequest.of(0 / 50, 50), null, null, null, null, null, null))
-                .thenReturn(List.of(responseDTO));
+  @Test
+  @WithMockUser(username = "employee", roles = {"EMPLOYEE"})
+  void getTransactionsWithoutSpecifyingFiltersShouldReturnAListOfOne() throws Exception {
+    when(transactionService.getTransactionsWithFilters(PageRequest.of(0 / 50, 50), null, null, null,
+        null, null, null))
+        .thenReturn(List.of(responseDTO));
 
-        this.mockMvc.perform(
-                        MockMvcRequestBuilders.get("/transactions"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)));
-    }
+    this.mockMvc.perform(
+            MockMvcRequestBuilders.get("/transactions"))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", hasSize(1)));
+  }
 
-    @Test
-    @WithMockUser(username = "customer", roles = {"CUSTOMER"})
-    void tryingToMakeATransactionWhenTheDayLimitHasBeenReachedShouldResultInIllegalArgumentException() throws Exception {
-        when(transactionService.getSumOfMoneyTransferred(testUser.getEmail(), LocalDate.now()))
-                .thenReturn(100.0);
+  @Test
+  @WithMockUser(username = "customer", roles = {"CUSTOMER"})
+  void tryingToMakeATransactionWhenTheDayLimitHasBeenReachedShouldResultInIllegalArgumentException()
+      throws Exception {
+    when(transactionService.getSumOfMoneyTransferred(testUser.getEmail(), LocalDate.now()))
+        .thenReturn(100.0);
 
-        TransactionDTO dto = new TransactionDTO(100.0, testAccount1.getIban(), testAccount2.getIban());
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-        String requestJson=ow.writeValueAsString(dto);
+    TransactionDTO dto = new TransactionDTO(100.0, testAccount1.getIban(), testAccount2.getIban());
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+    String requestJson = ow.writeValueAsString(dto);
 
-        mockMvc.perform(
-                MockMvcRequestBuilders.post("/transactions")
-                        .contentType(APPLICATION_JSON_UTF8)
-                        .content(requestJson)
-        ) .andExpect(status().isForbidden());
-    }
+    mockMvc.perform(
+        MockMvcRequestBuilders.post("/transactions")
+            .contentType(APPLICATION_JSON_UTF8)
+            .content(requestJson)
+    ).andExpect(status().isForbidden());
+  }
 }

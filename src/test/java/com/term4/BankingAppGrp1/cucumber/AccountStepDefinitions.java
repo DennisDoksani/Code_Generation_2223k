@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.term4.BankingAppGrp1.requestDTOs.AccountStatusDTO;
 import com.term4.BankingAppGrp1.requestDTOs.CreatingAccountDTO;
 import com.term4.BankingAppGrp1.requestDTOs.LoginDTO;
-import com.term4.BankingAppGrp1.requestDTOs.UpdatingAccountDTO;
 import com.term4.BankingAppGrp1.responseDTOs.AccountDTO;
 import com.term4.BankingAppGrp1.responseDTOs.ErrorMessageDTO;
 import com.term4.BankingAppGrp1.responseDTOs.UserAccountsDTO;
@@ -44,10 +43,9 @@ public class AccountStepDefinitions extends BaseStepDefinition {
       loginDTO = new LoginDTO(EMPLOYEE_EMAIL, LOGIN_PASSWORD);
     } else if (role.equalsIgnoreCase("customer")) {
       loginDTO = new LoginDTO(CUSTOMER_EMAIL, LOGIN_PASSWORD);
-    } else if(role.equalsIgnoreCase("customerWithoutAc")) {
-      loginDTO= new LoginDTO(CUSTOMER_EMAIL_WITHOUT_ACCOUNT, LOGIN_PASSWORD);
-    }
-    else {
+    } else if (role.equalsIgnoreCase("customerWithoutAc")) {
+      loginDTO = new LoginDTO(CUSTOMER_EMAIL_WITHOUT_ACCOUNT, LOGIN_PASSWORD);
+    } else {
       throw new IllegalArgumentException("Invalid role");
     }
     httpHeaders.add("Authorization", "Bearer " + getToken(loginDTO));
@@ -126,10 +124,11 @@ public class AccountStepDefinitions extends BaseStepDefinition {
 
   @When("I send a POST request to {string}")
   public void iSendAPOSTRequestTo(String endpoint) {
-     validCreatingAccountDTO = new CreatingAccountDTO(90.00,80.00,"Savings",1L);
+    validCreatingAccountDTO = new CreatingAccountDTO(90.00, 80.00, "Savings", 1L);
     httpHeaders.add("Content-Type", "application/json");
     sendPostRequest(httpHeaders, endpoint, validCreatingAccountDTO);
   }
+
   public void sendPostRequest(HttpHeaders httpHeaders, String endpoint, Object body) {
     response = restTemplate.exchange(
         "/" + endpoint,
@@ -142,19 +141,20 @@ public class AccountStepDefinitions extends BaseStepDefinition {
 
   @When("I send a POST request to {string} with a valid CreatingAccountDTO")
   public void iSendAPOSTRequestToWithAValidCreatingAccountDTO(String endpoint) {
-    validCreatingAccountDTO = new CreatingAccountDTO(90.00,80.00,"Savings",3L);
+    validCreatingAccountDTO = new CreatingAccountDTO(90.00, 80.00, "Savings", 3L);
     sendPostRequest(httpHeaders, endpoint, validCreatingAccountDTO);
   }
 
   @And("the response should be an Account object with Iban")
   public void theResponseShouldBeAnAccountObjectWithIban() throws JsonProcessingException {
-    AccountDTO account =  objectMapper.readValue(response.getBody(), AccountDTO.class);
+    AccountDTO account = objectMapper.readValue(response.getBody(), AccountDTO.class);
     Assertions.assertNotNull(account.getIban());
   }
+
   @And("the account status of {string} should be updated")
   public void theAccountStatusOfShouldBeUpdated(String iban) throws JsonProcessingException {
-    iSendAGETRequestTo( "accounts/" + iban);
-    AccountDTO account =  objectMapper.readValue(response.getBody(), AccountDTO.class);
+    iSendAGETRequestTo("accounts/" + iban);
+    AccountDTO account = objectMapper.readValue(response.getBody(), AccountDTO.class);
     Assertions.assertFalse(account.isActive());
   }
 
