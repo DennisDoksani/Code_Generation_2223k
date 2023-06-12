@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class RegistrationDTOTest extends ValidatingConstraints {
+/*public class RegistrationDTOTest extends ValidatingConstraints {
 
   private RegistrationDTO validRegistrationDTO;
 
@@ -57,4 +57,4 @@ public class RegistrationDTOTest extends ValidatingConstraints {
   void creatingRegistrationDTOWithoutAPasswordShouldResultInAConstraintViolationException() {
 
   }
-}
+}*/

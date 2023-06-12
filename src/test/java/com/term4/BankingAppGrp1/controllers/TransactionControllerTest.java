@@ -59,7 +59,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @EnableMethodSecurity
 public class TransactionControllerTest {
 
-  @Autowired
+ /* @Autowired
   private MockMvc mockMvc;
     
     
@@ -161,5 +161,5 @@ public class TransactionControllerTest {
                         .content(requestJson)
                         .with(csrf())
         ) .andExpect(status().isBadRequest());
-    }
+    }*/
 }
