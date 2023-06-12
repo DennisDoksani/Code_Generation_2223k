@@ -25,6 +25,7 @@ public class BaseStepDefinition {
   protected ResponseEntity<String> response;
   protected HttpHeaders httpHeaders = new HttpHeaders();
   protected final String accountEndpoint = "/accounts";
+  protected final String LOGIN_ENDPOINT = "http://www.localhost.com/auth/login";
   protected final String EMPLOYEE_EMAIL = "employee@seed.com";
   protected final String EMPLOYEE_CUSTOMER_EMAIL = "employeecustomer@seed.com";
   protected final String CUSTOMER_EMAIL = "customer@seed.com";

@@ -11,8 +11,12 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+
+import static org.hibernate.query.results.Builders.entity;
 
 public class AuthStepDefinitions extends BaseStepDefinition {
 
@@ -54,15 +58,10 @@ public class AuthStepDefinitions extends BaseStepDefinition {
 
     @When("I call the login endpoint")
     public void iCallTheLoginEndpoint() {
-        try{
-            response = restTemplate.postForEntity(
-                    "/auth/login",
-                    loginDto,
-                    String.class);
-        } catch (Exception e) {
-
-        }
-
+        response = restTemplate.postForEntity(
+                "/auth/login",
+                loginDto,
+                String.class);
     }
 
     @Then("I get http status {int}")
