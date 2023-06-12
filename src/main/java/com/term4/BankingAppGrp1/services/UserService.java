@@ -83,11 +83,14 @@ public class UserService {
     User updatingUser = userRepository.findById(id)
             .orElseThrow(
                     () -> new EntityNotFoundException("The updating user with ID: " + userDTO.id() + " was not found"));
+    //Validate input
+    validateDateOfBirth(String.valueOf(userDTO.dateOfBirth()));
+    validatePhoneNumber(String.valueOf(userDTO.phoneNumber()));
 
     updatingUser.setFirstName(userDTO.firstName());
     updatingUser.setLastName(userDTO.lastName());
-    validateDateOfBirth(String.valueOf(userDTO.dateOfBirth()));
-    validatePhoneNumber(String.valueOf(userDTO.phoneNumber()));
+    updatingUser.setDateOfBirth(userDTO.dateOfBirth());
+    updatingUser.setPhoneNumber(userDTO.phoneNumber());
     updatingUser.setEmail(userDTO.email());
     updatingUser.setActive(userDTO.isActive());
     updatingUser.setDayLimit(userDTO.dayLimit());
