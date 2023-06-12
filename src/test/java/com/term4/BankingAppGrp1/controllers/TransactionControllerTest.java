@@ -22,10 +22,8 @@ import com.term4.BankingAppGrp1.services.UserService;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectWriter;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.SerializationFeature;
-import java.nio.charset.Charset;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
+
+import io.cucumber.java.an.E;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,6 +33,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -65,7 +64,9 @@ public class TransactionControllerTest {
     
 
     private Transaction testTransaction1;
-    private TransactionResponseDTO responseDTO;
+    private Transaction testTransaction2;
+    private TransactionResponseDTO responseDTO1;
+    private TransactionResponseDTO responseDTO2;
     private Account testAccount1;
     private Account testAccount2;
     private Account testAccount3;
@@ -117,8 +118,11 @@ public class TransactionControllerTest {
 
         testTransaction1 = new Transaction(10.0, testAccount1, testAccount2,
                 LocalDate.now(), LocalTime.now(), testUser1);
+        testTransaction2 = new Transaction(40.0, testAccount2, testAccount3,
+                LocalDate.now(), LocalTime.now(), testUser2);
 
-        responseDTO = new TransactionResponseDTO(
+
+        responseDTO1 = new TransactionResponseDTO(
                 testTransaction1.getTransactionID(),
                 testTransaction1.getAmount(),
                 new TransactionAccountDTO(testAccount2.getIban(), testAccount2.getAccountType(), testUser1.getFullName()),
@@ -127,39 +131,81 @@ public class TransactionControllerTest {
                 testTransaction1.getTimestamp(),
                 testUser1.getFullName());
 
-  }
+        responseDTO2 = new TransactionResponseDTO(
+                testTransaction2.getTransactionID(),
+                testTransaction2.getAmount(),
+                new TransactionAccountDTO(testAccount3.getIban(), testAccount3.getAccountType(), testUser2.getFullName()),
+                new TransactionAccountDTO(testAccount2.getIban(), testAccount2.getAccountType(), testUser1.getFullName()),
+                testTransaction2.getDate(),
+                testTransaction2.getTimestamp(),
+                testUser2.getFullName());
+    }
 
-  @Test
-  @WithMockUser(username = "employee", roles = {"EMPLOYEE"})
-  void getTransactionsWithoutSpecifyingFiltersShouldReturnAListOfOne() throws Exception {
-    when(transactionService.getTransactionsWithFilters(PageRequest.of(0 / 50, 50), null, null, null,
-        null, null, null))
-        .thenReturn(List.of(responseDTO));
+    @Test
+    @WithMockUser(username = "Ruubyo@isgaming.com", password = "secretword", roles = "EMPLOYEE")
+    void savingANewTransactionShouldReturnStatus201() throws Exception {
+        TransactionDTO transactionDTO = new TransactionDTO(10.0, "NL01INHO0000000003", "NL01INHO0000000002");
+        when(transactionService.validTransaction(transactionDTO))
+                .thenReturn(true);
 
-    this.mockMvc.perform(
-            MockMvcRequestBuilders.get("/transactions"))
-        .andDo(print())
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(1)));
-  }
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(transactionDTO);
 
-//    @Test
-//    @WithMockUser(username = "not@gaming.com", password = "secretword", roles = "CUSTOMER")
-//    void tryingToMakeATransactionWhenTheDayLimitHasBeenReachedShouldResultInIllegalArgumentException() throws Exception {
-//        when(transactionService.getSumOfMoneyTransferred(testUser2.getEmail(), LocalDate.now()))
-//                .thenReturn(299.0);
-//
-//        TransactionDTO dto = new TransactionDTO(10.0, testAccount2.getIban(), testAccount3.getIban());
-//        ObjectMapper mapper = new ObjectMapper();
-//        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-//        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-//        String requestJson=ow.writeValueAsString(dto);
-//
-//        mockMvc.perform(
-//                MockMvcRequestBuilders.post("/transactions")
-//                        .contentType(APPLICATION_JSON_UTF8)
-//                        .content(requestJson)
-//                        .with(csrf())
-//        ) .andExpect(status().isBadRequest());
-//    }
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/transactions")
+                        .contentType(APPLICATION_JSON_UTF8)
+                        .content(requestJson)
+                        .with(csrf())
+        ) .andExpect(status().isCreated());
+    }
+
+    @Test
+    @WithMockUser(username = "not@gaming.com", password = "secretword", roles = "CUSTOMER")
+    void customerAttemptingToAccessTransactionDataOfOtherUsersShouldReturn403() throws Exception {
+        when(transactionService.accountBelongsToUser(testAccount2.getIban(), "not@gaming.com"))
+                .thenReturn(false);
+        when(transactionService.accountBelongsToUser(testAccount1.getIban(), "not@gaming.com"))
+                .thenReturn(false);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/transactions?ibanFrom=" + testAccount2.getIban())
+                        .with(csrf())
+        ) .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "Ruubyo@isgaming.com", password = "secretword", roles = "EMPLOYEE")
+    void employeeAttemptingToAccessTransactionDataOfOtherUsersShouldReturnAListOfOne() throws Exception {
+        when(transactionService.accountBelongsToUser(testAccount3.getIban(), "Ruubyo@isgaming.com"))
+                .thenReturn(false);
+        when(transactionService.accountBelongsToUser(testAccount2.getIban(), "Ruubyo@isgaming.com"))
+                .thenReturn(false);
+        when(transactionService.getTransactionsWithFilters(PageRequest.of(0 / 50, 50), testAccount3.getIban(), null, null, null, null, null))
+                .thenReturn(List.of(responseDTO1));
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/transactions?ibanFrom=" + testAccount3.getIban())
+                        .with(csrf())
+        ) .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)));
+    }
+
+    @Test
+    @WithMockUser(username = "not@gaming.com", password = "secretword", roles = "CUSTOMER")
+    void attemptingToRetrieveTransactionsWithValidFiltersShouldReturnAListOfOne() throws Exception {
+        when(transactionService.accountBelongsToUser(testAccount3.getIban(), "not@gaming.com"))
+                .thenReturn(true);
+        when(transactionService.getTransactionsWithFilters(PageRequest.of(0 / 50, 50), testAccount3.getIban(), null, 40.0, 45.0, null, null))
+                .thenReturn(List.of(responseDTO1));
+
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/transactions?ibanFrom=" + testAccount3.getIban() + "&amountMin=40&amountMax=45")
+                        .with(csrf())
+
+        ) .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)));
+    }
 }
