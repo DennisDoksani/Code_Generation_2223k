@@ -73,70 +73,70 @@ public class Runner implements ApplicationRunner {
 
     private void seedBankAccount() {
         User inhollandBank = User.builder()
-                .bsn("227015277")
-                .firstName("Inholland")
-                .lastName("Bank")
-                .dateOfBirth(LocalDate.now())
-                .phoneNumber("680000000000")
-                .email("inholland@bank.nl")
-                .password("Inholland")
-                .isActive(true)
-                .transactionLimit(9999999999999999L)
-                .dayLimit(9999999999999999L)
-                .roles(List.of(Role.ROLE_EMPLOYEE))
-                .build();
+            .bsn("227015277")
+            .firstName("Inholland")
+            .lastName("Bank")
+            .dateOfBirth(LocalDate.now())
+            .phoneNumber("680000000000")
+            .email("inholland@bank.nl")
+            .password("Inholland")
+            .isActive(true)
+            .transactionLimit(9999999999999999L)
+            .dayLimit(9999999999999999L)
+            .roles(List.of(Role.ROLE_EMPLOYEE))
+            .build();
 
         userService.saveUser(inhollandBank);
         Account seedAccount = Account.builder()
-                .iban(DEFAULT_INHOLLAND_BANK_IBAN)
-                .balance(9999999999999.0)
-                .creationDate(LocalDate.now())
-                .absoluteLimit(0)
-                .isActive(true)
-                .accountType(AccountType.CURRENT)
-                .customer(inhollandBank)
-                .build();
+            .iban(DEFAULT_INHOLLAND_BANK_IBAN)
+            .balance(9999999999999.0)
+            .creationDate(LocalDate.now())
+            .absoluteLimit(0)
+            .isActive(true)
+            .accountType(AccountType.CURRENT)
+            .customer(inhollandBank)
+            .build();
         accountService.saveAccount(seedAccount);
     }
 
     private List<Account> makeDummyBankAccounts(User user, User secondSeedCustomer) {
 
         Account savings = Account.builder()
-                .iban("NL01INHO0000000003")
-                .balance(9999.0)
-                .isActive(true)
-                .accountType(AccountType.SAVINGS)
-                .customer(user)
-                .build();
+            .iban("NL01INHO0000000003")
+            .balance(9999.0)
+            .isActive(true)
+            .accountType(AccountType.SAVINGS)
+            .customer(user)
+            .build();
 
         Account current = Account.builder()
-                .iban("NL01INHO0000000002")
-                .balance(2900.0)
-                .isActive(true)
-                .accountType(AccountType.CURRENT)
-                .customer(user)
-                .build();
+            .iban("NL01INHO0000000002")
+            .balance(2900.0)
+            .isActive(true)
+            .accountType(AccountType.CURRENT)
+            .customer(user)
+            .build();
 
         accountService.saveAccount(savings);
         accountService.saveAccount(current);
 
 
         Account seedAccount = Account.builder()
-                .accountType(AccountType.CURRENT)
-                .customer(secondSeedCustomer)
-                .build();
+            .accountType(AccountType.CURRENT)
+            .customer(secondSeedCustomer)
+            .build();
         Account seedSavings = Account.builder()
-                .accountType(AccountType.SAVINGS)
-                .customer(secondSeedCustomer)
-                .build();
+            .accountType(AccountType.SAVINGS)
+            .customer(secondSeedCustomer)
+            .build();
 
         Account seedHardcodedIban = Account.builder()
-                .iban("NL72INHO0579629781")
-                .balance(900.0)
-                .creationDate(LocalDate.now())
-                .accountType(AccountType.CURRENT)
-                .customer(secondSeedCustomer)
-                .build();
+            .iban("NL72INHO0579629781")
+            .balance(900.0)
+            .creationDate(LocalDate.now())
+            .accountType(AccountType.CURRENT)
+            .customer(secondSeedCustomer)
+            .build();
         accountService.saveAccount(seedAccount);
         accountService.saveAccount(seedHardcodedIban);
         accountService.saveAccount(savings);
@@ -160,52 +160,52 @@ public class Runner implements ApplicationRunner {
 
     private User seedEmployeeCustomer() {
         User seedEmployeeCustomer = User.builder()
-                .bsn("277545146")
-                .firstName("EmployeeCustomer")
-                .lastName("Seed")
-                .dateOfBirth(LocalDate.of(1990, 1, 1))
-                .phoneNumber("0611111111")
-                .email("employeecustomer@seed.com")
-                .password("password")
-                .isActive(true)
-                .roles(List.of(Role.ROLE_EMPLOYEE, Role.ROLE_CUSTOMER))
-                .dayLimit(1000)
-                .transactionLimit(300)
-                .build();
+            .bsn("277545146")
+            .firstName("EmployeeCustomer")
+            .lastName("Seed")
+            .dateOfBirth(LocalDate.of(1990, 1, 1))
+            .phoneNumber("0611111111")
+            .email("employeecustomer@seed.com")
+            .password("password")
+            .isActive(true)
+            .roles(List.of(Role.ROLE_EMPLOYEE, Role.ROLE_CUSTOMER))
+            .dayLimit(1000)
+            .transactionLimit(300)
+            .build();
         userService.saveUser(seedEmployeeCustomer);
         return seedEmployeeCustomer;
     }
 
     private User seedCustomer() {
         User seedCustomer = User.builder()
-                .bsn("509547989")
-                .firstName("Customer")
-                .lastName("Seed")
-                .dateOfBirth(LocalDate.of(2000, 10, 10))
-                .phoneNumber("0611111121")
-                .email("customer@seed.com")
-                .password("password")
-                .isActive(true)
-                .roles(List.of(Role.ROLE_CUSTOMER))
-                .dayLimit(300)
-                .transactionLimit(300)
-                .build();
+            .bsn("509547989")
+            .firstName("Customer")
+            .lastName("Seed")
+            .dateOfBirth(LocalDate.of(2000, 10, 10))
+            .phoneNumber("0611111121")
+            .email("customer@seed.com")
+            .password("password")
+            .isActive(true)
+            .roles(List.of(Role.ROLE_CUSTOMER))
+            .dayLimit(300)
+            .transactionLimit(300)
+            .build();
         userService.saveUser(seedCustomer);
         return seedCustomer;
     }
 
     private void seedEmployeeWithoutAccounts() {
         User seedEmployee = User.builder()
-                .bsn("091287662")
-                .firstName("Employee")
-                .lastName("Seed")
-                .dateOfBirth(LocalDate.of(1990, 1, 1))
-                .phoneNumber("0611111111")
-                .email("employee@seed.com")
-                .password("password")
-                .isActive(true)
-                .roles(List.of(Role.ROLE_EMPLOYEE))
-                .build();
+            .bsn("091287662")
+            .firstName("Employee")
+            .lastName("Seed")
+            .dateOfBirth(LocalDate.of(1990, 1, 1))
+            .phoneNumber("0611111111")
+            .email("employee@seed.com")
+            .password("password")
+            .isActive(true)
+            .roles(List.of(Role.ROLE_EMPLOYEE))
+            .build();
         userService.saveUser(seedEmployee);
     }
 } 
