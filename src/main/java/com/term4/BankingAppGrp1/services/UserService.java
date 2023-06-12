@@ -79,15 +79,15 @@ public class UserService {
     }
   }
 
-  public User updateUser(UserDTO userDTO) {
-    User updatingUser = userRepository.findByBsn(userDTO.bsn()).orElseThrow(() ->
-        new EntityNotFoundException(
-            "The updating user with BSN: " + userDTO.bsn() + " was not found"));
+  public User updateUser(long id, UserDTO userDTO) {
+    User updatingUser = userRepository.findById(id)
+            .orElseThrow(
+                    () -> new EntityNotFoundException("The updating user with ID: " + userDTO.id() + " was not found"));
 
     updatingUser.setFirstName(userDTO.firstName());
     updatingUser.setLastName(userDTO.lastName());
-    updatingUser.setDateOfBirth(userDTO.dateOfBirth());
-    updatingUser.setPhoneNumber(userDTO.phoneNumber());
+    validateDateOfBirth(String.valueOf(userDTO.dateOfBirth()));
+    validatePhoneNumber(String.valueOf(userDTO.phoneNumber()));
     updatingUser.setEmail(userDTO.email());
     updatingUser.setActive(userDTO.isActive());
     updatingUser.setDayLimit(userDTO.dayLimit());

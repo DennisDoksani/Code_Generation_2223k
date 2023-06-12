@@ -46,14 +46,9 @@ public class UserController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasRole('EMPLOYEE')")
   public ResponseEntity<String> deleteUser(@PathVariable long id) {
-    List<Account> userAccounts = accountService.getAccountsByUserId(id);
-    if (userAccounts.isEmpty()) {
       userService.deleteUser(id);
+
       return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User deleted successfully!");
-    } else {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .body("User has active bank accounts and cannot be deleted.");
-    }
   }
 
   @GetMapping("/{id}")
@@ -66,9 +61,10 @@ public class UserController {
 
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('EMPLOYEE')")
-  public ResponseEntity<User> updateUser(@RequestBody UserDTO userDTO) {
-    User updatedUser = userService.updateUser(userDTO);
-    return ResponseEntity.ok(updatedUser);
+  public ResponseEntity<Object> updateUser(@RequestBody UserDTO userDTO,
+                                           @PathVariable long id) {
+    return ResponseEntity.ok(parseUserObjectToDTO.apply(
+            userService.updateUser(id, userDTO)));
   }
 
   @GetMapping
