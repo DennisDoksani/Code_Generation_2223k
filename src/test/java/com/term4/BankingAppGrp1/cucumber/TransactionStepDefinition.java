@@ -1,6 +1,7 @@
-package com.term4.BankingAppGrp1.cucumber.transactions;
+package com.term4.BankingAppGrp1.cucumber;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.term4.BankingAppGrp1.cucumber.BaseStepDefinition;
 import io.cucumber.java.en.Given;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;

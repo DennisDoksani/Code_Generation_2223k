@@ -147,7 +147,8 @@ public class Runner implements ApplicationRunner {
     }
 
     private void seedAccounts(User customer, User employeeCustomer) {
-        //Seed some (200) bank current accounts 
+        //Seed some (200) bank current accounts
+        accountService.saveAccount(Account.builder().accountType(AccountType.CURRENT).customer(customer).iban("NL72INHO0579639781").build());
         for (int i = 0; i < 100; i++) {
             accountService.saveAccount(Account.builder().accountType(AccountType.CURRENT).customer(customer).build());
             accountService.saveAccount(Account.builder().accountType(AccountType.CURRENT).customer(employeeCustomer).build());
@@ -155,8 +156,6 @@ public class Runner implements ApplicationRunner {
         //Seed savings accounts 
         accountService.saveAccount(Account.builder().accountType(AccountType.SAVINGS).customer(customer).build());
         accountService.saveAccount(Account.builder().accountType(AccountType.SAVINGS).customer(employeeCustomer).build());
-
-
     }
 
     private User seedEmployeeCustomer() {

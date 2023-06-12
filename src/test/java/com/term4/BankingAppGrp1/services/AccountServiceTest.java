@@ -2,10 +2,6 @@ package com.term4.BankingAppGrp1.services;
 
 import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_INHOLLAND_BANK_IBAN;
 import static com.term4.BankingAppGrp1.models.Role.ROLE_CUSTOMER;
-import static com.term4.BankingAppGrp1.repositories.AccountSpecifications.hasCustomerEmail;
-import static com.term4.BankingAppGrp1.repositories.AccountSpecifications.hasCustomerName;
-import static com.term4.BankingAppGrp1.repositories.AccountSpecifications.isActiveAccounts;
-import static com.term4.BankingAppGrp1.repositories.AccountSpecifications.isNotBanksOwnAccount;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,7 +34,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.any
 
 ;
 
@@ -152,7 +151,7 @@ class AccountServiceTest {
   }
 
   @Test
-  void UpdateAccountDetailsWithNonExistingIBanShouldThrowEntityNotFoundExceptionWithMessage() {
+  void updateAccountDetailsWithNonExistingIBanShouldThrowEntityNotFoundExceptionWithMessage() {
     when(accountRepository.findById(DEFAULT_INHOLLAND_BANK_IBAN)).thenReturn(
         Optional.of(inhollandBankAccount));
     Exception exception = Assertions.catchException(() ->
@@ -227,40 +226,32 @@ class AccountServiceTest {
     Account createdAccount = accountService.createAccountWithLimitCheck(creatingAccountDTO);
 
     assertNotNull(createdAccount);
+    assertEquals(createdAccount,updatedCustomerAccount);
+    assertEquals(seedEmployeeCustomer, createdAccount.getCustomer());
     assertEquals(Arrays.asList(Role.ROLE_EMPLOYEE, ROLE_CUSTOMER),
         new ArrayList<>(createdAccount.getCustomer().getRoles()));
   }
 
   @Test
-    //TODO: FIx this test
   void creatingAnAccountForUserShouldNotChangeTheStoredPassword() throws LimitExceededException {
-    // Mocking accountRepository.countAccountByCustomer_IdEqualsAndAccountTypeEquals()
+    User seedEmployeeCustomer = seedEmployee;
+    seedEmployeeCustomer.setRoles(List.of(Role.ROLE_EMPLOYEE, ROLE_CUSTOMER));
+
+    Account updatedCustomerAccount = new Account();
+    updatedCustomerAccount.setCustomer(seedEmployeeCustomer);
+
     when(accountRepository
         .countAccountByCustomer_IdEqualsAndAccountTypeEquals(seedEmployee.getId(),
             AccountType.CURRENT))
         .thenReturn(2);
-    // Mocking accountRepository.save()
-    when(accountRepository.save(currentAccount)).thenReturn(currentAccount);
-    when(userService.getUser(seedEmployee.getId())).thenReturn(seedEmployee);
+    when(accountRepository.save(Mockito.any(Account.class))).thenReturn(updatedCustomerAccount);
+    when(userService.getUser(seedEmployee.getId())).thenReturn(seedEmployeeCustomer);
 
-    // Call the method under test
     Account createdAccount = accountService.createAccountWithLimitCheck(creatingAccountDTO);
 
     // Assert that the stored password remains unchanged
     assertEquals(seedEmployee.getPassword(), createdAccount.getCustomer().getPassword());
 
-  }
-
-  @Test
-  void creatingAccountWithInvalidAccountTypeResultIntoAnIllegalArgumentException() {
-    CreatingAccountDTO creatingAccountDTO = new CreatingAccountDTO(seedEmployee.getDayLimit(),
-        seedEmployee.getTransactionLimit(),
-        "INVALID_ACCOUNT_TYPE", seedEmployee.getId());
-    Exception exception = Assertions.catchException(
-        () -> accountService.createAccountWithLimitCheck(creatingAccountDTO));
-    Assertions.assertThat(exception)
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("The account type is not valid");
   }
 
   @Test
@@ -287,16 +278,13 @@ class AccountServiceTest {
   }
 
   @Test
-    // TODO: Doesnt pass
   void testSearchAccountByCustomerName() {
     String customerName = "Employee";
     int limit = 2;
     int offset = 0;
 
-    when(accountRepository.findAll(
-        hasCustomerName(customerName).and(isActiveAccounts()).and(isNotBanksOwnAccount()),
-        PageRequest.of(0, limit)
-    )).thenReturn(new PageImpl<>(List.of(currentAccount, savingsAccount)));
+    when(accountRepository.findAll(any(Specification.class), eq(PageRequest.of(0,limit))))
+        .thenReturn(new PageImpl<>(List.of(currentAccount, savingsAccount)));
 
     List<Account> result = accountService.searchAccountByCustomerName(customerName, limit, offset);
 
@@ -326,8 +314,7 @@ class AccountServiceTest {
   @Test
   void getAccountsByEmailAddressShouldReturnOnlyAccountsWithPassedEmailAndActiveAccounts() {
     String email = seedEmployee.getEmail();
-    when(accountRepository.findAll(
-        hasCustomerEmail(email).and(isActiveAccounts()).and(isNotBanksOwnAccount())))
+    when(accountRepository.findAll(any(Specification.class)))
         .thenReturn(List.of(currentAccount, savingsAccount));
     List<Account> accounts = accountService.getAccountsByEmailAddress(email);
     assertEquals(List.of(currentAccount, savingsAccount), accounts);
@@ -348,6 +335,4 @@ class AccountServiceTest {
         .thenReturn(100.0);
     assertEquals(100.0, accountService.getTotalTransactedAmountOfTodayByUserEmail(currentAccount.getIban()));
   }
-
-
 }

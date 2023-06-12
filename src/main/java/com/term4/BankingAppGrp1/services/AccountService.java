@@ -13,11 +13,13 @@ import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
 import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.User;
+import com.term4.BankingAppGrp1.models.customValidators.ValidAccountType;
 import com.term4.BankingAppGrp1.repositories.AccountRepository;
 import com.term4.BankingAppGrp1.requestDTOs.CreatingAccountDTO;
 import com.term4.BankingAppGrp1.requestDTOs.UpdatingAccountDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -74,23 +76,19 @@ public class AccountService {
   @Transactional
   public Account createAccountWithLimitCheck(CreatingAccountDTO creatingAccountDTO)
       throws LimitExceededException {
-    try {
-      if ((AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase())
-          .equals(AccountType.CURRENT))) {
-        checkIfUserHasReachedAccountLimit(AccountType.CURRENT, creatingAccountDTO.accountHolderId(),
-            DEFAULT_CURRENT_ACCOUNT_LIMIT);
-      } else {
-        checkIfUserHasReachedAccountLimit(AccountType.SAVINGS, creatingAccountDTO.accountHolderId(),
-            DEFAULT_SAVINGS_ACCOUNT_LIMIT);
-      }
-      Account account = mapCreatingAccountDTOToAccount(creatingAccountDTO);
-      userService.saveUserWithoutHashingPassword(
-          account.getCustomer()); // will get update with the new Limits for the user
-      account.getCustomer().addRole(Role.ROLE_CUSTOMER); // Add customer role to the user
-      return accountRepository.save(account);
-    } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException("The account type is not valid");
+    if ((AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase())
+        .equals(AccountType.CURRENT))) {
+      checkIfUserHasReachedAccountLimit(AccountType.CURRENT, creatingAccountDTO.accountHolderId(),
+          DEFAULT_CURRENT_ACCOUNT_LIMIT);
+    } else {
+      checkIfUserHasReachedAccountLimit(AccountType.SAVINGS, creatingAccountDTO.accountHolderId(),
+          DEFAULT_SAVINGS_ACCOUNT_LIMIT);
     }
+    Account account = mapCreatingAccountDTOToAccount(creatingAccountDTO);
+    userService.saveUserWithoutHashingPassword(
+        account.getCustomer()); // will get update with the new Limits for the user
+    account.getCustomer().addRole(Role.ROLE_CUSTOMER); // Add customer role to the user
+    return accountRepository.save(account);
   }
 
 
@@ -153,18 +151,14 @@ public class AccountService {
   }
 
   private Account mapCreatingAccountDTOToAccount(CreatingAccountDTO creatingAccountDTO) {
-    try {
-      User accountHolder = userService.getUser(creatingAccountDTO.accountHolderId());
-      accountHolder.setDayLimit(creatingAccountDTO.dayLimit());
-      accountHolder.setTransactionLimit(creatingAccountDTO.transactionLimit());
-      // converting the account type to uppercase to match the enum values
-      return Account.builder()
-          .accountType(AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase()))
-          .customer(accountHolder)
-          .build();
-    } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException("The account type is not valid");
-    }
+    User accountHolder = userService.getUser(creatingAccountDTO.accountHolderId());
+    accountHolder.setDayLimit(creatingAccountDTO.dayLimit());
+    accountHolder.setTransactionLimit(creatingAccountDTO.transactionLimit());
+    // converting the account type to uppercase to match the enum values
+    return Account.builder()
+        .accountType(AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase())) // this already have been filtered from
+        .customer(accountHolder)
+        .build();
   }
 
   // this method will be used to get all the accounts of a customer

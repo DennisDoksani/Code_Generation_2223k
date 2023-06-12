@@ -1,4 +1,4 @@
-package com.term4.BankingAppGrp1.models;
+package com.term4.BankingAppGrp1.models.customValidators;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
