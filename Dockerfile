@@ -4,5 +4,5 @@ RUN apt-get install -y openjdk-17-jdk
 COPY . .
 RUN chmod +x mvnw
 RUN ./mvnw clean install -U -X
-EXPOSE 8080
+EXPOSE 80
 ENTRYPOINT ["./mvnw","spring-boot:run"]
