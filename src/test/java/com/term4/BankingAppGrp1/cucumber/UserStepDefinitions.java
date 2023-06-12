@@ -86,7 +86,7 @@ public class UserStepDefinitions extends BaseStepDefinition {
     @When("I call the registration endpoint")
     public void iCallTheRegistrationEndpoint() {
         response = restTemplate.postForEntity(
-                "/users",
+                USERS_ENDPOINT,
                 registrationDTO,
                 String.class);
     }
