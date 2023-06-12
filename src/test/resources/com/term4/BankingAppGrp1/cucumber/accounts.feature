@@ -119,17 +119,17 @@ Feature: Everything to do with Accounts endpoint
     Then the response status code should be 204
     And  the account status of "NL72INHO0579639781" should be updated
 
-    Scenario: when employee tries to update account active status with invalid Iban
+  Scenario: when employee tries to update account active status with invalid Iban
     Given I log in as an "employee"
     When I send a POST request to "accounts/accountStatus/NL72INHO0579639782" with Valid RequestBody
     Then the response status code should be 404
-      And the response should be error message "The updating account with IBAN: NL72INHO0579639782 was not found"
+    And the response should be error message "The updating account with IBAN: NL72INHO0579639782 was not found"
 
-    Scenario: when customer tries to update account active status with invalid RequestBody
-      Given I log in as an "customer"
-      When I send a POST request to "accounts/accountStatus/NL72INHO0579639782" with Valid RequestBody
-      Then the response status code should be 403
-        And the response should be error message "Access Denied"
+  Scenario: when customer tries to update account active status with invalid RequestBody
+    Given I log in as an "customer"
+    When I send a POST request to "accounts/accountStatus/NL72INHO0579639782" with Valid RequestBody
+    Then the response status code should be 403
+    And the response should be error message "Access Denied"
 
 
 

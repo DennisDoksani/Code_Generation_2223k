@@ -4,15 +4,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class ATMDepositDTOTest extends ValidatingConstraints {
-    @BeforeEach
-    public void setUp() {
-    }
 
-    @Test
-    void accountTo() {
-    }
+  @BeforeEach
+  public void setUp() {
+  }
 
-    @Test
-    void amount() {
-    }
+  @Test
+  void accountTo() {
+  }
+
+  @Test
+  void amount() {
+  }
 }

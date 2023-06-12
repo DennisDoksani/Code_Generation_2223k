@@ -13,13 +13,11 @@ import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
 import com.term4.BankingAppGrp1.models.Role;
 import com.term4.BankingAppGrp1.models.User;
-import com.term4.BankingAppGrp1.models.customValidators.ValidAccountType;
 import com.term4.BankingAppGrp1.repositories.AccountRepository;
 import com.term4.BankingAppGrp1.requestDTOs.CreatingAccountDTO;
 import com.term4.BankingAppGrp1.requestDTOs.UpdatingAccountDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -156,7 +154,8 @@ public class AccountService {
     accountHolder.setTransactionLimit(creatingAccountDTO.transactionLimit());
     // converting the account type to uppercase to match the enum values
     return Account.builder()
-        .accountType(AccountType.valueOf(creatingAccountDTO.accountType().toUpperCase())) // this already have been filtered from
+        .accountType(AccountType.valueOf(
+            creatingAccountDTO.accountType().toUpperCase())) // this already have been filtered from
         .customer(accountHolder)
         .build();
   }

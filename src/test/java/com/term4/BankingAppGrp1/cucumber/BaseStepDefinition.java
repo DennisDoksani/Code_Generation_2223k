@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @CucumberContextConfiguration
 public class BaseStepDefinition {
+
   @Autowired
   protected TestRestTemplate restTemplate;
 
@@ -26,7 +27,7 @@ public class BaseStepDefinition {
   protected HttpHeaders httpHeaders = new HttpHeaders();
   protected final String LOGIN_ENDPOINT = "/auth/login";
   protected final String USERS_ENDPOINT = "/users";
-  protected  final String CUSTOMER_EMAIL_WITHOUT_ACCOUNT="employee@seed.com";
+  protected final String CUSTOMER_EMAIL_WITHOUT_ACCOUNT = "employee@seed.com";
 
   protected final String EMPLOYEE_EMAIL = "employee@seed.com";
   protected final String EMPLOYEE_CUSTOMER_EMAIL = "employeecustomer@seed.com";

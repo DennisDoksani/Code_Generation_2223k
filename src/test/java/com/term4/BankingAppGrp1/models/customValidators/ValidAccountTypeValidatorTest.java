@@ -12,8 +12,9 @@ class ValidAccountTypeValidatorTest {
     ValidAccountTypeValidator validAccountTypeValidator = new ValidAccountTypeValidator();
     assertTrue(validAccountTypeValidator.isValid("Savings", null));
   }
+
   @Test
-  void whenInvalidAccountTypeIPassedWillReturnFalse(){
+  void whenInvalidAccountTypeIPassedWillReturnFalse() {
     ValidAccountTypeValidator validAccountTypeValidator = new ValidAccountTypeValidator();
     assertFalse(validAccountTypeValidator.isValid("Savings1", null));
   }

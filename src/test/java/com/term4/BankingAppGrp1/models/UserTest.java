@@ -6,67 +6,67 @@ import org.junit.jupiter.api.Test;
 
 
 public class UserTest {
-    
-    private User user;
 
-    @BeforeEach
-    void setUp() {
-        user = User.builder().build();
-    }
+  private User user;
 
-    @Test
-    void userBuilderShouldResultInValidUserObject() {
-        Assertions.assertNotNull(user);
-    }
+  @BeforeEach
+  void setUp() {
+    user = User.builder().build();
+  }
 
-    @Test
-    void userBuilderShouldDefaultTo200AsTransactionLimit() {
-        Assertions.assertEquals(200, user.getTransactionLimit());
-    }
+  @Test
+  void userBuilderShouldResultInValidUserObject() {
+    Assertions.assertNotNull(user);
+  }
 
-    @Test
-    void userBuilderShouldDefaultTo500AsDayLimit() {
-        Assertions.assertEquals(500, user.getDayLimit());
-    }
+  @Test
+  void userBuilderShouldDefaultTo200AsTransactionLimit() {
+    Assertions.assertEquals(200, user.getTransactionLimit());
+  }
 
-    @Test
-    void setDayLimitToNegativeNumberShouldResultInDayLimitBeingSetToZero() {
-        user.setDayLimit(-1);
+  @Test
+  void userBuilderShouldDefaultTo500AsDayLimit() {
+    Assertions.assertEquals(500, user.getDayLimit());
+  }
 
-        Assertions.assertEquals(0, user.getDayLimit());
-    }
+  @Test
+  void setDayLimitToNegativeNumberShouldResultInDayLimitBeingSetToZero() {
+    user.setDayLimit(-1);
 
-    @Test
-    void setDayLimitToPositiveNumberShouldResultInDayLimitBeingSetToThatNumber() {
-        user.setDayLimit(1);
+    Assertions.assertEquals(0, user.getDayLimit());
+  }
 
-        Assertions.assertEquals(1, user.getDayLimit());
-    }
+  @Test
+  void setDayLimitToPositiveNumberShouldResultInDayLimitBeingSetToThatNumber() {
+    user.setDayLimit(1);
 
-    @Test
-    void setTransactionLimitToNegativeNumberShouldResultInTransactionLimitBeingSetToZero() {
-        user.setTransactionLimit(-1);
+    Assertions.assertEquals(1, user.getDayLimit());
+  }
 
-        Assertions.assertEquals(0, user.getTransactionLimit());
-    }
+  @Test
+  void setTransactionLimitToNegativeNumberShouldResultInTransactionLimitBeingSetToZero() {
+    user.setTransactionLimit(-1);
 
-    @Test
-    void setTransactionLimitToPositiveNumberShouldResultInTransactionLimitBeingSetToThatNumber() {
-        user.setTransactionLimit(1);
+    Assertions.assertEquals(0, user.getTransactionLimit());
+  }
 
-        Assertions.assertEquals(1, user.getTransactionLimit());
-    }
+  @Test
+  void setTransactionLimitToPositiveNumberShouldResultInTransactionLimitBeingSetToThatNumber() {
+    user.setTransactionLimit(1);
 
-    @Test
-    void getFullNameShouldReturnFirstNameAndLastName() {
-        user.setFirstName("John");
-        user.setLastName("Doe");
+    Assertions.assertEquals(1, user.getTransactionLimit());
+  }
 
-        Assertions.assertEquals("John Doe", user.getFullName());
-    }
+  @Test
+  void getFullNameShouldReturnFirstNameAndLastName() {
+    user.setFirstName("John");
+    user.setLastName("Doe");
 
-    @Test
-    void getFullNameWithNullsShouldNotThrowException() {
-        Assertions.assertDoesNotThrow(() -> user.getFullName());
-    }
+    Assertions.assertEquals("John Doe", user.getFullName());
+  }
+
+  @Test
+  void getFullNameWithNullsShouldNotThrowException() {
+    Assertions.assertDoesNotThrow(() -> user.getFullName());
+  }
 }

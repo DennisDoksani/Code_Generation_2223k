@@ -3,22 +3,25 @@ package com.term4.BankingAppGrp1.models;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TransactionTest {
-    Transaction transaction = new Transaction();
+ class TransactionTest {
 
-    @Test
-    void createNewTransactionShouldResultInAValidObject() { Assertions.assertNotNull(transaction); }
+  Transaction transaction = new Transaction();
 
-    @Test
-    void setAmountToZeroOrNegativeShouldResultInIllegalArgumentException() {
-        Exception exception =Assertions.assertThrows(IllegalArgumentException.class,
-                () -> transaction.setAmount(0.0));
+  @Test
+  void createNewTransactionShouldResultInAValidObject() {
+    Assertions.assertNotNull(transaction);
+  }
 
-        Assertions.assertEquals("Amount can not be zero or under", exception.getMessage());
+  @Test
+  void setAmountToZeroOrNegativeShouldResultInIllegalArgumentException() {
+    Exception exception = Assertions.assertThrows(IllegalArgumentException.class,
+        () -> transaction.setAmount(0.0));
 
-        Exception exception2 =Assertions.assertThrows(IllegalArgumentException.class,
-                () -> transaction.setAmount(-1));
+    Assertions.assertEquals("Amount can not be zero or under", exception.getMessage());
 
-        Assertions.assertEquals("Amount can not be zero or under", exception2.getMessage());
-    }
+    Exception exception2 = Assertions.assertThrows(IllegalArgumentException.class,
+        () -> transaction.setAmount(-1));
+
+    Assertions.assertEquals("Amount can not be zero or under", exception2.getMessage());
+  }
 }
