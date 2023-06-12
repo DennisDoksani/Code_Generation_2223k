@@ -26,6 +26,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -38,6 +39,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,6 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(TransactionController.class)
 @Import(ApiTestConfiguration.class)
+@EnableMethodSecurity
 public class TransactionControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -53,7 +56,9 @@ public class TransactionControllerTest {
     private TransactionResponseDTO responseDTO;
     private Account testAccount1;
     private Account testAccount2;
-    private User testUser;
+    private Account testAccount3;
+    private User testUser1;
+    private User testUser2;
 
     @MockBean
     private TransactionService transactionService;
@@ -68,7 +73,7 @@ public class TransactionControllerTest {
 
     @BeforeEach
     void Init() {
-        testUser = User.builder()
+        testUser1 = User.builder()
         .bsn("582022290")
         .firstName("Ruubyo")
         .lastName("Gaming")
@@ -82,20 +87,35 @@ public class TransactionControllerTest {
         .roles(List.of(Role.ROLE_EMPLOYEE))
         .build();
 
-        testAccount1 = new Account("NL01INHO0000000003", 100, LocalDate.now(), 0, true, AccountType.SAVINGS, testUser);
-        testAccount2 = new Account("NL01INHO0000000002", 100, LocalDate.now(), 0, true, AccountType.CURRENT, testUser);
+        testUser2 = User.builder()
+                .bsn("582022291")
+                .firstName("Not")
+                .lastName("Ruubyo")
+                .dateOfBirth(LocalDate.of(2003, 10, 1))
+                .phoneNumber("0611111111")
+                .email("not@gaming.com")
+                .password("secretword")
+                .isActive(true)
+                .dayLimit(300)
+                .transactionLimit(300)
+                .roles(List.of(Role.ROLE_CUSTOMER))
+                .build();
+
+        testAccount1 = new Account("NL01INHO0000000003", 101, LocalDate.now(), 0, true, AccountType.SAVINGS, testUser1);
+        testAccount2 = new Account("NL01INHO0000000002", 101, LocalDate.now(), 0, true, AccountType.CURRENT, testUser1);
+        testAccount3 = new Account("NL01INHO0000000004", 101, LocalDate.now(), 0, true, AccountType.CURRENT, testUser2);
 
         testTransaction1 = new Transaction(10.0, testAccount1, testAccount2,
-                LocalDate.now(), LocalTime.now(), testUser);
+                LocalDate.now(), LocalTime.now(), testUser1);
 
         responseDTO = new TransactionResponseDTO(
                 testTransaction1.getTransactionID(),
                 testTransaction1.getAmount(),
-                new TransactionAccountDTO(testAccount2.getIban(), testAccount2.getAccountType(), testUser.getFullName()),
-                new TransactionAccountDTO(testAccount1.getIban(), testAccount1.getAccountType(), testUser.getFullName()),
+                new TransactionAccountDTO(testAccount2.getIban(), testAccount2.getAccountType(), testUser1.getFullName()),
+                new TransactionAccountDTO(testAccount1.getIban(), testAccount1.getAccountType(), testUser1.getFullName()),
                 testTransaction1.getDate(),
                 testTransaction1.getTimestamp(),
-                testUser.getFullName());
+                testUser1.getFullName());
 
     }
 
@@ -113,12 +133,12 @@ public class TransactionControllerTest {
     }
 
     @Test
-    @WithMockUser()
+    @WithMockUser(username = "not@gaming.com", password = "secretword", roles = "CUSTOMER")
     void tryingToMakeATransactionWhenTheDayLimitHasBeenReachedShouldResultInIllegalArgumentException() throws Exception {
-        when(transactionService.getSumOfMoneyTransferred(testUser.getEmail(), LocalDate.now()))
-                .thenReturn(100.0);
+        when(transactionService.getSumOfMoneyTransferred(testUser2.getEmail(), LocalDate.now()))
+                .thenReturn(299.0);
 
-        TransactionDTO dto = new TransactionDTO(100.0, testAccount1.getIban(), testAccount2.getIban());
+        TransactionDTO dto = new TransactionDTO(10.0, testAccount2.getIban(), testAccount3.getIban());
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
@@ -128,6 +148,7 @@ public class TransactionControllerTest {
                 MockMvcRequestBuilders.post("/transactions")
                         .contentType(APPLICATION_JSON_UTF8)
                         .content(requestJson)
-        ) .andExpect(status().isForbidden());
+                        .with(csrf())
+        ) .andExpect(status().isBadRequest());
     }
 }
