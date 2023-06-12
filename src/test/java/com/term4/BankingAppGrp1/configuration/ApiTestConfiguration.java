@@ -7,6 +7,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 @TestConfiguration
 public class ApiTestConfiguration {
 
-    @MockBean
-    private JwtTokenProvider jwtTokenProvider;
+  @MockBean
+  private JwtTokenProvider jwtTokenProvider;
 }

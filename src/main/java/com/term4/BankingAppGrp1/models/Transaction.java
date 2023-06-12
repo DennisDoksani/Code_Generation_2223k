@@ -1,48 +1,53 @@
 package com.term4.BankingAppGrp1.models;
 
-import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @NoArgsConstructor
 public class Transaction {
 
-    @GeneratedValue
-    @Id
-    private long transactionID;
+  @GeneratedValue
+  @Id
+  private long transactionID;
 
-    private Double amount;
+  private Double amount;
 
-    @ManyToOne
-    private Account accountTo;
-    @ManyToOne
-    private Account accountFrom;
+  @ManyToOne
+  private Account accountTo;
+  @ManyToOne
+  private Account accountFrom;
 
-    private LocalDate date;
+  private LocalDate date;
 
-    private LocalTime timestamp;
+  private LocalTime timestamp;
 
-    @OneToOne
-    private User userPerforming;
+  @OneToOne
+  private User userPerforming;
 
-    public Transaction(Double amount, Account accountTo, Account accountFrom, LocalDate localDate, LocalTime localTime, User userPerforming) {
-        this.amount = amount;
-        this.accountTo = accountTo;
-        this.accountFrom = accountFrom;
-        this.date = localDate;
-        this.timestamp = localTime;
-        this.userPerforming = userPerforming;
-    }
+  public Transaction(Double amount, Account accountTo, Account accountFrom, LocalDate localDate,
+      LocalTime localTime, User userPerforming) {
+    this.amount = amount;
+    this.accountTo = accountTo;
+    this.accountFrom = accountFrom;
+    this.date = localDate;
+    this.timestamp = localTime;
+    this.userPerforming = userPerforming;
+  }
 
-    public void setAmount(double amount) {
-        if(amount <= 0)
-            throw new IllegalArgumentException("Amount can not be zero or under");
+  public void setAmount(double amount) {
+      if (amount <= 0) {
+          throw new IllegalArgumentException("Amount can not be zero or under");
+      }
 
-        this.amount = amount;
-    }
+    this.amount = amount;
+  }
 }

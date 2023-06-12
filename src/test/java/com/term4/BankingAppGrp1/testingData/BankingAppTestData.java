@@ -77,7 +77,8 @@ public abstract class BankingAppTestData {
     accountHolderDTO = new AccountHolderDTO(employeeUser.getId(), employeeUser.getDayLimit(),
         employeeUser.getTransactionLimit(),
         employeeUser.getFirstName(), employeeUser.getLastName());
-    customerAccountHolderDTO = new AccountHolderDTO(customerUser.getId(),employeeUser.getDayLimit(),
+    customerAccountHolderDTO = new AccountHolderDTO(customerUser.getId(),
+        employeeUser.getDayLimit(),
         employeeUser.getTransactionLimit(),
         customerUser.getFirstName(), customerUser.getLastName());
     accountDTO = new AccountDTO(employeeAccount.getIban(), employeeAccount.getBalance(),

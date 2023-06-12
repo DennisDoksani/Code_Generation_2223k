@@ -101,11 +101,38 @@ Feature: Everything to do with Accounts endpoint
     Then the response status code should be 403
     And the response should be error message "Access Denied"
 
-    Scenario: when employee tries to post new account with valid Account Creating DTO
+  Scenario: when employee tries to post new account with valid Account Creating DTO but limit reached
     Given I log in as an "employee"
     When I send a POST request to "accounts" with a valid CreatingAccountDTO
+    Then the response status code should be 409
+    And the response should be error message "The user has reached the maximum limit for SAVINGS accounts."
+
+  Scenario: when employee tries to post new account with valid Account Creating DTO and limit is ok
+    Given I log in as an "customerWithoutAc"
+    When I send a POST request to "accounts" with a valid CreatingAccountDTO
     Then the response status code should be 201
-      And the response should have 1 object
+    And the response should be an Account object with Iban
+
+  Scenario: when employee tries to update account active status with valid Iban
+    Given I log in as an "employee"
+    When I send a POST request to "accounts/accountStatus/NL72INHO0579639781" with Valid RequestBody
+    Then the response status code should be 204
+    And  the account status of "NL72INHO0579639781" should be updated
+
+  Scenario: when employee tries to update account active status with invalid Iban
+    Given I log in as an "employee"
+    When I send a POST request to "accounts/accountStatus/NL72INHO0579639782" with Valid RequestBody
+    Then the response status code should be 404
+    And the response should be error message "The updating account with IBAN: NL72INHO0579639782 was not found"
+
+  Scenario: when customer tries to update account active status with invalid RequestBody
+    Given I log in as an "customer"
+    When I send a POST request to "accounts/accountStatus/NL72INHO0579639782" with Valid RequestBody
+    Then the response status code should be 403
+    And the response should be error message "Access Denied"
+
+
+
 
 
 

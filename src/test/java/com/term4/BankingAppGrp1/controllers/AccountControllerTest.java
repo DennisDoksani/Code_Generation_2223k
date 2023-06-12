@@ -74,8 +74,8 @@ class AccountControllerTest extends BankingAppTestData {
             MockMvcRequestBuilders.get("/accounts")
                 .param("limit", "1")
                 .param("offset", "0"))
-            .andDo(print())
-            .andExpect(status().isUnauthorized());
+        .andDo(print())
+        .andExpect(status().isUnauthorized());
 
   }
 
@@ -399,10 +399,10 @@ class AccountControllerTest extends BankingAppTestData {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.size()").value(2))
         .andExpectAll(
-                jsonPath("$[0].iban").value(employeeAccount.getIban()),
-                jsonPath("$[0].accountHolderName").value(employeeAccount.getCustomer().getFullName()),
-                jsonPath("$[1].iban").value(customerAccount.getIban()),
-                jsonPath("$[1].accountHolderName").value(customerAccount.getCustomer().getFullName())
+            jsonPath("$[0].iban").value(employeeAccount.getIban()),
+            jsonPath("$[0].accountHolderName").value(employeeAccount.getCustomer().getFullName()),
+            jsonPath("$[1].iban").value(customerAccount.getIban()),
+            jsonPath("$[1].accountHolderName").value(customerAccount.getCustomer().getFullName())
         );
   }
 
@@ -727,6 +727,7 @@ class AccountControllerTest extends BankingAppTestData {
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value("The day limit cannot be Negative"));
   }
+
   @Test
   @WithMockUser(roles = {"EMPLOYEE"}, username = EMPLOYEE_EMAIL)
   void whenEmployeesTriesToPUTAccountWithNegativeTransactionLimitReturnBadRequest()
@@ -744,6 +745,7 @@ class AccountControllerTest extends BankingAppTestData {
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value("The transaction limit cannot be Negative"));
   }
+
   @Test
   @WithMockUser(roles = {"EMPLOYEE"}, username = EMPLOYEE_EMAIL)
   void whenEmployeesTriesToPUTAccountWithoutFirstNameReturnBadRequest()
@@ -761,6 +763,7 @@ class AccountControllerTest extends BankingAppTestData {
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value("First Name cannot be left empty"));
   }
+
   @Test
   @WithMockUser(roles = {"EMPLOYEE"}, username = EMPLOYEE_EMAIL)
   void whenEmployeesTriesToPUTAccountWithoutLastNameReturnBadRequest()
@@ -778,20 +781,24 @@ class AccountControllerTest extends BankingAppTestData {
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value("Last Name cannot be left empty"));
   }
+
   @Test
   @WithMockUser(roles = {"EMPLOYEE"}, username = EMPLOYEE_EMAIL)
   void whenEmployeeTriesToPOSTAccountForUserIfLimitExceedReturnsConflict() throws Exception {
-    when(accountService.createAccountWithLimitCheck( new CreatingAccountDTO(50.0,40.00, "Savings", 1L))).
-        thenThrow(new LimitExceededException("The user has reached the maximum number of accounts"));
+    when(accountService.createAccountWithLimitCheck(
+        new CreatingAccountDTO(50.0, 40.00, "Savings", 1L))).
+        thenThrow(
+            new LimitExceededException("The user has reached the maximum number of accounts"));
     this.mockMvc.perform(
             MockMvcRequestBuilders.post("/accounts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(
-                    new CreatingAccountDTO(50.0,40.00, "Savings", 1L)))
+                    new CreatingAccountDTO(50.0, 40.00, "Savings", 1L)))
                 .with(csrf()))
         .andDo(print())
         .andExpect(status().isConflict())
-        .andExpect(jsonPath("$.message").value("The user has reached the maximum number of accounts"));
+        .andExpect(
+            jsonPath("$.message").value("The user has reached the maximum number of accounts"));
   }
 
 

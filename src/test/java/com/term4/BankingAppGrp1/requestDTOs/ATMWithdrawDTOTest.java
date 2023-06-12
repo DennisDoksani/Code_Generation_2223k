@@ -6,32 +6,33 @@ import org.junit.jupiter.api.Test;
 
 public class ATMWithdrawDTOTest extends ValidatingConstraints {
 
-    private ATMWithdrawDTO validATMWithdrawDTO;
-    @BeforeEach
-    public void setUp() {
-        validATMWithdrawDTO = new ATMWithdrawDTO(
-                "NL61INHO0000000001",
-                100.00
-                );
-    }
+  private ATMWithdrawDTO validATMWithdrawDTO;
 
-    @Test
-    void creatingATMWithdrawDTOWithAllValidFieldsShouldResultInAValidObject() {
-        Assertions.assertNotNull(validATMWithdrawDTO);
-    }
+  @BeforeEach
+  public void setUp() {
+    validATMWithdrawDTO = new ATMWithdrawDTO(
+        "NL61INHO0000000001",
+        100.00
+    );
+  }
 
-    //TODO: negative amount
+  @Test
+  void creatingATMWithdrawDTOWithAllValidFieldsShouldResultInAValidObject() {
+    Assertions.assertNotNull(validATMWithdrawDTO);
+  }
 
-    //TODO: nulls
+  //TODO: negative amount
 
-    //TODO: no pattern
+  //TODO: nulls
 
-    @Test
-    void accountFrom() {
+  //TODO: no pattern
 
-    }
+  @Test
+  void accountFrom() {
 
-    @Test
-    void amount() {
-    }
+  }
+
+  @Test
+  void amount() {
+  }
 }

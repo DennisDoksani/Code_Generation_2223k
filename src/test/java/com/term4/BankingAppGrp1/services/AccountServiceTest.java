@@ -5,6 +5,8 @@ import static com.term4.BankingAppGrp1.models.Role.ROLE_CUSTOMER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -36,10 +38,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.any
-
-;
 
 @ExtendWith(SpringExtension.class)
 @Import(ApiTestConfiguration.class)
@@ -226,7 +224,7 @@ class AccountServiceTest {
     Account createdAccount = accountService.createAccountWithLimitCheck(creatingAccountDTO);
 
     assertNotNull(createdAccount);
-    assertEquals(createdAccount,updatedCustomerAccount);
+    assertEquals(createdAccount, updatedCustomerAccount);
     assertEquals(seedEmployeeCustomer, createdAccount.getCustomer());
     assertEquals(Arrays.asList(Role.ROLE_EMPLOYEE, ROLE_CUSTOMER),
         new ArrayList<>(createdAccount.getCustomer().getRoles()));
@@ -283,7 +281,7 @@ class AccountServiceTest {
     int limit = 2;
     int offset = 0;
 
-    when(accountRepository.findAll(any(Specification.class), eq(PageRequest.of(0,limit))))
+    when(accountRepository.findAll(any(Specification.class), eq(PageRequest.of(0, limit))))
         .thenReturn(new PageImpl<>(List.of(currentAccount, savingsAccount)));
 
     List<Account> result = accountService.searchAccountByCustomerName(customerName, limit, offset);
@@ -320,6 +318,7 @@ class AccountServiceTest {
     assertEquals(List.of(currentAccount, savingsAccount), accounts);
     assertEquals(2, accounts.size());
   }
+
   @Test
   void isAccountOwnedBYCustomerShouldReturnTrueWhenAccountIsOwnedByCustomerAndShouldBeCaseInSensitive() {
     when(accountRepository.existsAccountByIbanEqualsAndCustomerEmailEqualsIgnoreCase(
@@ -329,10 +328,12 @@ class AccountServiceTest {
         seedEmployee.getEmail().toLowerCase());
     assertTrue(result);
   }
+
   @Test
   void getTotalTransactedAmountOfTodayShouldReturnTotalTransactedAmountOfToday() {
     when(transactionService.getSumOfMoneyTransferred(currentAccount.getIban(), LocalDate.now()))
         .thenReturn(100.0);
-    assertEquals(100.0, accountService.getTotalTransactedAmountOfTodayByUserEmail(currentAccount.getIban()));
+    assertEquals(100.0,
+        accountService.getTotalTransactedAmountOfTodayByUserEmail(currentAccount.getIban()));
   }
 }
