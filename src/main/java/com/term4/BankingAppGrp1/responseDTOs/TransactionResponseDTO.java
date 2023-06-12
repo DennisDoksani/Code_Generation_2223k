@@ -1,6 +1,5 @@
 package com.term4.BankingAppGrp1.responseDTOs;
 
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 
