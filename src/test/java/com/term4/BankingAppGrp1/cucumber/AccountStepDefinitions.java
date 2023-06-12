@@ -141,7 +141,7 @@ public class AccountStepDefinitions extends BaseStepDefinition {
 
   @When("I send a POST request to {string} with a valid CreatingAccountDTO")
   public void iSendAPOSTRequestToWithAValidCreatingAccountDTO(String endpoint) {
-    validCreatingAccountDTO = new CreatingAccountDTO(90.00, 80.00, "Savings", 3L);
+    validCreatingAccountDTO = new CreatingAccountDTO(90.00, 80.00, "Savings", 1L);
     sendPostRequest(httpHeaders, endpoint, validCreatingAccountDTO);
   }
 
@@ -162,5 +162,11 @@ public class AccountStepDefinitions extends BaseStepDefinition {
   public void iSendAPOSTRequestToWithValidRequestBody(String endpoint) {
     AccountStatusDTO accountStatusDTO = new AccountStatusDTO(false);
     sendPostRequest(httpHeaders, endpoint, accountStatusDTO);
+  }
+
+  @When("I send a POST Request to {string} with Valid CreatingAccountDTO")
+  public void iSendAPOSTRequestToWithValidCreatingAccountDTO(String endpoint) {
+    validCreatingAccountDTO = new CreatingAccountDTO(90.00, 80.00, "Savings", 3L);
+    sendPostRequest(httpHeaders, endpoint, validCreatingAccountDTO);
   }
 }
