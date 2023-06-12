@@ -51,7 +51,7 @@ public class AuthStepDefinitions extends BaseStepDefinition {
     @When("I call the login endpoint")
     public void iCallTheLoginEndpoint() {
         response = restTemplate.postForEntity(
-                "/auth/login",
+                LOGIN_ENDPOINT,
                 loginDto,
                 String.class);
     }
