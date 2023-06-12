@@ -1,9 +1,7 @@
 package com.term4.BankingAppGrp1.cucumber;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.term4.BankingAppGrp1.cucumber.BaseStepDefinition;
 import com.term4.BankingAppGrp1.requestDTOs.LoginDTO;
-import com.term4.BankingAppGrp1.responseDTOs.AccountDTO;
 import com.term4.BankingAppGrp1.responseDTOs.ErrorMessageDTO;
 import com.term4.BankingAppGrp1.responseDTOs.LoginResponseDTO;
 import io.cucumber.java.en.And;
@@ -11,12 +9,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.junit.jupiter.api.Assertions;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-
-import java.util.List;
-
-import static org.hibernate.query.results.Builders.entity;
 
 public class AuthStepDefinitions extends BaseStepDefinition {
 
@@ -81,9 +73,4 @@ public class AuthStepDefinitions extends BaseStepDefinition {
         ErrorMessageDTO errorMessageDTO = objectMapper.readValue(response.getBody(), ErrorMessageDTO.class);
         Assertions.assertEquals(errorMessage, errorMessageDTO.message());
     }
-
-
-
-
-
 }

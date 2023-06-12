@@ -1,4 +1,4 @@
-Feature: Everything to do with login
+Feature: Everything to do with login/auth
 
   Scenario: Login with valid credentials
     Given I have a valid login object with valid email and valid password
@@ -12,14 +12,14 @@ Feature: Everything to do with login
     Then I get http status 401
     And I receive an error message: "Invalid username/password"
 
-  Scenario: Login with valid email but invalid password
-    Given I have a valid email but invalid password
+  Scenario: Login with invalid email and valid password
+    Given I have an invalid email and valid password
     When I call the login endpoint
     Then I get http status 401
     And I receive an error message: "Invalid username/password"
 
-  Scenario: Login with invalid email and valid password
-    Given I have an invalid email and valid password
+  Scenario: Login with valid email but invalid password
+    Given I have a valid email but invalid password
     When I call the login endpoint
     Then I get http status 401
     And I receive an error message: "Invalid username/password"
@@ -41,4 +41,3 @@ Feature: Everything to do with login
     When I call the login endpoint
     Then I get http status 400
     And I receive an error message: "Email is invalid."
-
