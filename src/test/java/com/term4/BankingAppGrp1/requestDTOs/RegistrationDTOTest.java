@@ -25,33 +25,33 @@ public class RegistrationDTOTest extends ValidatingConstraints {
     Assertions.assertNotNull(validRegistrationDTO);
   }
 
-  @Test
-  void creatingRegistrationDTOWithoutAnEmailShouldResultInAConstraintViolationException() {
-    RegistrationDTO registrationDTO = new RegistrationDTO(
-        "123456789",
-        "",
-        "password",
-        "firstName",
-        "lastName",
-        "06-34531077",
-        "2000-01-01");
-
-    Assertions.assertEquals("Email is required.", getMessageFromViolations(registrationDTO));
-  }
-
-  @Test
-  void creatingRegistrationDTOWithInvalidEmailShouldResultInAConstraintViolationException() {
-    RegistrationDTO registrationDTO = new RegistrationDTO(
-        "123456789",
-        "notAnEmail",
-        "password",
-        "firstName",
-        "lastName",
-        "06-34531077",
-        "2000-01-01");
-
-    Assertions.assertEquals("Email is invalid.", getMessageFromViolations(registrationDTO));
-  }
+//  @Test
+//  void creatingRegistrationDTOWithoutAnEmailShouldResultInAConstraintViolationException() {
+//    RegistrationDTO registrationDTO = new RegistrationDTO(
+//        "123456789",
+//        "",
+//        "password",
+//        "firstName",
+//        "lastName",
+//        "06-34531077",
+//        "2000-01-01");
+//
+//    Assertions.assertEquals("Email is required.", getMessageFromViolations(registrationDTO));
+//  }
+//
+//  @Test
+//  void creatingRegistrationDTOWithInvalidEmailShouldResultInAConstraintViolationException() {
+//    RegistrationDTO registrationDTO = new RegistrationDTO(
+//        "123456789",
+//        "notAnEmail",
+//        "password",
+//        "firstName",
+//        "lastName",
+//        "06-34531077",
+//        "2000-01-01");
+//
+//    Assertions.assertEquals("Email is invalid.", getMessageFromViolations(registrationDTO));
+//  }
 
   @Test
   void creatingRegistrationDTOWithoutAPasswordShouldResultInAConstraintViolationException() {

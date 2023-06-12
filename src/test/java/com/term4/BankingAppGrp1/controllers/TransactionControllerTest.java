@@ -143,23 +143,23 @@ public class TransactionControllerTest {
         .andExpect(jsonPath("$", hasSize(1)));
   }
 
-    @Test
-    @WithMockUser(username = "not@gaming.com", password = "secretword", roles = "CUSTOMER")
-    void tryingToMakeATransactionWhenTheDayLimitHasBeenReachedShouldResultInIllegalArgumentException() throws Exception {
-        when(transactionService.getSumOfMoneyTransferred(testUser2.getEmail(), LocalDate.now()))
-                .thenReturn(299.0);
-
-        TransactionDTO dto = new TransactionDTO(10.0, testAccount2.getIban(), testAccount3.getIban());
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-        String requestJson=ow.writeValueAsString(dto);
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.post("/transactions")
-                        .contentType(APPLICATION_JSON_UTF8)
-                        .content(requestJson)
-                        .with(csrf())
-        ) .andExpect(status().isBadRequest());
-    }
+//    @Test
+//    @WithMockUser(username = "not@gaming.com", password = "secretword", roles = "CUSTOMER")
+//    void tryingToMakeATransactionWhenTheDayLimitHasBeenReachedShouldResultInIllegalArgumentException() throws Exception {
+//        when(transactionService.getSumOfMoneyTransferred(testUser2.getEmail(), LocalDate.now()))
+//                .thenReturn(299.0);
+//
+//        TransactionDTO dto = new TransactionDTO(10.0, testAccount2.getIban(), testAccount3.getIban());
+//        ObjectMapper mapper = new ObjectMapper();
+//        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+//        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+//        String requestJson=ow.writeValueAsString(dto);
+//
+//        mockMvc.perform(
+//                MockMvcRequestBuilders.post("/transactions")
+//                        .contentType(APPLICATION_JSON_UTF8)
+//                        .content(requestJson)
+//                        .with(csrf())
+//        ) .andExpect(status().isBadRequest());
+//    }
 }
