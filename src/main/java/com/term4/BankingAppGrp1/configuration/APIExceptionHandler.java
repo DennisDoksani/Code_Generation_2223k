@@ -80,4 +80,11 @@ public class APIExceptionHandler {
   public ResponseEntity<Object> handleException(LimitExceededException e) {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO(e.getMessage()));
   }
+
+  @ExceptionHandler(value = {Exception.class})
+  public ResponseEntity<Object> handleException(Exception e) {
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body(new ErrorMessageDTO(e.getMessage()));
+  }
+
 }
