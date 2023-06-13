@@ -1,5 +1,7 @@
 package com.term4.BankingAppGrp1.testingData;
 
+import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_INHOLLAND_BANK_IBAN;
+
 import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
 import com.term4.BankingAppGrp1.models.Role;
@@ -16,6 +18,8 @@ public abstract class BankingAppTestData {
   protected ObjectMapper objectMapper;
   protected Account employeeAccount;
   protected Account customerAccount;
+  protected User inhollandBankUser;
+  protected Account inhollandBankAccount;
   protected final String CUSTOMER_EMAIL = "customer@seed.com";
   protected final String EMPLOYEE_EMAIL = "employee@seed.com";
   protected final String EMPLOYEE_CUSTOMER_EMAIL = "employeeCustomer@seed.com";
@@ -30,6 +34,28 @@ public abstract class BankingAppTestData {
   @BeforeEach
   protected void setupData() {
     objectMapper = new ObjectMapper();
+    inhollandBankUser= User.builder()
+        .bsn("227015277")
+        .firstName("Inholland")
+        .lastName("Bank")
+        .dateOfBirth(LocalDate.now())
+        .phoneNumber("680000000000")
+        .email("inholland@bank.nl")
+        .password("Inholland")
+        .isActive(true)
+        .transactionLimit(9999999999999999L)
+        .dayLimit(9999999999999999L)
+        .roles(List.of(Role.ROLE_EMPLOYEE))
+        .build();
+   inhollandBankAccount= Account.builder()
+        .iban(DEFAULT_INHOLLAND_BANK_IBAN)
+        .balance(9999999999999.0)
+        .creationDate(LocalDate.now())
+        .absoluteLimit(0)
+        .isActive(true)
+        .accountType(AccountType.CURRENT)
+        .customer(inhollandBankUser)
+        .build();
     customerUser = User.builder()
         .id(3L)
         .bsn("091287662")
