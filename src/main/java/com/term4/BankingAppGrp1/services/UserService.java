@@ -13,6 +13,8 @@ import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.function.Function;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,18 @@ public class UserService {
 
   private final int MIN_AGE_IN_YEARS = 18;
   private final String PHONE_NUMBER_REGION = "NL";
+
+  private final Function <RegistrationDTO, User> registrationDTOToUser = registrationDTO -> User.builder()
+      .bsn(registrationDTO.bsn())
+      .email(registrationDTO.email())
+      .password(registrationDTO.password())
+      .firstName(registrationDTO.firstName())
+      .lastName(registrationDTO.lastName())
+      .phoneNumber(registrationDTO.phoneNumber())
+      .dateOfBirth(LocalDate.parse(registrationDTO.dateOfBirth()))
+      .build();
+
+
 
   public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder,
       AccountRepository accountRepository, PhoneNumberUtil phoneNumberUtil) {
@@ -51,15 +65,7 @@ public class UserService {
   public User registerUser(RegistrationDTO registrationDTO) {
 
     validateRegistration(registrationDTO);
-
-    User newUser = User.builder().bsn(registrationDTO.bsn())
-        .firstName(registrationDTO.firstName())
-        .lastName(registrationDTO.lastName())
-        .dateOfBirth(LocalDate.parse(registrationDTO.dateOfBirth()))
-        .phoneNumber(registrationDTO.phoneNumber())
-        .email(registrationDTO.email().toLowerCase())
-        .password(bCryptPasswordEncoder.encode(registrationDTO.password()))
-        .build();
+    User newUser = registrationDTOToUser.apply(registrationDTO);
 
     return userRepository.save(newUser);
   }
@@ -111,7 +117,7 @@ public class UserService {
 
   private void validateRegistration(RegistrationDTO registrationDTO) {
     //Check if email is unique
-      if (userRepository.findByEmail(registrationDTO.email()).isPresent()) {
+      if (userRepository.existsByEmailEqualsIgnoreCase(registrationDTO.email())) {
           throw new EntityExistsException("This e-mail is already in use.");
       }
     //Check if BSN is unique
