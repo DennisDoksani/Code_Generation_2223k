@@ -56,11 +56,6 @@ public class TransactionController {
     this.userService = userService;
   }
 
-//    @GetMapping
-//    public ResponseEntity<Object> getAllTransactions() {
-//        return ResponseEntity.ok().body(transactionService.getAllTransactions());
-//    }
-
   @GetMapping()
   @PreAuthorize("hasAnyRole('CUSTOMER', 'EMPLOYEE')")
   public ResponseEntity<Object> getTransactionsWithFilters(
