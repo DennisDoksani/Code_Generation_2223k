@@ -7,6 +7,9 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import javax.naming.AuthenticationException;
 import javax.naming.LimitExceededException;
+
+import jakarta.validation.ValidationException;
+import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -14,10 +17,12 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
+@Log
 public class APIExceptionHandler {
 
   @ExceptionHandler(value = {AuthenticationException.class})
@@ -81,10 +86,22 @@ public class APIExceptionHandler {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO(e.getMessage()));
   }
 
-  @ExceptionHandler(value = {Exception.class})
-  public ResponseEntity<Object> handleException(Exception e) {
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body(new ErrorMessageDTO(e.getMessage()));
-  }
+  @ExceptionHandler(value = {MissingPathVariableException.class})
+    public ResponseEntity<Object> handleException(MissingPathVariableException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(new ErrorMessageDTO(e.getMessage()));
+    }
 
+  @ExceptionHandler(value = {ValidationException.class})
+    public ResponseEntity<Object> handleException(ValidationException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(new ErrorMessageDTO(e.getMessage()));
+    }
+
+    @ExceptionHandler(value = {Exception.class})
+    public ResponseEntity<Object> handleException(Exception e) {
+      log.severe(e.getMessage());
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(new ErrorMessageDTO("Something went horribly wrong, please give us a good grade. \uD83D\uDE1F"));
+    }
 }
