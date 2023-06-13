@@ -122,7 +122,7 @@ public class TransactionService {
             //Implement some kind of warning for the user
         }
 
-        if (dto.amount() > accountFrom.getCustomer().getTransactionLimit())
+        if ((accountFrom.getAccountType() == AccountType.CURRENT && accountTo.getAccountType() == AccountType.CURRENT) && dto.amount() > accountFrom.getCustomer().getTransactionLimit())
             throw new IllegalArgumentException("The amount you are trying to transfer exceeds the transaction limit");
         
             // Checks first if the accountFrom has transactions made today and then if the amount will exceed the day limit

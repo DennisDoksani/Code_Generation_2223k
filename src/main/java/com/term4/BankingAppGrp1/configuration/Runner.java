@@ -56,7 +56,7 @@ public class Runner implements ApplicationRunner {
                 .email("Ruubyo@isgaming.com")
                 .password("secretword")
                 .isActive(true)
-                .dayLimit(300)
+                .dayLimit(500)
                 .transactionLimit(300)
                 .roles(List.of(Role.ROLE_EMPLOYEE))
                 .build();
