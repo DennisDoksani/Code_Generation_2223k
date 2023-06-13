@@ -1,55 +1,38 @@
 package com.term4.BankingAppGrp1.requestDTOs;
 
-import jakarta.validation.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Set;
+public class LoginDTOTest extends ValidatingConstraints {
 
-import static org.junit.jupiter.api.Assertions.*;
+  @Test
+  void creatingLoginDTOWithAnEmailAndPasswordShouldResultInAValidObject() {
+    LoginDTO loginDTO = new LoginDTO("email@email.com", "password");
+    Assertions.assertNotNull(loginDTO);
+  }
 
-public class LoginDTOTest {
-    private Validator validator;
+  @Test
+  void creatingLoginDTOWithoutAnEmailShouldResultInAConstraintViolationException() {
+    LoginDTO loginDTO = new LoginDTO("", "password");
 
-    @BeforeEach
-    public void setUp() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-    }
+    assertEquals("Email is required.", getMessageFromViolations(loginDTO));
+  }
 
-    @Test
-    void creatingLoginDTOWithAnEmailAndPasswordShouldResultInAValidObject() {
-        LoginDTO loginDTO = new LoginDTO("email@email.com", "password");
-        Assertions.assertNotNull(loginDTO);
-    }
+  @Test
+  void creatingLoginDTOWithoutAValidEmailStringShouldResultInAConstraintViolationException() {
+    LoginDTO loginDTO = new LoginDTO("notAnEmail", "password");
 
-    @Test
-    void creatingLoginDTOWithoutAnEmailShouldResultInAConstraintViolationException() {
-        LoginDTO loginDTO = new LoginDTO("", "password");
+    assertEquals("Email is invalid.", getMessageFromViolations(loginDTO));
+  }
 
-        Set<ConstraintViolation<LoginDTO>> violations = this.validator.validate(loginDTO);
-        String message = violations.iterator().next().getMessage();
-        assertEquals("Email is required.", message);
-    }
+  @Test
+  void creatingLoginDTOWithoutAPasswordShouldResultInAConstraintViolationException() {
+    LoginDTO loginDTO = new LoginDTO("email@email.com", "");
 
-    @Test
-    void creatingLoginDTOWithoutAValidEmailStringShouldResultInAConstraintViolationException() {
-        LoginDTO loginDTO = new LoginDTO("notAnEmail", "password");
-
-        Set<ConstraintViolation<LoginDTO>> violations = this.validator.validate(loginDTO);
-        String message = violations.iterator().next().getMessage();
-        assertEquals("Email is invalid.", message);
-    }
-
-    @Test
-    void creatingLoginDTOWithoutAPasswordShouldResultInAConstraintViolationException() {
-        LoginDTO loginDTO = new LoginDTO("email@email.com", "");
-
-        Set<ConstraintViolation<LoginDTO>> violations = this.validator.validate(loginDTO);
-        String message = violations.iterator().next().getMessage();
-        assertEquals("Password is required.", message);
-    }
+    assertEquals("Password is required.", getMessageFromViolations(loginDTO));
+  }
 }
 
 

@@ -1,5 +1,7 @@
 package com.term4.BankingAppGrp1.services;
 
+import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_INHOLLAND_BANK_IBAN;
+
 import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
 import com.term4.BankingAppGrp1.models.Transaction;
@@ -14,25 +16,24 @@ import com.term4.BankingAppGrp1.responseDTOs.TransactionAccountDTO;
 import com.term4.BankingAppGrp1.responseDTOs.TransactionResponseDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.term4.BankingAppGrp1.models.ConstantsContainer.DEFAULT_INHOLLAND_BANK_IBAN;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 
 @Service
 public class TransactionService {
-    private final TransactionRepository transactionRepository;
-    private final AccountRepository accountRepository;
-    private final UserRepository userRepository;
-    private final UserService userService;
 
-    public TransactionService(TransactionRepository transactionRepository, AccountRepository accountRepository, UserRepository userRepository, UserService userService) {
+  private final TransactionRepository transactionRepository;
+  private final AccountRepository accountRepository;
+  private final UserRepository userRepository;
+  private final UserService userService;
+
+    public TransactionService(TransactionRepository transactionRepository,
+        AccountRepository accountRepository, UserRepository userRepository, UserService userService) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;

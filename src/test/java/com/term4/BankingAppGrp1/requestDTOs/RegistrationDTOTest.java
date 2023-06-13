@@ -1,38 +1,62 @@
 package com.term4.BankingAppGrp1.requestDTOs;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
-
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Set;
+public class RegistrationDTOTest extends ValidatingConstraints {
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+  private RegistrationDTO validRegistrationDTO;
 
-public class RegistrationDTOTest {
-    private Validator validator;
+  @BeforeEach
+  public void setUp() {
+    super.setUp();
 
-    @BeforeEach
-    public void setUp() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-    }
+    validRegistrationDTO = new RegistrationDTO(
+        "123456789",
+        "email@email.com",
+        "password",
+        "firstName",
+        "lastName",
+        "06-34531077",
+        "2000-01-01");
+  }
 
-    @Test
-    void creatingRegistrationDTOWithoutAnEmailShouldResultInAConstraintViolationException() {
-        RegistrationDTO registrationDTO = new RegistrationDTO("123456789",
-                "",
-                "password",
-                "firstName",
-                "lastName",
-                "06-34531077",
-                "2000-01-01");
+  @Test
+  void creatingRegistrationDTOWithAllValidFieldsShouldResultInAValidObject() {
+    Assertions.assertNotNull(validRegistrationDTO);
+  }
 
-        Set<ConstraintViolation<RegistrationDTO>> violations = this.validator.validate(registrationDTO);
-        String message = violations.iterator().next().getMessage();
-        assertEquals("Email is required.", message);
-    }
+  @Test
+  void creatingRegistrationDTOWithoutAnEmailShouldResultInAConstraintViolationException() {
+    RegistrationDTO registrationDTO = new RegistrationDTO(
+        "123456789",
+        "",
+        "password",
+        "firstName",
+        "lastName",
+        "06-34531077",
+        "2000-01-01");
+
+    Assertions.assertEquals("Email is required.", getMessageFromViolations(registrationDTO));
+  }
+
+  @Test
+  void creatingRegistrationDTOWithInvalidEmailShouldResultInAConstraintViolationException() {
+    RegistrationDTO registrationDTO = new RegistrationDTO(
+        "123456789",
+        "notAnEmail",
+        "password",
+        "firstName",
+        "lastName",
+        "06-34531077",
+        "2000-01-01");
+
+    Assertions.assertEquals("Email is invalid.", getMessageFromViolations(registrationDTO));
+  }
+
+  @Test
+  void creatingRegistrationDTOWithoutAPasswordShouldResultInAConstraintViolationException() {
+
+  }
 }

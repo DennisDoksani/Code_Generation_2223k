@@ -1,5 +1,12 @@
 package com.term4.BankingAppGrp1.controllers;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.term4.BankingAppGrp1.configuration.ApiTestConfiguration;
 import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
@@ -11,7 +18,6 @@ import com.term4.BankingAppGrp1.responseDTOs.TransactionAccountDTO;
 import com.term4.BankingAppGrp1.responseDTOs.TransactionResponseDTO;
 import com.term4.BankingAppGrp1.services.AccountService;
 import com.term4.BankingAppGrp1.services.TransactionService;
-
 import com.term4.BankingAppGrp1.services.UserService;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectWriter;
@@ -51,8 +57,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(ApiTestConfiguration.class)
 @EnableMethodSecurity
 public class TransactionControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
+
+  @Autowired
+  private MockMvc mockMvc;
+    
+    
 
     private Transaction testTransaction1;
     private Transaction testTransaction2;
@@ -64,16 +73,14 @@ public class TransactionControllerTest {
     private User testUser1;
     private User testUser2;
 
-    @MockBean
-    private TransactionService transactionService;
+  @MockBean
+  private TransactionService transactionService;
 
-    @MockBean
-    private AccountService accountService;
+  @MockBean
+  private AccountService accountService;
 
-    @MockBean
-    private UserService userService;
-
-    public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+  @MockBean
+  private UserService userService;
 
     @BeforeEach
     void Init() {
