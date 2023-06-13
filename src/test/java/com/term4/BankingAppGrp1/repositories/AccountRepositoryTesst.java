@@ -12,11 +12,8 @@ import com.term4.BankingAppGrp1.generators.IBANGenerator;
 import com.term4.BankingAppGrp1.models.Account;
 import com.term4.BankingAppGrp1.models.AccountType;
 import com.term4.BankingAppGrp1.testingData.BankingAppTestData;
-import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
-import lombok.extern.java.Log;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +27,8 @@ import org.springframework.test.annotation.DirtiesContext;
 
 
 @DataJpaTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD) //making issolated for each tests
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+//making issolated for each tests
 @Import(ApiTestConfiguration.class)
 class AccountRepositoryTesst extends BankingAppTestData {
 
@@ -174,6 +172,66 @@ class AccountRepositoryTesst extends BankingAppTestData {
     boolean accountExists = accountRepository.existsAccountByIbanEqualsAndCustomerEmailEqualsIgnoreCase(
         employeeAccount.getIban(), inhollandBankUser.getEmail());
     assertFalse(accountExists);
+  }
+
+  @Test
+  void findAccountsWithIsNotBankAccountSpecificationShouldReturnBankAccount() {
+    userRepository.save(employeeUser);
+    userRepository.save(inhollandBankUser);
+    accountRepository.save(employeeAccount);
+    accountRepository.save(inhollandBankAccount);
+    accountRepository.save(Account.builder().accountType(AccountType.SAVINGS)
+        .customer(employeeUser).balance(1000.0).build());
+    List<Account> foundAccounts = accountRepository.findAll(
+        AccountSpecifications.isNotBanksOwnAccount());
+    assertEquals(2, foundAccounts.size());
+    assertFalse(foundAccounts.contains(inhollandBankAccount));
+    assertTrue(foundAccounts.contains(employeeAccount));
+  }
+
+  @Test
+  void findAccountsWithIsActiveSpecificationReturnsActiveAccountOnly() {
+    userRepository.save(employeeUser);
+    accountRepository.save(employeeAccount);
+    Account deactivatedAccount = Account.builder().accountType(AccountType.SAVINGS)
+        .customer(employeeUser).balance(1000.0).isActive(false).
+        build();
+    accountRepository.save(deactivatedAccount);
+    List<Account> foundAccounts = accountRepository.findAll(
+        AccountSpecifications.isActiveAccounts());
+    assertEquals(1, foundAccounts.size());
+    assertFalse(foundAccounts.contains(deactivatedAccount));
+  }
+  @Test
+  void findAllWithCustomerNameSpecificationReturnsMatchingNameAccounts() {
+    userRepository.save(employeeUser);
+    accountRepository.save(employeeAccount);
+    List<Account> foundAccounts = accountRepository.findAll(
+        AccountSpecifications.hasCustomerName(employeeUser.getFirstName()));
+    assertEquals(1, foundAccounts.size());
+    assertTrue(foundAccounts.contains(employeeAccount));
+  }
+  @Test
+  void findAllWithHasCustomerEmailSpecificationShouldReturnAllAccountsSpecifiedEmailAndShouldBeCaseInsensitive(){
+    userRepository.save(employeeUser);
+    accountRepository.save(employeeAccount);
+    List<Account> foundAccounts = accountRepository.findAll(
+        AccountSpecifications.hasCustomerEmail(employeeUser.getEmail().toLowerCase()));
+    assertEquals(1, foundAccounts.size());
+    assertTrue(foundAccounts.contains(employeeAccount));
+  }
+  @Test
+  void findAllAccountsWhichHasIsCurrentAccountSpecificationShouldReturnAllCurrentAccounts(){
+    userRepository.save(employeeUser);
+    accountRepository.save(employeeAccount);
+    Account savingsAccount = Account.builder().accountType(AccountType.SAVINGS)
+        .customer(employeeUser).balance(1000.0).isActive(true).
+            build();
+    accountRepository.save(savingsAccount);
+    List<Account> foundAccounts = accountRepository.findAll(
+        AccountSpecifications.isCurrentAccounts());
+    assertEquals(1, foundAccounts.size());
+    assertTrue(foundAccounts.contains(employeeAccount));
   }
 
 
