@@ -96,23 +96,6 @@ public class AccountStepDefinitions extends BaseStepDefinition {
     Assertions.assertEquals(numberOfObjects, accounts.size());
   }
 
-  //  @And("The response should be an {string} list")
-//  public void theResponseShouldBeAnUserAccountsDTOList(String className)
-//      throws Exception {
-//
-//    List<Object> objects = objectMapper.readValue(response.getBody(),
-//        objectMapper.getTypeFactory().constructCollectionType(List.class, clazz));
-//
-//    // Check the class name for each object in the list using Stream API
-//    List<String> objectClassNames = objects.stream()
-//        .map(Object::getClass)
-//        .map(Class::getName)
-//        .toList();
-//
-//    // Assert that all object class names match the provided class name
-//    Assertions.assertTrue(objectClassNames.stream().allMatch(cn -> cn.equals(className)));
-//  }//    Class<?> clazz = Class.forName(className);
-
   @And("The response should be an UserAccountsDTO List")
   public void theResponseShouldBeAnUserAccountsDTOList() throws JsonProcessingException {
     String responseBody = response.getBody();
