@@ -331,9 +331,9 @@ class AccountServiceTest {
 
   @Test
   void getTotalTransactedAmountOfTodayShouldReturnTotalTransactedAmountOfToday() {
-    when(transactionService.getSumOfMoneyTransferred(currentAccount.getIban(), LocalDate.now()))
+    when(transactionService.getSumOfMoneyTransferredToday(currentAccount.getCustomer().getEmail()))
         .thenReturn(100.0);
     assertEquals(100.0,
-        accountService.getTotalTransactedAmountOfTodayByUserEmail(currentAccount.getIban()));
+        accountService.getTotalTransactedAmountOfTodayByUserEmail(currentAccount.getCustomer().getEmail()));
   }
 }
