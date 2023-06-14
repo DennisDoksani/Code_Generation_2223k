@@ -171,7 +171,7 @@ public class AccountService {
   }
 
   public double getTotalTransactedAmountOfTodayByUserEmail(String userEmail) {
-    return transactionService.getSumOfMoneyTransferred(userEmail, LocalDate.now());
+    return transactionService.getSumOfMoneyTransferredToday(userEmail);
   }
 
   public boolean isAccountOwnedByCustomer(String iban, String email) {
