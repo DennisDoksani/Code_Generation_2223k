@@ -8,7 +8,6 @@ import com.term4.BankingAppGrp1.models.Transaction;
 import com.term4.BankingAppGrp1.models.User;
 import com.term4.BankingAppGrp1.repositories.AccountRepository;
 import com.term4.BankingAppGrp1.repositories.TransactionRepository;
-import com.term4.BankingAppGrp1.repositories.UserRepository;
 import com.term4.BankingAppGrp1.requestDTOs.ATMDepositDTO;
 import com.term4.BankingAppGrp1.requestDTOs.ATMWithdrawDTO;
 import com.term4.BankingAppGrp1.requestDTOs.TransactionDTO;
@@ -29,14 +28,12 @@ public class TransactionService {
 
   private final TransactionRepository transactionRepository;
   private final AccountRepository accountRepository;
-  private final UserRepository userRepository;
   private final UserService userService;
 
     public TransactionService(TransactionRepository transactionRepository,
-        AccountRepository accountRepository, UserRepository userRepository, UserService userService) {
+        AccountRepository accountRepository, UserService userService) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
-        this.userRepository = userRepository;
         this.userService = userService;
     }
 
@@ -125,9 +122,12 @@ public class TransactionService {
 
         if ((accountFrom.getAccountType() == AccountType.CURRENT && accountTo.getAccountType() == AccountType.CURRENT) && dto.amount() > accountFrom.getCustomer().getTransactionLimit())
             throw new IllegalArgumentException("The amount you are trying to transfer exceeds the transaction limit");
+
+        if(accountFrom.getAccountType() ==AccountType.SAVINGS && accountFrom.getCustomer().getId()==accountTo.getCustomer().getId())
+          return true;
         
             // Checks first if the accountFrom has transactions made today and then if the amount will exceed the day limit
-        if (accountTo.getAccountType() != AccountType.SAVINGS && dto.amount() + getSumOfMoneyTransferred(accountFrom.getCustomer().getEmail(), LocalDate.now()) > accountFrom.getCustomer().getDayLimit())
+        if (accountTo.getAccountType() != AccountType.SAVINGS && dto.amount() + getSumOfMoneyTransferredToday(accountFrom.getCustomer().getEmail()) > accountFrom.getCustomer().getDayLimit())
             throw new IllegalArgumentException("The amount you are trying to transfer will exceed the day limit for this account");
 
         return true;
@@ -200,5 +200,10 @@ public class TransactionService {
             return transaction;
         }
         return null;
+    }
+    public double  getSumOfMoneyTransferredToday(String userEmail){
+      Double amount = transactionRepository.getSumOfMoneyTransferredToday(userEmail);
+      return amount == null ? 0.00 : amount; // DDouble can be null so we need to check if it is null
+
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,11 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>,
 
   @Query("SELECT sum(t.amount) FROM Transaction t WHERE t.accountFrom.customer.email = :user AND t.date = :date AND t.accountTo.accountType = :type")
   Optional<Double> getSumOfMoneyTransferred(String user, LocalDate date, AccountType type);
+
+  @Query("SELECT sum(t.amount) FROM Transaction t WHERE t.accountFrom.customer.email = :userEmail AND t.date = current_date AND "
+      + "t.accountFrom.accountType = com.term4.BankingAppGrp1.models.AccountType.CURRENT AND t.accountTo.accountType = com.term4.BankingAppGrp1.models.AccountType.CURRENT")
+  Double getSumOfMoneyTransferredToday(@Param("userEmail") String userEmail);
+
 
   @Modifying
   @Transactional
