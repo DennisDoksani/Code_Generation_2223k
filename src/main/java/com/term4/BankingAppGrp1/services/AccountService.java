@@ -178,7 +178,7 @@ public class AccountService {
     return accountRepository.existsAccountByIbanEqualsAndCustomerEmailEqualsIgnoreCase(iban, email);
   }
 
-  public List<Account> getAccountsByUserId(long id) {
+  public List<Account> getAccountsForUserId(long id) {
     return accountRepository.findByCustomer_IdEquals(id);
   }
 

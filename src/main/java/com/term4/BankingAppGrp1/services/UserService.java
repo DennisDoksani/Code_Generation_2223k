@@ -15,6 +15,7 @@ import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AccountRepository accountRepository;
     private final PhoneNumberUtil phoneNumberUtil;
+    private final AccountService accountService;
 
     private final int MIN_AGE_IN_YEARS = 18;
     private final String PHONE_NUMBER_REGION = "NL";
@@ -42,15 +44,30 @@ public class UserService {
 
 
     public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder,
-                       AccountRepository accountRepository, PhoneNumberUtil phoneNumberUtil) {
+                       AccountRepository accountRepository, PhoneNumberUtil phoneNumberUtil, AccountService accountService) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.accountRepository = accountRepository;
         this.phoneNumberUtil = phoneNumberUtil;
+        this.accountService = accountService;
     }
 
     public List<User> getAllUsers() {
         return (List<User>) userRepository.findAll();
+    }
+
+    public List<User> getFilteredUsers(boolean withAccounts) {
+        List<User> filteredUsers = this.getAllUsers();
+
+        if(withAccounts){
+            return filteredUsers.stream()
+                    .filter(user -> !accountService.getAccountsForUserId(user.getId()).isEmpty())
+                    .collect(Collectors.toList());
+        }else {
+            return filteredUsers.stream()
+                    .filter(user -> accountService.getAccountsForUserId(user.getId()).isEmpty())
+                    .collect(Collectors.toList());
+        }
     }
 
     public User saveUser(User user) {

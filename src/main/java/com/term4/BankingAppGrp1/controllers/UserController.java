@@ -74,6 +74,13 @@ public class UserController {
     return ResponseEntity.ok(users.stream().map(parseUserObjectToDTO).toList());
   }
 
+  @GetMapping("/withaccounts/{withAccounts}")
+  @PreAuthorize("hasRole('EMPLOYEE')")
+  public ResponseEntity<Object> getAllUsersWithOrWithoutAccount(@PathVariable boolean withAccounts) {
+    List<User> users = userService.getFilteredUsers(withAccounts);
+    return ResponseEntity.ok(users.stream().map(parseUserObjectToDTO).toList());
+  }
+
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<User> saveUser(@NotNull @Valid @RequestBody RegistrationDTO user) {
     return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUser(user));
