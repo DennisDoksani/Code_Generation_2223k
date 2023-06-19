@@ -6,7 +6,7 @@
 - Bijay Sapkota 
 - Ruben Walkeuter
 
-##Projects Description
+## Projects Description
 A Banking application, developed in Java, SpringBoot Frameworks, and H2-Consolle Databases, following the MVC Pattern.
 Able to create/register new accounts, give roles (Employee or Customer) and fulfil transactions between bank accounts.
 
